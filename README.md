@@ -1,5 +1,9 @@
 # idea-shaokao
 
+<p align="center">
+  <img src="assets/logo.png" alt="Idea Shaokao logo: a lightbulb with a brain, flame, and barbecue grill" width="360">
+</p>
+
 **Put research ideas through the heat before spending months on them.**
 
 An installable Agent Skill for persistent research discovery and conference-style
@@ -40,7 +44,7 @@ and [agent directory reference](https://github.com/vercel-labs/skills/blob/main/
 for current host support and destinations.
 
 For manual installation, clone this repository and copy `SKILL.md`, `references/`,
-`scripts/`, and optionally `agents/` into a directory named `idea-shaokao` inside
+`scripts/`, `assets/`, and optionally `agents/` into a directory named `idea-shaokao` inside
 your agent's skill directory. For example, a Claude Code project can use
 `.claude/skills/idea-shaokao/`. No build step is required. Do not copy the `.git/`
 directory or store research output inside the installed skill.
