@@ -1,0 +1,28 @@
+{
+  "direction": "github-review",
+  "result": "passed",
+  "artifactSha256": "cf5bf25f645741fe346f69b0bc22e7a2ad1ca8c026b0cc6f895ca686ded36346",
+  "viewports": [
+    "1440x900",
+    "1024x768"
+  ],
+  "checks": [
+    "open/resolved/all filters",
+    "severity filter",
+    "text and original-ID search",
+    "empty state and clear filters",
+    "issue detail routing",
+    "three sequential review comments",
+    "back navigation retains search",
+    "overview/review/source navigation",
+    "exact source text and switching",
+    "annotation creation/edit/delete",
+    "safe verbatim comments",
+    "saved notes and unfinished draft recovery",
+    "Markdown download",
+    "storage-denied fallback",
+    "immutable evidence",
+    "zero console errors",
+    "zero network requests"
+  ]
+}

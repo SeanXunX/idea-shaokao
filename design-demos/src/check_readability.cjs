@@ -4,7 +4,9 @@ const {pathToFileURL}=require('url');
 (async()=>{
  const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{})});
  const results=[];
- for(const name of ['signal-desk','editorial-dossier','evidence-table']){
+ const names=process.argv.slice(2).length?process.argv.slice(2):['signal-desk','editorial-dossier','evidence-table'];
+ let prior=[];try{prior=JSON.parse(await fs.readFile(path.resolve(__dirname,'../verification/readability-results.json'),'utf8'))}catch{}
+ for(const name of names){
   const context=await browser.newContext({viewport:{width:1440,height:900},offline:true});
   const page=await context.newPage();
   await page.goto(pathToFileURL(path.resolve(__dirname,'..',name+'.html')).href);
@@ -32,7 +34,7 @@ const {pathToFileURL}=require('url');
   results.push({direction:name,desktop,narrow});
   await context.close();
  }
- await fs.writeFile(path.resolve(__dirname,'../verification/readability-results.json'),JSON.stringify(results,null,2)+'\n');
+ await fs.writeFile(path.resolve(__dirname,'../verification/readability-results.json'),JSON.stringify([...prior.filter(item=>!names.includes(item.direction)),...results],null,2)+'\n');
  console.log(JSON.stringify(results,null,2));
  if(results.some(r=>[r.desktop,r.narrow].some(v=>v.overflow||v.lowContrast.length||v.smallText.length)))process.exitCode=1;
  await browser.close();

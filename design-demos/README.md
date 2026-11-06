@@ -1,80 +1,75 @@
-# Review Dossier — three interactive directions
+# Research Review — GitHub Issues direction
 
-Open any HTML file directly in your browser. Each is self-contained: content,
-fonts, styles, and scripts are embedded. No server, account, or network is needed.
+**[Open the current prototype](github-review.html)** — a single offline HTML file.
 
-| Direction | Reading model | Open |
-| --- | --- | --- |
-| A. Signal Desk | Verdict first, horizontal review sequence, expandable issue inspector | [Prototype](signal-desk.html) · [Screenshot](screenshots/signal-desk-1440.png) |
-| B. Editorial Dossier | Reading column, serif hierarchy, margin evidence and annotations | [Prototype](editorial-dossier.html) · [Screenshot](screenshots/editorial-dossier-1440.png) |
-| C. Evidence Table | Issue index and aligned concern / rebuttal / reassessment columns | [Prototype](evidence-table.html) · [Screenshot](screenshots/evidence-table-1440.png) |
+![Issue list](screenshots/github-review-1440.png)
 
-## Try the review flow
+The current interface follows the GitHub Issues page supplied by the user:
+https://github.com/addyosmani/agent-skills/issues. It uses a white background,
+native system fonts, compact rows, gray borders, state filters, and sequential
+comment threads. The previous Huashu-based exploration has been superseded.
 
-1. Read the core idea, investment decision, evidence stage, and next action.
-2. Select an issue. Inspect the concern, author response, final reassessment,
-   original reviewer IDs, and closure criterion.
-3. Open a source. The reader includes exact bundled text, relative artifact path,
-   and SHA-256 digest. Close it to return to your reading position.
-4. Annotate an issue, claim, or report section. Choose Question, Needs evidence,
-   or Suggested change. Your wording is preserved.
-5. Use My notes / Notes to edit or delete comments. Export feedback downloads
-   `review_feedback.md`, with project/version/round, target IDs, source paths,
-   source hashes, and comments.
+## Review flow
 
-Notes are private drafts in the current browser, stored separately for each design.
-The HTML file itself is not rewritten. Export feedback to share or keep your notes
-when moving the file. If browser storage is unavailable, the interface states
-“Session only · export to keep notes”; annotation and export still work.
+- **Issues:** search titles, concerns, or original reviewer IDs. Filter by Open,
+  Resolved, All, or severity. Three duplicate correctness concerns form one group.
+- **Issue detail:** read the reviewer concern, author rebuttal, and final
+  reassessment in order. Original IDs and closure criteria sit beside the thread.
+- **Overview:** inspect the idea, recommendation, claims, and experiment status.
+- **Review history:** inspect actual scores and the complete one-round sequence.
+- **Sources:** open any of the 18 exact bundled original documents and its hash.
+- **Feedback:** add a question, evidence request, or suggestion to a claim, issue,
+  or section. Edit/delete it under My notes and download `review_feedback.md`.
 
-## Test-case content
+![Issue discussion](screenshots/github-review-detail-1440.png)
 
-The shared content comes from the actual earlier one-round projection review.
-Every prototype is labeled Test Case. All three reviewers and both chairs
-recommended stopping the submitted formulation. External novelty/runtime remain
-unassessed, and the conditional E02/E03 experiments were canceled. E01 is an exact
-analytical finding, not an empirical run. No synthetic scores or results were added.
+Search and filters survive navigation and reload in the same tab when session
+storage is available. Notes and unfinished comments use local browser storage.
+The HTML itself is not rewritten: export feedback to share or retain your notes
+when moving the file. If local storage is blocked, a visible session-only message
+appears and annotation/export continue to work.
 
-The dataset preserves 18 original source texts and their hashes. Concise summaries
-in the interface link to those texts. Human annotations do not change the source
-record or the recorded recommendation.
+Everything opens without a server or network. The current prototype uses native
+UI fonts, with source data and scripts embedded in the HTML. Human feedback is
+separate from the scientific record.
 
-## Build and verification
+## Evidence and verification
 
-Rebuild the three portable HTML files with Python 3.10+ and the standard library:
+All content comes from the actual projection-review test case. The Kill verdict,
+unknown novelty/runtime, unchanged frozen v01, open technical defects, and canceled
+E02/E03 checks are preserved. No research results or reviewer scores were invented.
+
+The prototype passed at 1440×900 and 1024×768, including issue routing, filters,
+search/empty states, source fidelity, all reading sections, annotation editing and
+deletion, saved notes/draft recovery, safe verbatim text, Markdown export, and
+storage-denied fallback. No console errors or HTTP(S) requests were recorded.
+See [interaction results](verification/github-review-results.json) and
+[readability results](verification/readability-results.json).
+
+Rebuild with Python 3.10+ and the standard library:
 
 ```bash
 python3 design-demos/src/build_demos.py
 ```
 
-The builder verifies source hashes and embeds the font binaries, license notices,
-dataset, shared runtime, and each direction's template. Open font licenses and
-provenance are included in `assets/fonts/` and embedded in each output file.
-
-Browser checks use Playwright. Install it in your chosen development environment,
-then run:
+Run browser checks with Playwright available to Node:
 
 ```bash
-node design-demos/src/verify_demos.cjs
-node design-demos/src/check_readability.cjs
+node design-demos/src/verify_github_review.cjs
+node design-demos/src/check_readability.cjs github-review
 ```
 
-Set `PLAYWRIGHT_MODULE` to an installed Playwright module directory if it is outside
-normal Node resolution. Set `CHROMIUM_EXECUTABLE` when using an existing Chromium
-binary. These are development-only requirements; the delivered HTML has none.
+`PLAYWRIGHT_MODULE` can point to an external Playwright installation and
+`CHROMIUM_EXECUTABLE` to an existing Chromium binary. These are development-only
+requirements; the HTML file has none.
 
-Checks cover 1440×900 and 1024×768 viewports, local drafts, source fidelity, reading
-position, annotation editing/deletion, verbatim-safe text, feedback download,
-storage-denied fallback, stable evidence, anchors, and offline rendering.
-[Interaction results](verification/interaction-results.json) and
-[readability results](verification/readability-results.json) record the checks.
-The latter checks computed text contrast, 12px minimum secondary text, and document
-width; primary narrative text uses at least 14px. All six viewport screenshots
-are in `screenshots/`.
+## Earlier explorations
 
-## Design selection
+The earlier prototypes are retained for comparison and history:
+[Signal Desk](signal-desk.html), [Editorial Dossier](editorial-dossier.html), and
+[Evidence Table](evidence-table.html). Their templates, embedded font licenses,
+and verification records are unchanged. The build helper regenerates all four
+prototypes; `verify_demos.cjs` checks the earlier three.
 
-These are three exploratory directions, not an approved final interface. After
-selection, record the user's chosen direction and plan integration that generates
-`final/review.html` alongside future research reports. The current skill execution
-contract remains the research workflow documented in the repository's SKILL.md.
+The current delivery is the revised review interface. Generating it automatically
+as `final/review.html` remains a subsequent skill integration task.

@@ -43,5 +43,20 @@
       "smallText": [],
       "overflow": false
     }
+  },
+  {
+    "direction": "github-review",
+    "desktop": {
+      "checked": 41,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    },
+    "narrow": {
+      "checked": 41,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    }
   }
 ]

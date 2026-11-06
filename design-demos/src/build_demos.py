@@ -1,4 +1,4 @@
-"""Embed the shared immutable dataset, controls, and fonts into three offline demos."""
+"""Embed the shared immutable dataset, controls, and fonts into offline review prototypes."""
 import base64
 import hashlib
 import json
@@ -19,13 +19,13 @@ common = (src/'common.css').read_text()
 runtime = (src/'runtime.js').read_text()
 payload = json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
 embedded = '<script id="review-data" type="application/json">'+payload+'</script>\n<script>'+runtime+'</script>'
-for name in ('signal-desk','editorial-dossier','evidence-table'):
+for name in ('signal-desk','editorial-dossier','evidence-table','github-review'):
  template = src/(name+'.template.html')
  if not template.exists():
   print('Pending:',template.name)
   continue
  html = template.read_text()
- for marker,replacement in [('/* EMBED_FONTS */',fonts),('<!-- EMBED_COMMON_CSS -->',common),('<!-- EMBED_RUNTIME -->',embedded)]:
+ for marker,replacement in [('/* EMBED_FONTS */',fonts if name!='github-review' else '/* Native system fonts; no external font dependencies. */'),('<!-- EMBED_COMMON_CSS -->',common),('<!-- EMBED_RUNTIME -->',embedded)]:
   assert html.count(marker)==1, (name,marker)
   html = html.replace(marker,replacement)
  output = root/(name+'.html')

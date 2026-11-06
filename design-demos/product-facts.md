@@ -7,3 +7,11 @@ Verified design references (consulted during planning):
 - Edward Tufte, Analytical design and human factors: https://www.edwardtufte.com/notebook/analytical-design-and-human-factors/ — evidence comparison and credibility as design tasks.
 
 The UI labels this a Test Case and an internal conference-inspired model-agent review. It does not represent an actual conference decision.
+
+Current reference-directed revision:
+- User reference: https://github.com/addyosmani/agent-skills/issues.
+- Inspected the public page and a 1440px browser rendering before implementation.
+  The relevant patterns are light surfaces, compact issue rows, search, state and
+  label filters, and a left navigation. No issue content/counts from that repository
+  are used in this prototype; research content remains the original local fixture.
+- The user explicitly replaced the earlier Huashu-based design direction.
