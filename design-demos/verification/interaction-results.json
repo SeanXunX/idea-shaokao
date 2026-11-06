@@ -1,0 +1,106 @@
+[
+  {
+    "direction": "signal-desk",
+    "artifactSha256": "d6ac5a7217a8ead7878bb9ac213d462ad765644cbcd51378ef0d062b6659d1b3",
+    "result": "passed",
+    "viewports": [
+      "1440x900",
+      "1024x768"
+    ],
+    "checks": [
+      "functional section navigation",
+      "offline rendering",
+      "embedded fonts",
+      "four issue groups",
+      "source text fidelity",
+      "source switching",
+      "reading position",
+      "annotation creation/edit/deletion",
+      "verbatim safe text",
+      "local persistence",
+      "draft recovery",
+      "Markdown feedback download",
+      "claim and section targets",
+      "storage-denied fallback",
+      "immutable evidence",
+      "anchors",
+      "zero console errors",
+      "zero network requests"
+    ],
+    "loadedFonts": [
+      "IBM Plex Mono",
+      "IBM Plex Mono",
+      "Manrope"
+    ]
+  },
+  {
+    "direction": "editorial-dossier",
+    "artifactSha256": "12614e6c839b9659d5073c9c2d94e79fce4d391bfcc5943267352b8f5039e301",
+    "result": "passed",
+    "viewports": [
+      "1440x900",
+      "1024x768"
+    ],
+    "checks": [
+      "functional section navigation",
+      "offline rendering",
+      "embedded fonts",
+      "four issue groups",
+      "source text fidelity",
+      "source switching",
+      "reading position",
+      "annotation creation/edit/deletion",
+      "verbatim safe text",
+      "local persistence",
+      "draft recovery",
+      "Markdown feedback download",
+      "claim and section targets",
+      "storage-denied fallback",
+      "immutable evidence",
+      "anchors",
+      "zero console errors",
+      "zero network requests"
+    ],
+    "loadedFonts": [
+      "IBM Plex Mono",
+      "IBM Plex Mono",
+      "Manrope",
+      "Newsreader"
+    ]
+  },
+  {
+    "direction": "evidence-table",
+    "artifactSha256": "45f241f710710b7f37b00e6f2a0417dbe70a8d095219e1a7cfa187df068ee43b",
+    "result": "passed",
+    "viewports": [
+      "1440x900",
+      "1024x768"
+    ],
+    "checks": [
+      "functional section navigation",
+      "offline rendering",
+      "embedded fonts",
+      "four issue groups",
+      "source text fidelity",
+      "source switching",
+      "reading position",
+      "annotation creation/edit/deletion",
+      "verbatim safe text",
+      "local persistence",
+      "draft recovery",
+      "Markdown feedback download",
+      "claim and section targets",
+      "storage-denied fallback",
+      "immutable evidence",
+      "anchors",
+      "zero console errors",
+      "zero network requests"
+    ],
+    "loadedFonts": [
+      "IBM Plex Mono",
+      "IBM Plex Mono",
+      "Manrope",
+      "Newsreader"
+    ]
+  }
+]

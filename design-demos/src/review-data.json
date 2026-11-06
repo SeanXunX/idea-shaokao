@@ -1,0 +1,486 @@
+{
+  "project": {
+    "slug": "faster-nonnegative-projection",
+    "title": "Faster nonnegative projection",
+    "version": "v01",
+    "stage": "Proposal",
+    "mode": "Independent model-agent review",
+    "round": 1,
+    "maxRounds": 1,
+    "convergence": "Not converged",
+    "decision": "Kill",
+    "summary": "Replace exact nonnegative projection with absolute value to reduce projection cost in constrained optimization.",
+    "rationale": "The central exactness claim is false. A negative input is enough to disprove the proposed method; a separate optimizer counterexample defeats unrestricted drop-in compatibility.",
+    "novelty": "Not assessed",
+    "runtime": "Unmeasured",
+    "sourceDate": "07 Nov 2026",
+    "largestRisk": "The reviewed operator is mathematically invalid for negative inputs.",
+    "nextAction": "Stop this formulation. Preserve the counterexamples and review record; do not run the canceled benchmarks.",
+    "sourceCoverage": "Supplied claim and exact reasoning only. Offline review; external novelty and runtime are unassessed."
+  },
+  "issues": [
+    {
+      "id": "R01-R1-01",
+      "title": "Absolute value is not the stated projection",
+      "shortTitle": "Exactness fails",
+      "severity": "Critical",
+      "status": "Open",
+      "aliases": [
+        "R01-R1-01",
+        "R01-R2-01",
+        "R01-R3-01"
+      ],
+      "concern": "For every negative input, zero is feasible and closer than abs(x). At x = −1, the proposed operator incurs objective 4; zero incurs 1. The exact projection is max(x, 0).",
+      "response": "Accepted. Withdraw H01 and stop this formulation. The author did not replace or edit frozen v01.",
+      "reassessment": "Withdrawal acknowledges the counterexample; it does not repair the reviewed method. All three reviewers retain their unfavorable recommendation.",
+      "criterion": "Withdraw H01. Any substantive repair must be submitted as a new formulation and independently reviewed.",
+      "sources": [
+        "initial-r2",
+        "rebuttal",
+        "final-r2",
+        "sac"
+      ]
+    },
+    {
+      "id": "R01-R1-02",
+      "title": "Unrestricted optimizer compatibility fails",
+      "shortTitle": "Drop-in claim fails",
+      "severity": "Major",
+      "status": "Open",
+      "aliases": [
+        "R01-R1-02",
+        "R01-R2-02",
+        "R01-R3-02"
+      ],
+      "concern": "For f(z) = (z + 1)² / 2, a gradient step of size one gives −1. Exact projection reaches the constrained optimum zero; absolute value remains at one.",
+      "response": "Accepted. Withdraw unrestricted H03. A different absolute-value algorithm would be a new proposal, outside this review.",
+      "reassessment": "The step equals reciprocal curvature, so the example does not depend on an oversized step. The defect remains in unchanged v01; this does not rule out every possible use of absolute value.",
+      "criterion": "Withdraw unrestricted H03. Any alternative algorithm needs its own specification and justified convergence conditions.",
+      "sources": [
+        "initial-r2",
+        "discussion-before",
+        "rebuttal",
+        "final-r2",
+        "ac"
+      ]
+    },
+    {
+      "id": "R01-R1-03",
+      "title": "Novelty and research significance remain unassessed",
+      "shortTitle": "Novelty unknown",
+      "severity": "Moderate",
+      "status": "Open",
+      "aliases": [
+        "R01-R1-03"
+      ],
+      "concern": "No external literature was supplied or retrieved. Closest prior work, research novelty, and a meaningful workload bottleneck are not established.",
+      "response": "Accepted as uncertainty, not proof of nonnovelty. Preserve the gap; even verified novelty would not repair the correctness contradiction.",
+      "reassessment": "Unknown novelty and runtime are distinct from falsified correctness. No negative novelty finding or current coverage is claimed.",
+      "criterion": "For any future revised idea, inspect verified closest sources and establish a meaningful workload and contribution.",
+      "sources": [
+        "initial-r1",
+        "search-log",
+        "rebuttal",
+        "final-r1",
+        "sac"
+      ]
+    },
+    {
+      "id": "R01-R2-03",
+      "title": "Speed reporting corrected; runtime remains unknown",
+      "shortTitle": "Speed unmeasured",
+      "severity": "Moderate",
+      "status": "Resolved",
+      "aliases": [
+        "R01-R2-03"
+      ],
+      "concern": "No device, dtype, implementation, or measurements support the speed claim. Faster execution cannot establish equivalence of different operators.",
+      "response": "Keep H02 untested. Cancel conditional E02 and E03 after the correctness gate fails. Do not report an empirical improvement.",
+      "reassessment": "The reporting/action criterion is met. This resolution does not establish runtime, repair the method, or change the Kill recommendation.",
+      "criterion": "Keep speed untested and cancel conditional benchmarks for this failed formulation.",
+      "sources": [
+        "initial-r2",
+        "rebuttal",
+        "final-r2",
+        "ac",
+        "sac"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "H01",
+      "title": "Exact projection",
+      "text": "P(x) = abs(x) minimizes (z − x)² over z ≥ 0 for every real x.",
+      "status": "Falsified by exact reasoning",
+      "sources": [
+        "proposal",
+        "initial-r2",
+        "sac"
+      ]
+    },
+    {
+      "id": "H02",
+      "title": "Lower execution cost",
+      "text": "Absolute value may execute faster than the exact projection.",
+      "status": "Unmeasured",
+      "sources": [
+        "proposal",
+        "evidence",
+        "rebuttal"
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "Drop-in optimizer use",
+      "text": "The operator can replace exact projection in constrained optimization without qualification.",
+      "status": "Unrestricted claim falsified",
+      "sources": [
+        "proposal",
+        "initial-r2",
+        "sac"
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "id": "submission",
+      "label": "Submission",
+      "role": "Author",
+      "summary": "Frozen v01; exactness and drop-in claims submitted as hypotheses.",
+      "source": "proposal"
+    },
+    {
+      "id": "reviews",
+      "label": "Independent reviews",
+      "role": "R1 · R2 · R3",
+      "summary": "All three reviewers identify the correctness failure; significance coverage is retained.",
+      "source": "scores"
+    },
+    {
+      "id": "discussion",
+      "label": "AC discussion",
+      "role": "AC + reviewers",
+      "summary": "Check the step-size objection and separate falsification from unknown novelty.",
+      "source": "discussion-before"
+    },
+    {
+      "id": "rebuttal",
+      "label": "Author rebuttal",
+      "role": "Author",
+      "summary": "Accept the counterexamples; withdraw H01 and unrestricted H03 without rewriting v01.",
+      "source": "rebuttal"
+    },
+    {
+      "id": "reassessment",
+      "label": "Reassessment",
+      "role": "R1 · R2 · R3",
+      "summary": "All overall scores remain 1/10. Withdrawal does not repair the method.",
+      "source": "discussion-after"
+    },
+    {
+      "id": "chairs",
+      "label": "Chair assessment",
+      "role": "AC + separate SAC",
+      "summary": "Both independently recommend Kill. SAC verifies the frozen packet hashes.",
+      "source": "sac"
+    }
+  ],
+  "experiments": [
+    {
+      "id": "E01",
+      "title": "Exact scalar correctness gate",
+      "kind": "Analytical finding",
+      "status": "Failed by proof",
+      "summary": "At x = −1, abs(x) yields squared distance 4; feasible zero yields 1. No empirical run is needed to falsify a universal claim.",
+      "source": "initial-r2"
+    },
+    {
+      "id": "E02",
+      "title": "Matched speed benchmark",
+      "kind": "Conditional planned experiment",
+      "status": "Canceled",
+      "summary": "Not executed after E01 fails. Hardware timing remains unknown.",
+      "source": "experiments"
+    },
+    {
+      "id": "E03",
+      "title": "Optimizer comparison",
+      "kind": "Conditional planned experiment",
+      "status": "Canceled",
+      "summary": "The empirical check was canceled. The separate exact quadratic counterexample is analytical evidence, not an empirical run.",
+      "source": "rebuttal"
+    }
+  ],
+  "reviewers": [
+    {
+      "id": "R1",
+      "focus": "Novelty + significance",
+      "initial": 1,
+      "final": 1,
+      "confidence": "5/5 for algebra only",
+      "reason": "Withdrawal acknowledges but does not repair frozen v01.",
+      "sources": [
+        "initial-r1",
+        "final-r1"
+      ]
+    },
+    {
+      "id": "R2",
+      "focus": "Technical soundness",
+      "initial": 1,
+      "final": 1,
+      "confidence": "5/5 for algebra only",
+      "reason": "Withdrawal acknowledges but does not repair frozen v01.",
+      "sources": [
+        "initial-r2",
+        "final-r2"
+      ]
+    },
+    {
+      "id": "R3",
+      "focus": "Experimental rigor + significance",
+      "initial": 1,
+      "final": 1,
+      "confidence": "5/5 for algebra only",
+      "reason": "Withdrawal acknowledges but does not repair frozen v01.",
+      "sources": [
+        "initial-r3",
+        "final-r3"
+      ]
+    }
+  ],
+  "sources": {
+    "proposal": {
+      "id": "proposal",
+      "path": "proposal/v01/proposal.md",
+      "title": "Frozen proposal v01",
+      "kind": "Submitted claim",
+      "text": "# Faster nonnegative projection using absolute value — frozen submission v01\n\n## Abstract and claim\nThe supplied proposal defines P(x)=abs(x) for every real scalar x and claims P(x) minimizes (z-x)^2 over z>=0 for all real x. It suggests P as a drop-in projection in constrained optimization. Hypothesis H01: the universal minimization statement is correct. Hypothesis H02: the operator is faster than an exact conventional implementation. Hypothesis H03: substituting it preserves constrained-optimization behavior. These are claims to review, not verified findings.\n\n## Problem and mechanism\nInput x is any real number. Feasible output z must satisfy z>=0. Objective is squared Euclidean distance (z-x)^2. Method is the exact mathematical map P:R->[0,infinity), P(x)=|x|. No randomized components, datasets, trainable parameters, or architecture are supplied. Motivation: potentially reduce projection cost. Expected Result claimed by the proposer: exact projection with faster execution; no hardware, baseline, or speed magnitude specified.\n\n## Comparison and analysis to be reviewed\nDerive the constrained minimizer directly and compare objective values for negative, zero, and positive inputs. Feasibility, distance optimality, and downstream algorithm validity require distinct checks. Mathematical constant-operation complexity alone does not establish hardware speed. Literature, proofs, implementation, experiments, and optimizer assumptions are absent.\n\n## Scope and implementation path\nProposal review only. If correctness survives, a later authorized project would first specify arithmetic/dtypes and a reference oracle, then implement exact and proposed operators, measure matched workloads, and assess a stated constrained optimizer. No code or development is performed now; estimates and hardware requirements cannot be defended before those choices. Known risk categories: invalid universal claim, unmeasured speed, and uncontrolled optimizer behavior. This frozen packet intentionally preserves the supplied claim for independent assessment.\n",
+      "sha256": "2a2155cb05fac9ee5bb951dd01f9b3679209e912f77a4afd995e5ae001c3f99c"
+    },
+    "experiments": {
+      "id": "experiments",
+      "path": "proposal/v01/experiments.md",
+      "title": "Original experiment plan",
+      "kind": "Planned / conditional",
+      "text": "# Proposed checks; no runs authorized or performed\n\nH01: universal projection validity. H02: speed benefit. H03: drop-in optimizer compatibility.\n\n| ID | Priority | Hypothesis, setup, comparator | Metric, threshold, controls | Scope and execution |\n| --- | --- | --- | --- | --- |\n| E01 | Essential mathematical gate | Exact symbolic scalar analysis, especially negative x, x=0, positive x; compare feasible objective values with the constrained argmin | Objective excess must be zero for every real x; a single feasible strictly better z kills H01. Exact arithmetic avoids numerical noise. | Reviewers may reason analytically; no code or empirical run. Necessary and sufficient falsification gate for universal claim. |\n| E02 | Conditional only | If E01 survives and future work authorized: same dtype/compiler/device, abs versus verified exact baseline; equal tuning, representative signs/scales | First require identical correct semantics. Then latency/throughput with repeated runs and uncertainty; no speed target supplied, so predefine practical threshold before measurements. | Unexecuted; no hardware/command is supplied; cannot justify resource estimate now. Not warranted if E01 fails. |\n| E03 | Conditional only | If E01 survives and future work authorized: explicitly specified projected optimizer on a 1-D constrained quadratic and broader workloads, exact baseline; equal steps and starting points | Feasibility, objective gap, stationarity; control steps and negative pre-projection states. Any failure of claimed equivalence falsifies unrestricted drop-in claim. | Unexecuted; no implementation or optimizer project. Not warranted if E01 fails. |\n\nOnly E01 is scientifically essential for this narrow review. E02/E03 are conditional follow-ups, not filler required experiments or completed evidence. No numerical benchmark or uncertainty estimate is fabricated.\n",
+      "sha256": "bc483401673b4ac0cde592d1744fbaccc208d316822f1f06c5868c68cd62e852"
+    },
+    "evidence": {
+      "id": "evidence",
+      "path": "proposal/v01/evidence.md",
+      "title": "Evidence inventory",
+      "kind": "Evidence boundaries",
+      "text": "# Evidence inventory v01\nVerified Fact: user supplied P(x)=abs(x), a universal minimization claim, and suggested drop-in optimization use. This is verified as the content of the submission, not as mathematical truth.\nNo implementation, experimental record, literature, or proof supplied. All performance and optimizer effects are unvalidated Hypotheses. Review-generated analytic evidence must be saved in reports/rebuttal separately; the frozen packet will not be rewritten.\n",
+      "sha256": "9ef0f7cbd9c1e4c2df6aaf05ae597e930a6bbea93d22faeee35826d3b47d7345"
+    },
+    "report": {
+      "id": "report",
+      "path": "final/final_report.md",
+      "title": "Final research report",
+      "kind": "Final synthesis",
+      "text": "# Final report: faster nonnegative projection\n\n**Decision: Kill the submitted formulation.** Proposal stage; independent model-agent mode; **1/1 complete round; not_converged**. Separate SAC agrees with AC. Source coverage: 2026-11-06 UTC / 2026-11-07 Asia/Shanghai, supplied claim and exact reasoning only. External novelty and runtime remain unknown. This is an internal conference-inspired review, not an official conference outcome.\n\n## A. Research discovery\n\nThe user supplied `P(x)=abs(x)` and claimed it solves `min (z-x)^2` over `z>=0` for every real x, with faster drop-in optimization use. No literature, code, proof, or results were supplied; internet was unavailable. [Search log](../literature/search_log.md), [source ledger](../literature/papers.md), [bounded landscape](../literature/research_landscape.md), and [comparison matrix](../literature/related_work_matrix.md) explicitly preserve that gap. No current novelty or prior-art conclusion is claimed. Open-ended candidate ideation was outside scope; [selection rationale](../ideation/idea_selection.md) preserves the supplied idea.\n\n**Verified Fact, exact derivation:** if x>=0, z=x uniquely achieves zero distance. If x<0, `(z-x)^2-x^2=z^2-2xz>=0` for feasible z, with equality only at zero. Thus the unique true projection is `max(x,0)`. The proposed absolute value incurs `4x^2` on negative inputs, versus `x^2` at zero. At x=-1, the objective is 4 instead of 1. Sources: independent [R2 initial proof](../reviews/round-01/reviewer-R2-initial.md) and [SAC verification](../reviews/round-01/sac-assessment.md).\n\n## B. Final proposal\n\n[Selected final proposal](../proposal/final/proposal.md) is a byte-identical copy of reviewed v01, with [provenance](../proposal/final/README.md); it is preserved as the rejected formulation. The method is the single map `|x|`, no architecture or implementation. Its hypothesized benefit was exact projection at lower cost. The author withdrew H01 and unrestricted H03 in the separate rebuttal, without silently substituting a corrected operator, objective, or domain. No revised submission or second round occurred.\n\n## C. Plan and evidence\n\n[Experiment plan](../proposal/final/experiments.md) and [evidence inventory](../proposal/final/evidence.md) separate hypotheses from evidence. Only **E01, the exact scalar correctness gate**, is scientifically essential for this narrow task; it fails by proof. There are no empirical runs. Fewer than three essential experiments are warranted because one counterexample conclusively falsifies the universal claim. Conditional E02 (matched speed benchmark) and E03 (stated-optimizer comparison) were canceled after the gate failed; their outcomes are unknown, not negative measurements.\n\n**Verified Fact, downstream counterexample:** for `f(z)=(z+1)^2/2`, a gradient step of size one produces -1 from every z. True projection returns the constrained optimum zero; absolute value returns one forever, with objective 2 rather than 1/2. Curvature is one, so this is not an oversized-step artifact. This defeats unrestricted drop-in equivalence, without ruling out every separately specified algorithm using absolute value. See [actual R2 discussion](../reviews/round-01/reviewer-R2-discussion-before.md).\n\n## D. Complete review history\n\nThe [complete review record](complete_review_record.md) preserves all initial reports, both actual AC-directed exchanges, author rebuttal, final reports, AC meta-review, and separate SAC assessment. [Compact execution trace](execution_trace.md) and [role provenance](../reviews/round-01/provenance.jsonl) identify actual agents and context boundaries.\n\n| Reviewer, round 01 | Initial overall | Final overall | Reason |\n| --- | --- | --- | --- |\n| R1 novelty + significance/impact | 1/10 | 1/10 | Withdrawal does not repair exactness or compatibility. |\n| R2 technical soundness | 1/10 | 1/10 | Mathematical counterexamples remain decisive. |\n| R3 experimental rigor + significance/impact | 1/10 | 1/10 | The essential gate failed; benchmarking cannot rescue it. |\n\nScores use the unofficial internal rubric v1 at proposal stage; novelty is not assessable, confidence 5/5 concerns the algebra only. Full dimensions and confidence limits appear in [score history](../reviews/score-history.md). No dissent or missing role remains. [Issue tracker](../issue_tracker.md) retains all critical/major technical defects as Open in unchanged v01. Claim withdrawal is verified but is not technical repair. Only R2's speed-reporting/action requirement is Resolved; runtime remains unknown. There are no pending experiments.\n\n## E. Implementation roadmap\n\n| Stage | Task | Dependency | Priority | Artifact / estimate |\n| --- | --- | --- | --- | --- |\n| Current review | Preserve proof and stop this formulation | SAC decision, completed | Essential | Complete record; completed |\n| Prototype, baselines, benchmarks, ablations, analysis, writing | Not started; canceled for this invalid formulation | Would require a separately authorized new proposal | None now | No code or empirical artifacts; no unjustified estimate |\n\nFirst implementation step: **none for this formulation**. First-week engineering priorities and parallel implementation tasks do not apply to the authorized proposal-only review. A separate future project would first specify a correct operator and justify a distinct contribution; this review does not initiate it. Leading risk is semantic invalidity, already demonstrated.\n\n## F. Final SAC verdict\n\nThe [independent SAC assessment](../reviews/round-01/sac-assessment.md) recommends **Kill**, with confidence 5/5 in mathematical rejection. Its recommendation is preserved without alteration.\n\n1. **Final idea:** use absolute value as exact scalar nonnegative projection.\n2. **Core novelty:** no defensible new valid projection mechanism established; external priority unassessed.\n3. **Why now:** no enabling evidence or timely opportunity supplied.\n4. **Why not existing work:** the exact analytic comparator is `max(x,0)`; external closest-work attribution was not verified.\n5. **Conference potential:** the submitted central claim is false; neither acceptance nor investigation readiness is supported.\n6. **Biggest rejection risk:** a decisive correctness contradiction, already verified.\n7. **Three essential experiments:** only E01 is warranted; E02/E03 are conditional canceled checks, not missing required tests.\n8. **First implementation step:** stop; do not implement this claimed projection.\n9. **Recommendation:** Kill; one round completed, no convergence, no further authorized work pending.\n\nLimitations: offline literature coverage; same-family model-agent reasoning may be correlated; filesystem isolation was procedural. None prevents the exact validity decision. All files were created outside the repository. No external service, research implementation, empirical experiment, or second round occurred.\n",
+      "sha256": "e5b81bcca0f39a5105dd9803e7bf3d6d9d949bbdb4f0f8ba5d67498d78666913"
+    },
+    "issues": {
+      "id": "issues",
+      "path": "issue_tracker.md",
+      "title": "Original issue tracker",
+      "kind": "Verified dispositions",
+      "text": "# Issue tracker\n\nAuthor-owned aggregation; original reviewer IDs retained. No issue is silently merged or severity downgraded.\n\n| ID | Source | Claim | Severity | Resolution criterion | Owner | Response | Evidence | Status | Disposition/link |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| R01-R1-01 | R1 initial | Universal correctness fails | Critical | Withdraw H01; substantive repair requires new review | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R1-initial.md: Exact derivation and x=-1 | Open | R1 final verifies withdrawal, not technical repair; R2/R3 duplicates |\n| R01-R1-02 | R1 initial | Unrestricted drop-in compatibility fails | Major | Withdraw H03; any alternate algorithm needs proof | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R1-initial.md: Exact constrained quadratic counterexample | Open | R1 final verifies withdrawal, not repair; R2/R3 duplicates |\n| R01-R1-03 | R1 initial | Contribution/novelty and relevant bottleneck unestablished | Moderate | Verified closest sources and meaningful workload for any revised idea | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R1-initial.md: No literature supplied/retrieved | Open | R1 final retains uncertainty; novelty unassessed, not falsified |\n| R01-R2-01 | R2 initial | Universal correctness fails | Critical | Withdraw H01; new method needs new review | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R2-initial.md: Exact derivation and x=-1 | Open | Reviewer final confirms critical defect persists in v01; duplicate of R01-R1-01 |\n| R01-R2-02 | R2 initial | Unrestricted optimizer compatibility fails | Major | Withdraw H03 | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R2-initial.md: Exact constrained quadratic counterexample | Open | Reviewer final confirms major defect persists in v01; duplicate of R01-R1-02 |\n| R01-R2-03 | R2 initial | Speed unassessable | Moderate | Keep untested; cancel benchmark after failed gate | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R2-initial.md: No measurements/device specified | Resolved | R2 final verifies reporting/action criterion met; H02 runtime remains unknown |\n| R01-R3-01 | R3 initial | Universal correctness fails | Critical | Withdraw H01 and stop | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R3-initial.md: Exact negative-half-line calculation | Open | Reviewer final confirms critical defect persists in v01; duplicate of R01-R1-01 |\n| R01-R3-02 | R3 initial | Unrestricted optimizer compatibility fails | Major | Withdraw H03 | Author | Accepted in rebuttal; no method repair | reviews/round-01/reviewer-R3-initial.md: Exact constrained quadratic counterexample | Open | Reviewer final confirms major defect persists in v01; duplicate of R01-R1-02 |\n\nDispositions are based on actual final reassessments and remain subject to AC/SAC audit. Critical/major defect statuses describe unchanged v01, not unresolved disagreement. No pending empirical runs: conditional E02/E03 are canceled.\n\nFinal verification: AC meta-review and separate SAC assessment endorse these dispositions. Critical/major defects remain Open in rejected frozen v01; no second round or corrective implementation is pending.\n",
+      "sha256": "787ee680c17acabe0f640918addf78a4b94fd17b2388160bab2728e9bb22092e"
+    },
+    "rebuttal": {
+      "id": "rebuttal",
+      "path": "rebuttals/round-01.md",
+      "title": "Author rebuttal",
+      "kind": "Author response",
+      "text": "# Author rebuttal — round 01\n\nAuthor/coordinator: actual agent `/root/forward_trial`. Response to all three initial reports and the actual AC-directed pre-rebuttal exchange. Frozen v01 is unchanged. This rebuttal withdraws the unsupported claims; it does not submit a replacement method or claim a repaired proposal.\n\n| Issue ID / reviewer | Concern | Author response | Evidence | Change made or planned | Remaining uncertainty |\n| --- | --- | --- | --- | --- | --- |\n| R01-R1-01, R01-R2-01, R01-R3-01 | Critical universal minimization failure | Accepted. Withdraw H01 for the submitted operator. For x<0, zero is strictly better than abs(x); the unique exact map is max(x,0). | Each initial review; x=-1 gives 4 versus 1. For negative x, excess is 3x²>0. | Record falsification and stop this formulation; no rewrite of v01, implementation, or second round. | None about the contradiction; the fatal flaw remains in the reviewed v01. |\n| R01-R1-02, R01-R2-02, R01-R3-02 | Major unrestricted drop-in failure | Accepted. Withdraw unrestricted H03. The quadratic example uses legitimate reciprocal-curvature step 1 and sends every pre-projection update to -1. | R2 pre-rebuttal reply and all initial reviews: exact projection returns optimum 0; abs returns 1 with objective 2 versus 1/2. | No use as a drop-in projection. A separately justified absolute-value algorithm would be a new formulation, outside this review. | This does not prove every possible use of absolute value in optimization fails. |\n| R01-R1-03 | Moderate novelty and significance not established | Accepted as uncertainty, not proof of nonnovelty. Even established novelty would not repair the contradiction. | Literature ledger/search gap; R1 discussion reply. | Preserve unknown novelty/workload value. No further search within offline scope. | Closest literature and any future, materially different contribution remain unassessed. |\n| R01-R2-03 | Moderate speed unmeasured | Accepted. H02 remains untested; speed cannot establish equivalence of different operators. | Evidence inventory and R3 discussion reply. | Cancel conditional E02/E03 for this formulation. Do not report any measured speed or empirical result. | Actual hardware timing remains unknown and irrelevant to validity decision. |\n\n**Response to AC discussion.** No mathematical rebuttal is offered: the exact calculations are correct. Novelty cannot rescue correctness; step one is not an artificial oversized step; and no empirical evidence is needed to reject this universal claim. The requested one-round process should still reach an independent AC meta-review and separate SAC audit. Withdrawal acknowledges criticism but is not evidence of technical repair or convergence. The author proposes stopping this formulation, subject to the chairs' own assessment.\n\n**Evidence labeling.** The derivations are Verified Facts by explicit mathematical proof in the linked reports, not Experimentally Validated Results. No experiments or implementation occurred. H02 and external novelty remain unknown. There are no new external sources, replacement submission, or promised experiments that could close a fatal issue.\n",
+      "sha256": "8651a9416445e93aaad28848e3e442255ba402fc874f4285d53d26e2f8f0f92b"
+    },
+    "ac": {
+      "id": "ac",
+      "path": "reviews/round-01/ac-meta-review.md",
+      "title": "AC meta-review",
+      "kind": "Chair synthesis",
+      "text": "# AC meta-review — round 01\n\n**Recommendation: Kill the submitted formulation.** Stage: proposal, frozen v01; unofficial idea-shaokao internal rubric v1. This judgment follows from exact counterexamples, not averaged scores.\n\n**Provenance.** Continuing independent AC `/root/forward_trial/ac`. Inspected the manifest and seven packet files, all initial reports, both actual discussion records (the latter includes all final reassessments), author rebuttal, issue tracker, score history, and role/protocol instructions. No private author reasoning, external sources, code, or empirical experiments were accessed.\n\nThe intended contribution is faster exact scalar nonnegative projection using absolute value, with drop-in optimization compatibility. Strengths are its explicit specification, honest evidence inventory, and decisive analytic gate before implementation. These support an efficient research decision; they do not establish a valid method.\n\nThe critical flaw is conclusive: for negative x, absolute value incurs squared distance `4x²`, while feasible zero incurs `x²`. The unique exact projection is `max(x,0)`. Thus H01 fails throughout the negative half-line. Separately, on `f(z)=(z+1)²/2`, step size one sends every pre-projection state to −1. Exact projection reaches the optimum zero; absolute value remains at one. R2 correctly explains that this step equals reciprocal curvature, eliminating an oversized-step objection. H03 therefore fails as an unrestricted claim.\n\nAll reviewers agree; no minority objection remains. Discussion usefully distinguished mathematical invalidity from unknown novelty/runtime and failure of unrestricted compatibility from failure of every conceivable absolute-value algorithm. The rebuttal adequately acknowledges the evidence, withdraws H01/H03, and cancels conditional benchmarks. It supplies no repair.\n\nI endorse retaining critical/major defects as **Open in frozen v01**, while explicitly recognizing their withdrawal requirements were satisfied. This distinguishes unresolved technical defects from resolved disagreement. R01-R2-03 is **Resolved** only as a reporting/action requirement; runtime remains unknown. R01-R1-03 remains **Open**: literature novelty and meaningful workload value are unassessed, not disproved.\n\nIndependent review, actual directed discussions, rebuttal, and reassessment are complete through the AC step; separate SAC assessment remains pending. No further experiment is needed for this decision. Confidence is high in mathematical rejection, limited in literature/performance assessment. One round establishes no convergence: **not_converged**. Stop this formulation; any redesign requires separate authorization and review.\n",
+      "sha256": "c2ed92df45b859bdadcc78e4600da4cb68b02cae35d647f53f63f8d6be990821"
+    },
+    "sac": {
+      "id": "sac",
+      "path": "reviews/round-01/sac-assessment.md",
+      "title": "Independent SAC assessment",
+      "kind": "Process audit / analytical finding",
+      "text": "# SAC assessment — round 01\n\n**Independent decision: Kill the submitted formulation.** I agree with the AC recommendation on mathematical grounds. Current stage remains **proposal**, frozen v01, under the unofficial idea-shaokao internal rubric v1.\n\n**Provenance and audit.** I am separate SAC agent `/root/forward_trial/sac`, dispatched without an instruction to ratify the AC. I read the manifest, all seven listed packet files, all three initial and final reports, both complete discussion records, rebuttal, issue tracker, score history, AC meta-review, `provenance.jsonl`, and `references/{roles,review-protocol}.md`. I also recomputed all seven SHA-256 hashes; each matches the manifest. No external sources, private notes, implementation, tests, or experiments were accessed.\n\nThe recorded sequence establishes three fresh initial reviewer contexts before AC dispatch, reuse of those contexts for actual directed replies and reassessments, then this separate SAC context after the meta-review. Required significance/broader-impact coverage appears in R1/R3. The process is complete through this assessment within its one-round ceiling. However, these are separate agent contexts, not independent human experts; filesystem boundaries were procedural, and provenance/report declarations cannot prove absence of every unauthorized read or correlated reasoning.\n\n**Independent validity check.** For negative x and feasible z, `(z-x)²-x²=z²-2xz≥0`, uniquely minimized at z=0. Absolute value instead costs `4x²`, disproving H01. The quadratic `f(z)=(z+1)²/2` with step one has pre-projection update −1; exact projection reaches zero while absolute value stays at one. Since curvature is one, this also decisively defeats unrestricted H03 without an oversized-step artifact.\n\nThe AC handled the potential disputes fairly: it tested that step-size objection, distinguished unknown novelty/runtime from falsified correctness, and preserved the limitation concerning other absolute-value algorithms. No minority objection was suppressed in the supplied record. Withdrawal resolves author disagreement but leaves the frozen formulation technically invalid. Keeping those defects Open is defensible with that explicit distinction; the withdrawal requirements themselves were satisfied.\n\n**Remaining issues and action.** Critical R01-R1-01 and linked duplicates persist; H03 has a major defect. Novelty and runtime remain unassessed. Confidence is **5/5 for mathematical rejection**, limited for literature/performance. Convergence is **not_converged**: one round cannot establish it, and critical defects remain. Stop this formulation, preserve the record and reusable counterexamples, and perform no conditional benchmarks. Any substantive redesign requires a separately authorized proposal; no clarification pass is needed.\n",
+      "sha256": "c55caa9af658866b42423754ef22013fbb1ae1d3cea6898f2cd8bb7474f37fce"
+    },
+    "discussion-before": {
+      "id": "discussion-before",
+      "path": "reviews/round-01/discussion-before-rebuttal.md",
+      "title": "Pre-rebuttal discussion",
+      "kind": "Actual reviewer exchange",
+      "text": "# Discussion before rebuttal — actual exchanges\n\nThe independent AC wrote the agenda/provisional synthesis below. Each named reviewer then answered in its original context after all initials were collected. Coordinator concatenation preserves their text; it is not a reconstructed dialogue.\n\n\n---\n\n# AC discussion agenda — round 01\n\n**Provenance:** Actual independent AC agent `/root/forward_trial/ac`; frozen v01, proposal stage; unofficial idea-shaokao internal rubric v1; one-round ceiling. Inspected the manifest, its seven frozen packet files, all three submitted initial reports, and `references/{roles,review-protocol}.md`. No private author material, external sources, code, or experiments accessed. This is an agenda, not a completed discussion or meta-review.\n\nAll reviewers recommend Kill, but agreement alone does not establish correctness or convergence. The bounded discussion will test the grounds and scope of that recommendation:\n\n| Issue IDs | Proposition to scrutinize | Reviewer question / evidence needed |\n| --- | --- | --- |\n| R01-R1-01, R01-R1-03; linked R2/R3-01 | Unassessed novelty does not prevent rejecting the stated mathematical claim. | **R1:** Would the same recommendation follow if novelty were established, and why? Separate the exact contradiction from missing literature. |\n| R01-R2-02; linked R1/R3-02 | The optimizer example establishes failure of unrestricted compatibility, without establishing failure of every possible absolute-value algorithm. | **R2:** Does step size one create an artificial failure, or is it legitimate for the stated quadratic? Explain the scope using its curvature and update. |\n| R01-R3-01; R01-R2-03 | A failed analytic gate makes conditional benchmarks unnecessary; missing measurements are not themselves the fatal flaw. | **R3:** What evidence, if any, remains necessary to decide the frozen proposal? Distinguish rejecting H01 from assessing H02. |\n\n**Provisional synthesis:** Independently checking the algebra gives objective excess `3x²>0` for every negative input. This directly defeats H01. The downstream example appears valid; speed and external novelty remain unknown. These distinctions currently support stopping this formulation, pending actual responses and rebuttal. No verdict on a redesigned method is implied.\n\n---\n\n# R1 response to AC — before rebuttal\n\nActual R1 `/root/forward_trial/r1`; inspected the AC agenda and all three initial reports. Yes: even if novelty were established, I would still recommend Kill for this formulation. R01-R1-01 is an exact contradiction: for every negative input, the proposed output has objective `4x²`, while feasible zero has `x²`. Novelty cannot make that universal minimization statement true. R01-R1-02 independently contradicts unrestricted optimizer compatibility. R01-R1-03 records literature uncertainty, not evidence of prior-art overlap or a premise needed for rejection. Establishing novelty would remove that uncertainty without repairing correctness. I agree with the AC's distinction and register no disagreement. This conclusion does not assess a redesigned operator, objective, or restricted algorithm. No experiments or external checks were performed.\n\n---\n\n# R2 reply to AC — before rebuttal\n\nActual respondent: `/root/forward_trial/r2`, original reviewer context. Read the AC agenda and all three initial reports.\n\n**R01-R2-02:** Step size one is legitimate for this quadratic: `f″(z)=1`, so the gradient has Lipschitz constant one and the chosen step is its reciprocal. Directly, `z−f′(z)=−1`; exact projection reaches the constrained optimum zero from every feasible initialization. Absolute value instead returns one and remains there, with a positive objective gap. This is therefore not a failure induced by an excessively large step. It disproves unrestricted drop-in compatibility for the submitted operator. It does not rule out every separately specified algorithm involving absolute value. No disagreement with the AC’s scoped proposition; the major issue and recommendation remain unchanged.\n\n---\n\n# R3 response to AC before rebuttal\n\nActual continuing reviewer `/root/forward_trial/r3`; read the AC agenda and all three initial reports after collection. No additional evidence is necessary to decide frozen v01: R01-R3-01 supplies a feasible strictly better candidate at x=−1, conclusively rejecting universal H01. R01-R3-02 independently disproves unrestricted optimizer compatibility. H02 is different: runtime remains unknown without specified implementations, hardware, dtype, workload, and controlled repeated measurements. I agree with R01-R2-03 that absent timing is not the fatal flaw. Even favorable timing would compare different semantics and could not establish faster exact projection. E02/E03 therefore need not run. No substantive disagreement; my Kill recommendation remains based on correctness, not unmeasured performance or missing literature. Rebuttal may contest the algebra, but no empirical uncertainty blocks this decision.\n",
+      "sha256": "082589cc414408e737841c03976267aeebb72fe54c56aa96d0f26d208f8737e4"
+    },
+    "discussion-after": {
+      "id": "discussion-after",
+      "path": "reviews/round-01/discussion-after-rebuttal.md",
+      "title": "Post-rebuttal discussion",
+      "kind": "Actual reviewer exchange",
+      "text": "# Discussion after rebuttal — actual AC-directed exchange\n\nAC wrote the agenda after reading the complete pre-discussion/rebuttal. Each reviewer then answered in its original context. The following text is concatenated from their actual saved artifacts; initial scores remain preserved.\n\n---\n\n# AC post-rebuttal agenda\n\nContinuing independent AC `/root/forward_trial/ac`; read the actual pre-rebuttal exchange and author rebuttal. Frozen v01 and proposal-stage rubric remain unchanged; no new sources or experiments were inspected.\n\n**AC judgment:** No substantive mathematical dispute remains. R2 establishes that the optimizer counterexample uses a legitimate step; R1 and R3 correctly separate unknown novelty/runtime from decisive invalidity. The rebuttal accepts the derivations and withdraws H01/H03 without repairing v01. Acknowledgment resolves disagreement with the author, not the frozen formulation's defects. Stopping this formulation remains justified, independently of unanimous scores. One round cannot establish convergence.\n\n**Question to all reviewers:** In your final reports, distinguish accepted criticism from technical resolution: which original issues remain defects or uncertainties of v01, and does withdrawal change your scores or recommendation? State whether any additional evidence is necessary for this decision, preserve the limits concerning other algorithms, novelty, and runtime, and explain any disagreement with this synthesis.\n\n---\n\n# R1 final reassessment — round 01\n\nContinuing actual reviewer `/root/forward_trial/r1`; v01, proposal stage, unofficial idea-shaokao internal rubric v1. Newly inspected: actual pre-rebuttal discussion, author rebuttal, and AC post-rebuttal agenda. No external sources, code, or experiments.\n\n**R01-R1-01 and R01-R1-02:** The author accepts the exact counterexamples and withdraws H01/H03. This resolves disagreement and the requested claim withdrawal; it does not repair the critical projection defect or major compatibility defect in unchanged v01. Both remain technical defects of the reviewed formulation. No replacement was submitted.\n\n**R01-R1-03:** Novelty and practical value remain unassessed, as acknowledged. Runtime is likewise unknown. Neither uncertainty prevents the correctness-based decision. No additional evidence is necessary to reject the frozen universal claim. This does not reject every separately specified algorithm involving absolute value.\n\n**Final scores, unchanged:** novelty not assessable; technical quality 1/5; experimental plan 4/5; significance 1/5; clarity 4/5; overall 1/10; confidence 5/5 in the mathematical recommendation, not literature coverage. Withdrawal introduces no repair warranting higher scores; the plan's decisive gate remains a strength.\n\n**Recommendation:** Kill this formulation. I agree with the AC synthesis; no remaining substantive dissent. One completed round does not establish convergence. Initial report preserved.\n\n---\n\n# R2 final reassessment — round 01\n\nActual continuing reviewer `/root/forward_trial/r2`; v01, proposal stage, unofficial internal rubric v1. Assessed the collected pre-rebuttal discussion, author rebuttal, and AC post-rebuttal agenda against my original exact analysis. No external evidence or experiments added.\n\n- **R01-R2-01:** Critical defect remains unresolved in frozen v01. Withdrawal accepts the contradiction; it does not make absolute value the projection.\n- **R01-R2-02:** Major defect remains unresolved in v01. Unrestricted compatibility is withdrawn; the reciprocal-curvature-step counterexample stands. This does not condemn every separately specified absolute-value algorithm.\n- **R01-R2-03:** Reporting/action requirement resolved: speed is explicitly untested and conditional benchmarks are canceled. Runtime itself remains unknown.\n\nScores unchanged: novelty **not assessable** (no verified literature); technical **1/5** (false exactness); experiment plan **4/5** (decisive gate); significance **1/5** (claimed function fails); clarity **4/5** (clear frozen specification). Overall **1/10**, **Kill this formulation**, confidence **5/5** in mathematical rejection. Withdrawal resolves disagreement with the author, not technical defects, so no score change is warranted.\n\nNo further evidence is necessary for this decision. Novelty and runtime remain uncertain; redesigned methods remain unassessed. No dissent from the AC synthesis and no convergence claim after one round. Initial report preserved.\n\n---\n\n# R3 final reassessment\n\nContinuing independent reviewer `/root/forward_trial/r3`; round 01, frozen v01, proposal stage, unofficial internal rubric v1. Assessed the actual pre-rebuttal discussion, complete author rebuttal, and AC post-rebuttal agenda, alongside the previously inspected packet. No code, experiments, or external activity occurred.\n\n**R01-R3-01:** Accepted criticism; H01 withdrawn. The analytical contradiction remains a **critical unresolved technical defect of frozen v01**. Agreement about stopping resolves disagreement, not correctness.\n\n**R01-R3-02:** Accepted criticism; unrestricted H03 withdrawn. The counterexample remains a **major unresolved defect of v01**. R2's curvature explanation confirms its legitimate step size. This does not condemn every separately specified algorithm using absolute value.\n\nNo additional evidence is necessary for the decision. External novelty remains not assessable; H02 runtime remains unknown, rather than disproved. Conditional benchmark cancellation is appropriate and supplies no performance evidence.\n\nFinal scores unchanged: novelty **not assessable**; technical quality **1/5**; experimental plan **4/5**; significance **1/5**; clarity **4/5**; overall **1/10**; confidence **5/5** in correctness-based rejection. Recommend **Kill this formulation**. Withdrawal supplies no repaired contribution, so no score increase is warranted. Broader optimization harm is supported by the counterexample; wider effects remain unassessed. I agree with the AC synthesis; no dissent or convergence claim.\n",
+      "sha256": "ec20576826b104bb0822b8c023ad4c114c7dec26be92aa83f75ac485941463a9"
+    },
+    "scores": {
+      "id": "scores",
+      "path": "reviews/score-history.md",
+      "title": "Reviewer score history",
+      "kind": "Unofficial internal rubric",
+      "text": "# Score history\n\nUnofficial idea-shaokao internal rubric v1; proposal stage; round 01. Scores belong to actual independent reviewer contexts. Novelty is not assessable, not assigned a numeric score.\n\n| Reviewer | Agent | Initial overall | Final overall | Initial/final dimensions (technical, plan, significance, clarity) | Confidence | Reason |\n| --- | --- | --- | --- | --- | --- | --- |\n| R1 | /root/forward_trial/r1 | 1/10 | 1/10 | 1,4,1,4 / 1,4,1,4 | 5/5 for algebra, not novelty/runtime | Withdrawal acknowledges but does not repair frozen v01. |\n| R2 | /root/forward_trial/r2 | 1/10 | 1/10 | 1,4,1,4 / 1,4,1,4 | 5/5 for algebra, not novelty/runtime | Withdrawal acknowledges but does not repair frozen v01. |\n| R3 | /root/forward_trial/r3 | 1/10 | 1/10 | 1,4,1,4 / 1,4,1,4 | 5/5 for algebra, not novelty/runtime | Withdrawal acknowledges but does not repair frozen v01. |\n",
+      "sha256": "7efd1e833926c987aaf9dc578661a95a6261b13bda28fa862d040f05c48f3a3e"
+    },
+    "search-log": {
+      "id": "search-log",
+      "path": "literature/search_log.md",
+      "title": "Literature search limitations",
+      "kind": "Unavailable external evidence",
+      "text": "# Search log\nDate: 2026-11-06 UTC. Internet unavailable by evaluation constraint; no external services contacted. No user papers supplied. No online queries executed. Relevant queries for a future authorized search would be scalar Euclidean projection onto nonnegative half-line, orthant projection, projected gradient. Current/recent literature coverage and novelty cannot be established. Internal algebraic derivations are admissible evidence of validity, not a literature search.\n",
+      "sha256": "5c712942a0e68f96215bd89f7d8c26f0a8889a236d7f9d2ff411c2bca69b86e2"
+    },
+    "initial-r1": {
+      "id": "initial-r1",
+      "path": "reviews/round-01/reviewer-R1-initial.md",
+      "title": "R1 initial review",
+      "kind": "Independent reviewer judgment",
+      "text": "# R1 initial review — round 01\n\n**Provenance.** Actual reviewer: independent subagent `/root/forward_trial/r1`, assigned novelty plus significance/broader impact. Version v01; proposal stage; unofficial idea-shaokao internal rubric v1; one-round limit. Inspected only the manifest, its seven frozen files (`literature/{search_log,papers,research_landscape,related_work_matrix}.md`, `proposal/v01/{proposal,experiments,evidence}.md`), and the supplied `references/{roles,review-protocol}.md`. No peer reports, discussions, private notes, unrelated files, external services, code, or experiments were accessed. Evidence below is exact reasoning; external literature was not verified.\n\n## Summary and strengths\n\nThe proposal uses `P(x)=|x|` as the exact nonnegative squared-distance projection, hypothesizing faster execution and drop-in optimizer compatibility. It clearly separates feasibility, optimality, speed, and downstream behavior. The experiment plan appropriately gates implementation on an exact mathematical check and labels missing evidence honestly.\n\n## Issues\n\n**R01-R1-01 — Critical: H01 is false.** Source: `proposal.md`, objective and H01; analytic check E01 in `experiments.md`. For `x>=0`, `z=x` attains objective zero. For `x<0` and `z>=0`,\n\n`(z-x)^2-x^2=z^2-2zx>=0`, strictly if `z>0`.\n\nThus the unique minimizer is `max(x,0)`. For negative x, absolute value instead gives objective `4x^2`, versus `x^2` at zero. At `x=-1`, proposed output 1 costs 4; feasible output 0 costs 1. This is a contradiction, not uncertainty. **Resolution:** acknowledge falsification and withdraw the universal projection claim. Changing the operator, objective, or domain is a substantive reformulation; benchmarking cannot repair H01.\n\n**R01-R1-02 — Major: unrestricted H03 also fails.** Source: `proposal.md`, drop-in claim; exact constructed example. Minimize `f(z)=(z+1)^2/2` for `z>=0`. Its optimum is zero. Gradient descent with step size 1 forms `z-f'(z)=-1` every iteration. Exact projection returns zero; absolute value returns 1 forever, including from initialization at the optimum. Its objective is 2 instead of 1/2. **Resolution:** withdraw unrestricted compatibility. Any separately specified algorithm using absolute value needs its own assumptions and justification; feasible output alone is insufficient.\n\n**R01-R1-03 — Moderate: novelty and practical value remain unsupported.** Sources: all four literature files and `proposal.md`. No named closest work was supplied or verified, so external novelty is **not assessable**. The derived exact comparator is not a literature citation. No target workload, hardware, practical speed threshold, or material projection bottleneck is identified. **Resolution:** only if pursuing a revised idea, establish a distinct claim against verified sources and a meaningful workload. Do not benchmark incorrect projection semantics to close this issue. Missing literature is not the decisive rejection reason.\n\n## Assessments and recommendation\n\nTechnical validity fails decisively. Experimental quality concerns the plan: E01 is a strong, sufficient decision gate; conditional E02/E03 need no execution after its failure. Clarity is strong. Significance is weak for the submitted contribution: optimization users obtain no demonstrated correct acceleration. The concrete broader-impact concern is incorrect downstream optimization despite feasible outputs; no wider societal effects are assessable here.\n\n| Dimension | Score |\n| --- | --- |\n| Novelty | Not assessable |\n| Technical quality | 1/5 |\n| Experimental plan | 4/5 |\n| Significance | 1/5 |\n| Clarity | 4/5 |\n| Overall | 1/10, strongly unfavorable |\n| Confidence | 5/5 on correctness-based recommendation; novelty unassessed |\n\n**Author question:** Are H01 and unrestricted H03 withdrawn given these exact counterexamples?\n\n**Recommendation:** Kill the current exact-projection formulation; do not implement or benchmark it under these claims. Only a substantive new formulation could change this judgment; faster absolute-value execution would not. No empirical or literature uncertainty can rescue the stated universal claim. This initial review makes no convergence claim. Review complete; available for bounded discussion in the same context.\n",
+      "sha256": "45325ecd886550d5a619dec08374e06bb8fa3fff8b82b7be8012c18a3d00ef05"
+    },
+    "final-r1": {
+      "id": "final-r1",
+      "path": "reviews/round-01/reviewer-R1-final.md",
+      "title": "R1 final review",
+      "kind": "Independent reviewer judgment",
+      "text": "# R1 final reassessment — round 01\n\nContinuing actual reviewer `/root/forward_trial/r1`; v01, proposal stage, unofficial idea-shaokao internal rubric v1. Newly inspected: actual pre-rebuttal discussion, author rebuttal, and AC post-rebuttal agenda. No external sources, code, or experiments.\n\n**R01-R1-01 and R01-R1-02:** The author accepts the exact counterexamples and withdraws H01/H03. This resolves disagreement and the requested claim withdrawal; it does not repair the critical projection defect or major compatibility defect in unchanged v01. Both remain technical defects of the reviewed formulation. No replacement was submitted.\n\n**R01-R1-03:** Novelty and practical value remain unassessed, as acknowledged. Runtime is likewise unknown. Neither uncertainty prevents the correctness-based decision. No additional evidence is necessary to reject the frozen universal claim. This does not reject every separately specified algorithm involving absolute value.\n\n**Final scores, unchanged:** novelty not assessable; technical quality 1/5; experimental plan 4/5; significance 1/5; clarity 4/5; overall 1/10; confidence 5/5 in the mathematical recommendation, not literature coverage. Withdrawal introduces no repair warranting higher scores; the plan's decisive gate remains a strength.\n\n**Recommendation:** Kill this formulation. I agree with the AC synthesis; no remaining substantive dissent. One completed round does not establish convergence. Initial report preserved.\n",
+      "sha256": "d2067991a75e28d1caa9e541f04b973aae26c1ca4b758a7fb63e59525900b022"
+    },
+    "initial-r2": {
+      "id": "initial-r2",
+      "path": "reviews/round-01/reviewer-R2-initial.md",
+      "title": "R2 initial review",
+      "kind": "Independent reviewer judgment",
+      "text": "# R2 initial review — round 01\n\n**Role:** technical soundness. **Version/stage:** v01, proposal. **Rubric:** unofficial idea-shaokao internal rubric v1. **Provenance:** actual spawned reviewer agent `/root/forward_trial/r2`, separate initial-review context. Inspected the submission manifest, all seven frozen packet files, `roles.md`, and `review-protocol.md` only. No peer reports, external sources, code execution, or empirical experiments were consulted; file I/O and exact mathematical reasoning only. External literature was not verified.\n\n## Summary and strengths\n\nThe proposal substitutes absolute value for scalar Euclidean projection onto the nonnegative half-line, claiming exactness, faster execution, and optimizer compatibility. Its universal exactness claim is false. The packet clearly distinguishes hypotheses from evidence and prioritizes a decisive analytic gate; this makes further implementation unnecessary for evaluating the submitted claim.\n\n## Issues and decisive checks\n\n**R01-R2-01 — Critical: absolute value is not the stated projection.** For x < 0 and any feasible z ≥ 0,\n\n`(z-x)^2 - (0-x)^2 = z^2 - 2xz ≥ 0`,\n\nwith equality only at z = 0. For x ≥ 0, z = x uniquely achieves zero distance. Thus the unique solution is `max(x,0)`. On every negative input the proposed output −x has objective `4x^2`, versus `x^2` at zero: excess `3x^2 > 0`. In particular, x = −1 gives objective 4 instead of 1. This is an observed analytical contradiction, not missing empirical evidence. **Resolution criterion:** withdraw H01 and the exact-projection contribution; a different operator, objective, or domain is a substantive new proposal. Restricting to nonnegative inputs merely gives the identity.\n\n**R01-R2-02 — Major: unrestricted drop-in optimizer compatibility fails.** Linked to R01-R2-01, but with an explicit downstream consequence. Minimize `f(z)=(z+1)^2/2` over z ≥ 0, whose unique optimum is zero. A gradient step of size one gives `z-f′(z)=-1` for every z. Exact projection therefore returns zero immediately. Absolute value instead returns one forever, even when initialized at the optimum. Its objective is 2 rather than 1/2, and its interior derivative is 2 rather than zero. **Resolution criterion:** withdraw H03 as an unrestricted claim; any alternate optimization use needs a separately specified algorithm and justified convergence conditions.\n\n**R01-R2-03 — Moderate: speed remains unassessable.** No hardware, dtype, implementation, or measurements support H02; constant operation counts cannot establish runtime. Because semantics differ, a faster absolute-value instruction would not rescue the submitted contribution. **Resolution criterion:** retain speed as untested and cancel its conditional benchmark for this failed formulation. A future correct method would require the matched benchmark already outlined in E02.\n\n## Assessment and recommendation\n\nNovelty against named closest work: **not assessable**, since none was supplied or verified. Technical quality: **1/5**. Experimental-plan quality: **4/5**; E01 is sufficient and is now analytically failed, so E02/E03 should not proceed. Significance: **1/5** for the submitted exact-projection contribution. Clarity: **4/5**.\n\n**Overall: 1/10, strongly unfavorable; recommend Kill for this formulation. Confidence: 5/5** in the decisive mathematical findings, not in literature coverage or performance predictions. Author question: is a different objective intended? Only a substantive change of specification could alter this verdict; benchmarking cannot. No additional empirical check is required to reject the present universal claim.\n",
+      "sha256": "b3e5be728f4dd0c5e7e634c7eebdce595b6bef9abb477aca0667e7d01979de50"
+    },
+    "final-r2": {
+      "id": "final-r2",
+      "path": "reviews/round-01/reviewer-R2-final.md",
+      "title": "R2 final review",
+      "kind": "Independent reviewer judgment",
+      "text": "# R2 final reassessment — round 01\n\nActual continuing reviewer `/root/forward_trial/r2`; v01, proposal stage, unofficial internal rubric v1. Assessed the collected pre-rebuttal discussion, author rebuttal, and AC post-rebuttal agenda against my original exact analysis. No external evidence or experiments added.\n\n- **R01-R2-01:** Critical defect remains unresolved in frozen v01. Withdrawal accepts the contradiction; it does not make absolute value the projection.\n- **R01-R2-02:** Major defect remains unresolved in v01. Unrestricted compatibility is withdrawn; the reciprocal-curvature-step counterexample stands. This does not condemn every separately specified absolute-value algorithm.\n- **R01-R2-03:** Reporting/action requirement resolved: speed is explicitly untested and conditional benchmarks are canceled. Runtime itself remains unknown.\n\nScores unchanged: novelty **not assessable** (no verified literature); technical **1/5** (false exactness); experiment plan **4/5** (decisive gate); significance **1/5** (claimed function fails); clarity **4/5** (clear frozen specification). Overall **1/10**, **Kill this formulation**, confidence **5/5** in mathematical rejection. Withdrawal resolves disagreement with the author, not technical defects, so no score change is warranted.\n\nNo further evidence is necessary for this decision. Novelty and runtime remain uncertain; redesigned methods remain unassessed. No dissent from the AC synthesis and no convergence claim after one round. Initial report preserved.\n",
+      "sha256": "3ca8d6c71f6398094b448385bcc6eb2fdc20b8b47d36c8ed652ebd03da4822e6"
+    },
+    "initial-r3": {
+      "id": "initial-r3",
+      "path": "reviews/round-01/reviewer-R3-initial.md",
+      "title": "R3 initial review",
+      "kind": "Independent reviewer judgment",
+      "text": "# R3 initial review\n\n**Provenance.** Independent agent `/root/forward_trial/r3`; round 01, frozen v01, proposal stage; unofficial idea-shaokao internal rubric v1; one-round cap. Assigned experimental rigor plus significance/broader impact. Actually read: `reviews/round-01/submission-manifest.md`; all seven listed packet files (`literature/search_log.md`, `papers.md`, `research_landscape.md`, `related_work_matrix.md`, and `proposal/v01/{proposal,experiments,evidence}.md`); `/Users/sean/Code/idea-shaokao/references/{roles,review-protocol}.md`. No peer reports, discussion, private notes, external sources, code, or experiments accessed. Findings below are exact analytical reasoning, not empirical results.\n\n**Summary and strengths.** The proposal substitutes absolute value for scalar squared-distance projection onto the nonnegative half-line, claiming correctness, speed, and optimizer compatibility. The packet usefully separates those claims. E01 is an excellent inexpensive falsification gate; E02/E03 correctly depend on its survival, and missing evidence is disclosed honestly.\n\n**R01-R3-01 — Critical: the essential gate fails.** For any negative input x, candidate z=0 is feasible and has squared distance x². The proposed |x|=−x has squared distance 4x², strictly larger. For x≥0, z=x achieves zero distance. Thus the unique minimizer is max(x,0), not |x| for the stated domain. At x=−1 the proposed distance is 4 versus 1. This is an observed analytical contradiction of H01, not uncertainty requiring sampling. **Resolution:** withdraw the universal projection claim and stop this formulation. Any materially different objective/operator needs explicit reconsideration; benchmarks cannot repair this result.\n\n**R01-R3-02 — Major: unrestricted drop-in compatibility also fails.** Consider minimizing f(z)=(z+1)²/2 over z≥0 with gradient step size 1. Every pre-projection update is z−(z+1)=−1. Exact projection returns the constrained optimum 0; absolute value returns 1 forever, with objective 2 instead of 1/2. This directly falsifies equivalence for an elementary projected optimizer and demonstrates why feasibility alone is inadequate. **Resolution:** withdraw H03 as unrestricted compatibility; a new, narrowly specified algorithm would require its own justification.\n\n**Dimensions and significance.** Novelty against named closest work is **not assessable** because none was supplied or verified. Technical quality: **1/5**. Experimental quality of the proposal plan: **4/5**; E01 is decisive and already fails analytically. H02 remains unmeasured, but timing unequal semantics would not establish faster exact projection; no E02/E03 runs are warranted now. Significance: **1/5** for the claimed contribution, which cannot deliver its stated function. Broader impact: potential optimization cost savings remain unsupported; incorrect substitution can produce systematically inferior feasible solutions. No wider application effects are evidenced. Clarity: **4/5**.\n\n**Questions and judgment.** Does the author accept withdrawal of H01/H03 given these counterexamples? Overall **1/10, strongly unfavorable; recommend Kill this formulation**, confidence **5/5** for the mathematical rejection, limited for literature/performance. Only a materially revised claim or mechanism could change my recommendation; favorable timing alone could not.\n",
+      "sha256": "f9c092b279b101a4b5f9769033af9e1203d64bfdc06d7b2b560bc88bca2ad17f"
+    },
+    "final-r3": {
+      "id": "final-r3",
+      "path": "reviews/round-01/reviewer-R3-final.md",
+      "title": "R3 final review",
+      "kind": "Independent reviewer judgment",
+      "text": "# R3 final reassessment\n\nContinuing independent reviewer `/root/forward_trial/r3`; round 01, frozen v01, proposal stage, unofficial internal rubric v1. Assessed the actual pre-rebuttal discussion, complete author rebuttal, and AC post-rebuttal agenda, alongside the previously inspected packet. No code, experiments, or external activity occurred.\n\n**R01-R3-01:** Accepted criticism; H01 withdrawn. The analytical contradiction remains a **critical unresolved technical defect of frozen v01**. Agreement about stopping resolves disagreement, not correctness.\n\n**R01-R3-02:** Accepted criticism; unrestricted H03 withdrawn. The counterexample remains a **major unresolved defect of v01**. R2's curvature explanation confirms its legitimate step size. This does not condemn every separately specified algorithm using absolute value.\n\nNo additional evidence is necessary for the decision. External novelty remains not assessable; H02 runtime remains unknown, rather than disproved. Conditional benchmark cancellation is appropriate and supplies no performance evidence.\n\nFinal scores unchanged: novelty **not assessable**; technical quality **1/5**; experimental plan **4/5**; significance **1/5**; clarity **4/5**; overall **1/10**; confidence **5/5** in correctness-based rejection. Recommend **Kill this formulation**. Withdrawal supplies no repaired contribution, so no score increase is warranted. Broader optimization harm is supported by the counterexample; wider effects remain unassessed. I agree with the AC synthesis; no dissent or convergence claim.\n",
+      "sha256": "32ade789b323533575b5a6030969c71b2c384a11713f4e4a95d7c73ce3fad243"
+    }
+  },
+  "targets": {
+    "decision": {
+      "title": "Final decision and investment rationale",
+      "sources": [
+        "report",
+        "sac"
+      ]
+    },
+    "review-history": {
+      "title": "Round 01 review history",
+      "sources": [
+        "scores",
+        "discussion-before",
+        "discussion-after"
+      ]
+    },
+    "experiments": {
+      "title": "Experiment plan and evidence boundary",
+      "sources": [
+        "experiments",
+        "evidence"
+      ]
+    },
+    "R01-R1-01": {
+      "title": "Absolute value is not the stated projection",
+      "sources": [
+        "initial-r2",
+        "rebuttal",
+        "final-r2",
+        "sac"
+      ]
+    },
+    "R01-R1-02": {
+      "title": "Unrestricted optimizer compatibility fails",
+      "sources": [
+        "initial-r2",
+        "discussion-before",
+        "rebuttal",
+        "final-r2",
+        "ac"
+      ]
+    },
+    "R01-R1-03": {
+      "title": "Novelty and research significance remain unassessed",
+      "sources": [
+        "initial-r1",
+        "search-log",
+        "rebuttal",
+        "final-r1",
+        "sac"
+      ]
+    },
+    "R01-R2-03": {
+      "title": "Speed reporting corrected; runtime remains unknown",
+      "sources": [
+        "initial-r2",
+        "rebuttal",
+        "final-r2",
+        "ac",
+        "sac"
+      ]
+    },
+    "H01": {
+      "title": "Exact projection",
+      "sources": [
+        "proposal",
+        "initial-r2",
+        "sac"
+      ]
+    },
+    "H02": {
+      "title": "Lower execution cost",
+      "sources": [
+        "proposal",
+        "evidence",
+        "rebuttal"
+      ]
+    },
+    "H03": {
+      "title": "Drop-in optimizer use",
+      "sources": [
+        "proposal",
+        "initial-r2",
+        "sac"
+      ]
+    }
+  }
+}

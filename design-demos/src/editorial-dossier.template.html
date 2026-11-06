@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Faster nonnegative projection — idea-shaokao</title>
+<style>
+/* EMBED_FONTS */
+:root{--bg:#f3f0e8;--surface:#fffcf6;--text:#242822;--muted:#61645c;--line:#cbc9be;--accent:#863b29;--body-font:'Manrope',sans-serif;--mono-font:'IBM Plex Mono',monospace;--serif:'Newsreader',Georgia,serif}
+<!-- EMBED_COMMON_CSS -->
+*{box-sizing:border-box}
+html{scroll-behavior:auto;scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body-font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:4px}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.ed-shell{max-width:1440px;margin:0 auto;padding:0 54px 46px}
+.ed-masthead{min-height:83px;display:flex;align-items:center;justify-content:space-between;gap:22px;border-bottom:2px solid var(--text)}
+.ed-brand{font-size:19px;letter-spacing:-.7px;font-weight:800;text-decoration:none}
+.ed-edition{font-family:var(--mono-font);font-size:12px;color:var(--muted);margin-left:24px;letter-spacing:.04em}
+.ed-tools{display:flex;align-items:center;gap:8px}
+.ed-tools button{padding:8px 12px;border:1px solid var(--line);background:transparent;border-radius:0;cursor:pointer;font-size:12px;font-weight:600}
+.ed-tools button:hover{background:var(--surface);border-color:var(--text)}
+.ed-note-meta{font-size:12px;color:var(--muted);white-space:nowrap;margin-right:9px}
+.ed-storage{font-size:12px;min-height:20px;text-align:right;color:var(--muted);padding:7px 0 0}
+.ed-spread{display:grid;grid-template-columns:174px minmax(0,1fr) 238px;gap:0 40px;padding-top:24px}
+.ed-folio{padding-top:5px;min-width:0}
+.ed-kicker{font-family:var(--mono-font);font-size:12px;line-height:1.6;text-transform:uppercase;letter-spacing:.09em;margin:0 0 14px}
+.ed-folio .ed-kicker{color:var(--accent)}
+.ed-folio-name{font-family:var(--serif);font-size:26px;line-height:1.1;margin:0 0 21px;font-weight:500}
+.ed-facts{margin:0}
+.ed-facts div{margin:0 0 16px}
+.ed-facts dt{font-size:12px;color:var(--muted);margin-bottom:2px}
+.ed-facts dd{font-size:14px;line-height:1.45;margin:0}
+.ed-facts dd strong{font-weight:650}
+.ed-reading-nav{border-top:1px solid var(--line);margin-top:31px;padding-top:17px}
+.ed-reading-nav>a{display:block;font-size:13px;margin-bottom:10px;text-decoration:none}
+.ed-reading-nav>a:hover{text-decoration:underline}
+.ed-index{margin-top:29px}
+.ed-index-label{font-size:12px;color:var(--muted);margin:0 0 11px}
+.ed-issue-link{display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:12px 0 13px;cursor:pointer}
+.ed-issue-link:last-child{border-bottom:1px solid var(--line)}
+.ed-issue-link:hover .ed-issue-name{text-decoration:underline;text-underline-offset:3px}
+.ed-issue-link[aria-current="true"] .ed-issue-name{color:var(--accent);font-weight:750}
+.ed-issue-top{display:flex;gap:8px;align-items:baseline;font-family:var(--mono-font);font-size:12px;color:var(--muted);margin-bottom:4px}
+.ed-issue-link[aria-current="true"] .ed-issue-top:after{content:'Reading';font-family:var(--body-font);color:var(--accent);margin-left:auto;font-size:12px}
+.ed-issue-name{display:block;font-size:14px;line-height:1.4}
+.ed-issue-status{font-size:12px;display:block;color:var(--muted);margin-top:5px}
+.ed-reader{min-width:0}
+.ed-reader h1{font-family:var(--serif);font-size:64px;line-height:.98;letter-spacing:-1.5px;font-weight:400;margin:0 0 21px;max-width:690px}
+.ed-reader .ed-kicker{color:var(--muted);margin-bottom:18px}
+.ed-deck{font-family:var(--serif);font-size:23px;line-height:1.35;letter-spacing:-.15px;margin:0;max-width:675px}
+.ed-proposal-line{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:17px 0 15px;border-top:1px solid var(--text);border-bottom:1px solid var(--text);margin-top:25px}
+.ed-equation{font-family:var(--serif);font-size:31px;line-height:1.1;letter-spacing:-.3px;white-space:nowrap}
+.ed-equation-label{display:block;font-family:var(--mono-font);font-size:12px;color:var(--muted);letter-spacing:.03em;margin-bottom:6px}
+.ed-proposal-line button,.ed-inline-actions button,.ed-section-head button,.ed-record button,.ed-margin button,.ed-claim button{font-size:12px;line-height:1.4;background:transparent;border:0;border-bottom:1px solid currentColor;padding:3px 0;border-radius:0;cursor:pointer;color:var(--accent);text-align:left}
+.ed-proposal-line button:hover,.ed-inline-actions button:hover,.ed-section-head button:hover,.ed-record button:hover,.ed-margin button:hover,.ed-claim button:hover{color:var(--text)}
+.ed-inline-actions{display:flex;gap:16px;flex-wrap:wrap}
+.ed-claims{padding-top:19px}
+.ed-claim{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line)}
+.ed-claim-id{font-family:var(--mono-font);font-size:12px;padding-top:1px;color:var(--muted)}
+.ed-claim-copy{font-size:14px;line-height:1.45}
+.ed-claim-copy strong{font-weight:650}
+.ed-claim-outcome{display:block;color:var(--accent);font-size:12px;margin-top:2px}
+.ed-claim[data-claim="H02"] .ed-claim-outcome{color:var(--muted)}
+.ed-claim button{margin-top:0}
+.ed-margin{min-width:0}
+.ed-decision{border-top:1px solid var(--text);padding-top:13px}
+.ed-decision .ed-kicker{margin:0;color:var(--muted)}
+.ed-kill{font-family:var(--serif);font-size:70px;line-height:1;margin:9px 0 11px;letter-spacing:-1.7px;color:var(--accent)}
+.ed-decision p{font-size:14px;line-height:1.55;margin:0 0 14px}
+.ed-margin-label{font-size:12px;letter-spacing:.03em;margin:0 0 7px;color:var(--muted)}
+.ed-marginal-note{border-top:1px solid var(--line);padding-top:17px;margin-top:23px}
+.ed-marginal-note h3{font-family:var(--serif);font-size:23px;font-weight:400;line-height:1.15;margin:0 0 9px}
+.ed-marginal-note p{font-size:14px;line-height:1.55;margin:0 0 13px}
+.ed-marginal-note .ed-inline-actions{gap:13px}
+.ed-proof-note{margin-top:25px}
+.ed-proof-label{font-family:var(--mono-font);font-size:12px;color:var(--accent);margin-bottom:9px}
+.ed-proof-note .ed-proof-row{display:flex;justify-content:space-between;font-size:14px;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.ed-proof-row strong{font-family:var(--mono-font);font-size:15px;font-weight:500}
+.ed-proof-note p{font-size:14px;margin:11px 0;color:var(--muted)}
+.ed-issue-section{margin-top:35px;padding-top:20px;border-top:2px solid var(--text)}
+.ed-section-head{display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:17px}
+.ed-section-head h2{font-family:var(--serif);font-size:31px;font-weight:400;line-height:1.12;letter-spacing:-.3px;margin:0}
+.ed-section-number{font-family:var(--mono-font);font-size:12px;color:var(--accent);margin:0 0 9px}
+.ed-selected-title{font-family:var(--serif);font-size:29px;font-weight:400;line-height:1.13;letter-spacing:-.2px;margin:0 0 12px}
+.ed-selected-meta{display:flex;gap:13px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:18px}
+.ed-disposition{color:var(--accent);border:1px solid #b67c6a;padding:2px 7px;line-height:1.35}
+.ed-disposition.is-resolved{color:#3b5940;border-color:#899d87}
+.ed-critical-context{font-size:14px;line-height:1.6;margin:0 0 17px;color:var(--muted)}
+.ed-issue-detail{min-width:0}
+.ed-issue-detail h2,.ed-issue-detail h3{font-family:var(--serif);font-weight:400}
+.ed-issue-detail h2{font-size:27px;line-height:1.15}
+.ed-issue-detail h3{font-size:23px;line-height:1.2}
+.ed-issue-detail p{line-height:1.65}
+.ed-issue-detail button{font-size:12px;background:transparent;border:0;border-bottom:1px solid currentColor;padding:3px 0;border-radius:0;color:var(--accent)}
+.ed-issue-detail .issue-meta{margin:0 0 23px;font-size:12px;line-height:1.7}
+.ed-issue-detail .issue-steps{display:block}
+.ed-issue-detail .issue-step{padding:0 0 23px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.ed-issue-detail .issue-step h4{font-size:12px;color:var(--muted);margin-bottom:10px}
+.ed-issue-detail .issue-step p{font-size:15px;line-height:1.7;margin:0 0 11px}
+.ed-issue-detail .issue-criterion{margin-top:0;padding-top:0;border-top:0;font-size:14px}
+.ed-issue-detail .issue-criterion>strong{font-family:var(--mono-font);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.ed-issue-detail .issue-criterion p{margin:10px 0}
+.ed-issue-detail .issue-actions{gap:17px;margin-top:20px}
+.ed-record{margin-top:39px;border-top:1px solid var(--text);padding-top:21px;scroll-margin-top:25px}
+.ed-record .ed-section-head{margin-bottom:18px}
+.ed-score-table{width:100%;border-collapse:collapse;margin-bottom:13px;font-size:14px}
+.ed-score-table th{font-size:12px;color:var(--muted);font-weight:500;text-align:left}
+.ed-score-table th,.ed-score-table td{padding:10px 8px 10px 0;vertical-align:top;border-bottom:1px solid var(--line)}
+.ed-score-table td:nth-child(2),.ed-score-table td:nth-child(3){font-family:var(--mono-font);white-space:nowrap}
+.ed-score-table th:last-child,.ed-score-table td:last-child{text-align:right;padding-right:0}
+.ed-caveat{font-size:14px;color:var(--muted);line-height:1.55;margin:13px 0 21px}
+.ed-history{list-style:none;padding:0;margin:0;counter-reset:history}
+.ed-history li{display:grid;grid-template-columns:27px minmax(0,1fr);gap:9px;padding:13px 0;border-top:1px solid var(--line);counter-increment:history}
+.ed-history li:before{content:counter(history,decimal-leading-zero);font-family:var(--mono-font);font-size:12px;color:var(--muted);padding-top:3px}
+.ed-history h3{font-size:14px;line-height:1.4;margin:0 0 5px;font-weight:650}
+.ed-history h3 span{font-weight:400;font-size:12px;color:var(--muted);margin-left:8px}
+.ed-history p{font-size:14px;line-height:1.6;margin:0 0 7px}
+.ed-experiment{padding:14px 0;border-top:1px solid var(--line)}
+.ed-experiment-top{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.ed-experiment-top h3{font-size:14px;font-weight:650;margin:0}
+.ed-experiment-top h3 span{font-family:var(--mono-font);font-size:12px;color:var(--muted);font-weight:400;margin-right:9px}
+.ed-experiment-top>span{font-size:12px;color:var(--accent);white-space:nowrap}
+.ed-experiment p{font-size:14px;line-height:1.65;margin:7px 0}
+.ed-boundary{background:#e9e6dc;padding:17px 19px;margin-top:15px;font-size:14px;line-height:1.6}
+.ed-boundary strong{display:block;font-size:12px;letter-spacing:.05em;margin-bottom:6px;text-transform:uppercase}
+.ed-footer{border-top:2px solid var(--text);margin-top:46px;display:flex;justify-content:space-between;gap:18px;padding-top:16px;font-size:12px;color:var(--muted)}
+.ed-footer span{max-width:750px}
+.ed-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:1500px){.ed-shell{padding-left:64px;padding-right:64px}}
+@media(max-width:1190px){.ed-shell{padding:0 30px 35px}.ed-spread{grid-template-columns:145px minmax(0,1fr) 204px;gap:0 27px}.ed-reader h1{font-size:56px}.ed-deck{font-size:22px}.ed-edition{margin-left:16px}.ed-note-meta{display:none}.ed-equation{font-size:29px}.ed-folio-name{font-size:24px}.ed-margin .ed-inline-actions{gap:10px}}
+@media(max-width:1024px){.ed-spread{grid-template-columns:minmax(0,1fr) 218px;gap:0 31px;padding-top:15px}.ed-folio{grid-column:1/-1;display:grid;grid-template-columns:165px minmax(0,1fr);gap:12px 25px;padding:0 0 23px}.ed-folio-intro .ed-kicker{margin-bottom:7px}.ed-folio-name{font-size:23px;margin:0}.ed-facts{display:flex;gap:20px;flex-wrap:wrap}.ed-facts div{margin:0}.ed-facts dt{font-size:12px}.ed-facts dd{font-size:13px}.ed-reading-nav{grid-column:1/-1;margin:0;padding-top:11px;display:flex;gap:25px}.ed-reading-nav>a{margin:0}.ed-index{grid-column:1/-1;margin:0}.ed-index-label{margin:0 0 8px}.ed-issue-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}.ed-issue-link{padding:9px 0 0}.ed-issue-link:last-child{border-bottom:0}.ed-issue-top{font-size:12px;gap:5px}.ed-issue-link[aria-current="true"] .ed-issue-top:after{display:none}.ed-issue-link[aria-current="true"]{border-top:2px solid var(--accent)}.ed-issue-name{font-size:13px}.ed-issue-status{margin-top:3px}.ed-reader h1{font-size:57px}.ed-masthead{min-height:76px}.ed-edition{font-size:12px}.ed-storage{padding-top:5px}.ed-margin{padding-top:0}.ed-proposal-line{align-items:flex-start}.ed-proposal-line .ed-inline-actions{gap:9px}.ed-claim{grid-template-columns:34px minmax(0,1fr) auto}}
+@media(max-width:720px){.ed-shell{padding:0 20px 30px}.ed-masthead{flex-wrap:wrap;gap:9px;padding:15px 0}.ed-edition{display:none}.ed-tools button{padding:7px 9px}.ed-tools{gap:7px}.ed-brand{font-size:18px}.ed-storage{text-align:left;font-size:12px}.ed-spread{display:flex;flex-direction:column;padding-top:20px}.ed-folio{display:block;padding-bottom:25px}.ed-folio-intro{display:flex;align-items:baseline;justify-content:space-between;gap:14px}.ed-folio-name{font-size:22px}.ed-folio .ed-kicker{margin:0;font-size:12px}.ed-facts{margin-top:16px;gap:13px 24px}.ed-facts div:nth-child(3){display:none}.ed-reading-nav{display:flex;margin-top:18px;padding-top:12px;gap:23px}.ed-index{margin-top:18px}.ed-issue-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 20px}.ed-issue-name{font-size:14px}.ed-reader .ed-kicker{margin-bottom:14px}.ed-reader h1{font-size:49px;line-height:1;letter-spacing:-1px;margin-bottom:17px}.ed-deck{font-size:22px}.ed-proposal-line{gap:10px;margin-top:22px}.ed-equation{font-size:28px}.ed-proposal-line .ed-inline-actions{display:block}.ed-proposal-line .ed-inline-actions button{display:block;margin-bottom:7px}.ed-margin{order:2;margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:25px}.ed-decision{grid-column:1/-1}.ed-kill{font-size:63px}.ed-decision p{max-width:550px}.ed-marginal-note{margin-top:0}.ed-proof-note{margin-top:0}.ed-proof-note .ed-proof-row{font-size:13px}.ed-margin .ed-inline-actions{display:block}.ed-margin .ed-inline-actions button{display:block;margin-bottom:9px}.ed-footer{display:block}.ed-footer span{display:block;margin-bottom:7px}.ed-record .ed-section-head h2{font-size:28px}.ed-score-table{font-size:14px}.ed-history h3 span{display:block;margin-left:0}.ed-experiment-top{display:block}.ed-experiment-top>span{display:block;margin-top:5px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="ed-shell">
+  <header class="ed-masthead">
+    <div><a class="ed-brand" href="#overview">idea-shaokao</a><span class="ed-edition">RESEARCH REVIEW / 01</span></div>
+    <div class="ed-tools"><span id="ed-toolbar"></span></div>
+  </header>
+  <div class="ed-storage" data-storage-status>Checking local draft storage…</div>
+  <main class="ed-spread">
+    <aside class="ed-folio" aria-label="Dossier contents">
+      <div class="ed-folio-intro"><p class="ed-kicker">Test case</p><p class="ed-folio-name">Review dossier</p></div>
+      <dl class="ed-facts">
+        <div><dt>Reviewed submission</dt><dd><strong>Frozen v01</strong> · Proposal</dd></div>
+        <div><dt>Review mode</dt><dd>Independent<br>model-agent review</dd></div>
+        <div><dt>Review limit</dt><dd>Round 1 of 1<br><strong>Not converged</strong></dd></div>
+      </dl>
+      <nav class="ed-reading-nav" aria-label="Reading sections"><a href="#overview">Overview</a><a href="#issue-review">Issue review</a><a href="#review-history">Review record</a></nav>
+      <div class="ed-index"><p class="ed-index-label">ISSUE INDEX / 4 GROUPS</p><div class="ed-issue-list" id="ed-issue-index"></div></div>
+    </aside>
+
+    <article class="ed-reader">
+      <section id="overview" aria-labelledby="ed-title">
+        <p class="ed-kicker">Decision file · 07 Nov 2026</p>
+        <h1 id="ed-title">Faster nonnegative projection</h1>
+        <p class="ed-deck">A proposal to replace exact projection with absolute value, in pursuit of lower execution cost.</p>
+        <div class="ed-proposal-line">
+          <div><span class="ed-equation-label">THE PROPOSED OPERATOR</span><div class="ed-equation">P(x) = |x|</div></div>
+          <div class="ed-inline-actions" id="ed-proposal-actions"></div>
+        </div>
+        <div class="ed-claims" id="ed-claims" aria-label="Claims and present findings"></div>
+      </section>
+      <section class="ed-issue-section" id="issue-review" aria-labelledby="ed-issue-section-title">
+        <div class="ed-section-head"><div><p class="ed-section-number">01 / THE CRITICAL READING</p><h2 id="ed-issue-section-title">Where the claim breaks</h2></div></div>
+        <div id="ed-selected-issue"></div>
+      </section>
+      <section class="ed-record" id="review-history" aria-labelledby="ed-history-title">
+        <div class="ed-section-head"><div><p class="ed-section-number">02 / THE REVIEW RECORD</p><h2 id="ed-history-title">Acknowledged, not repaired</h2></div><span id="ed-history-note"></span></div>
+        <p class="ed-critical-context">The author accepted the counterexamples and withdrew H01 and unrestricted H03. Frozen v01 was not changed, so the technical defects remain open.</p>
+        <table class="ed-score-table"><caption class="ed-sr-only">Actual reviewer scores, initial and final</caption><thead><tr><th scope="col">Reviewer</th><th scope="col">Initial</th><th scope="col">Final</th><th scope="col">Evidence</th></tr></thead><tbody id="ed-scores"></tbody></table>
+        <p class="ed-caveat">All three scores are actual review results. Confidence 5/5 applies to the algebra only; external novelty and runtime remain unassessed. One completed round does not establish convergence.</p>
+        <ol class="ed-history" id="ed-history"></ol>
+      </section>
+      <section class="ed-record" id="experiments" aria-labelledby="ed-experiments-title">
+        <div class="ed-section-head"><div><p class="ed-section-number">03 / THE EVIDENCE BOUNDARY</p><h2 id="ed-experiments-title">Proof before compute</h2></div><span id="ed-experiments-note"></span></div>
+        <div id="ed-experiments"></div>
+        <div class="ed-boundary"><strong>No empirical runs</strong>E01 was an exact analytical gate. E02 and E03 were conditional plans and were canceled after it failed. Their cancellation supplies no evidence of faster execution.</div>
+      </section>
+    </article>
+
+    <aside class="ed-margin" aria-label="Decision and evidence margin">
+      <section class="ed-decision" id="decision" aria-labelledby="ed-decision-heading">
+        <p class="ed-kicker" id="ed-decision-heading">SAC recommendation</p>
+        <div class="ed-kill">Kill</div>
+        <p>The central exactness claim is false. A separate counterexample also defeats unrestricted optimizer compatibility.</p>
+        <p class="ed-margin-label">AC: Kill · SAC: Kill</p>
+        <div class="ed-inline-actions" id="ed-decision-actions"></div>
+      </section>
+      <section class="ed-marginal-note"><p class="ed-margin-label">THE ESSENTIAL RISK</p><h3>Feasible is not optimal.</h3><p>For negative inputs, the reviewed operator returns a nonnegative answer that is farther from the input than feasible zero.</p><div id="ed-risk-source"></div></section>
+      <section class="ed-proof-note" aria-label="Decisive exact check"><div class="ed-proof-label">E01 / AT x = −1</div><div class="ed-proof-row"><span>Proposed |x| → 1</span><strong>4</strong></div><div class="ed-proof-row"><span>Feasible zero → 0</span><strong>1</strong></div><p>Squared distance (z − x)².<br>The exact projection is max(x, 0).</p></section>
+      <section class="ed-marginal-note"><p class="ed-margin-label">THE NEXT ACTION</p><h3>Stop this formulation.</h3><p>Preserve the counterexamples and review record. Do not run the canceled benchmarks. A substantive repair requires a new proposal.</p><div id="ed-next-source"></div></section>
+      <section class="ed-marginal-note"><p class="ed-margin-label">READING THE RECORD</p><p>Four groups preserve the original reviewer issue IDs. Select an issue to trace the concern, author response, reassessment, and closure criterion.</p><p>Source text and SHA-256 hashes are one action away. Annotations stay separate from the scientific status.</p><div id="ed-record-source"></div></section>
+    </aside>
+  </main>
+  <footer class="ed-footer"><span>Internal conference-inspired model-agent review · Test Case · Offline review of supplied claims and exact reasoning.</span><span>idea-shaokao / Editorial dossier</span></footer>
+</div>
+<p class="ed-sr-only" id="ed-announcement" aria-live="polite"></p>
+<!-- EMBED_RUNTIME -->
+<script>
+(function(){
+  const e=UI.escape;
+  const shortNames=['Exactness fails','Drop-in claim fails','Novelty unknown','Speed unmeasured'];
+  document.getElementById('ed-toolbar').innerHTML=UI.notesButton()+UI.exportButton();
+  document.getElementById('ed-proposal-actions').innerHTML=UI.sourceButton('proposal','Read frozen proposal')+UI.noteButton('H01','Annotate claim');
+  document.getElementById('ed-decision-actions').innerHTML=UI.sourceButton('sac','Read SAC decision')+UI.noteButton('decision','Annotate');
+  document.getElementById('ed-risk-source').innerHTML=UI.sourceButton('initial-r2','Read the exact reasoning');
+  document.getElementById('ed-next-source').innerHTML=UI.sourceButton('report','Read final report');
+  document.getElementById('ed-record-source').innerHTML=UI.sourceButton('issues','Read original issue ledger');
+  document.getElementById('ed-history-note').innerHTML=UI.noteButton('review-history','Annotate record');
+  document.getElementById('ed-experiments-note').innerHTML=UI.noteButton('experiments','Annotate plan');
+  document.getElementById('ed-issue-index').innerHTML=D.issues.map((issue,i)=>`<button type="button" class="ed-issue-link" data-issue="${e(issue.id)}" aria-current="false"><span class="ed-issue-top"><span>0${i+1}</span></span><span class="ed-issue-name">${e(shortNames[i])}</span><span class="ed-issue-status">${e(issue.severity)} · ${e(issue.status)}</span></button>`).join('');
+  document.getElementById('ed-claims').innerHTML=D.claims.map(c=>`<div class="ed-claim" data-claim="${e(c.id)}"><span class="ed-claim-id">${e(c.id)}</span><div class="ed-claim-copy"><strong>${e(c.title)}</strong><span class="ed-claim-outcome">${e(c.status)}</span></div>${UI.noteButton(c.id,'Annotate')}</div>`).join('');
+  document.getElementById('ed-scores').innerHTML=D.reviewers.map(r=>`<tr><th scope="row">${e(r.id)}<br><span>${e(r.focus)}</span></th><td>${e(r.initial)}/10</td><td>${e(r.final)}/10</td><td>${UI.sourceButton(r.sources[1],'Final review')}</td></tr>`).join('');
+  document.getElementById('ed-history').innerHTML=D.timeline.map(t=>`<li><div><h3>${e(t.label)}<span>${e(t.role)}</span></h3><p>${e(t.summary)}</p>${UI.sourceButton(t.source,'Read source')}</div></li>`).join('');
+  document.getElementById('ed-experiments').innerHTML=D.experiments.map(x=>`<div class="ed-experiment"><div class="ed-experiment-top"><h3><span>${e(x.id)}</span>${e(x.title)}</h3><span>${e(x.status)}</span></div><p>${e(x.summary)}</p>${UI.sourceButton(x.source,'Read evidence')}</div>`).join('');
+  function selectIssue(id,announce){
+    const issue=D.issues.find(x=>x.id===id);if(!issue)return;
+    const idx=D.issues.indexOf(issue);
+    document.getElementById('ed-selected-issue').innerHTML=`<p class="ed-selected-meta"><span>ISSUE 0${idx+1} / 04</span><span class="ed-disposition${issue.status==='Resolved'?' is-resolved':''}">${e(issue.severity)} · ${e(issue.status)}</span></p><h3 class="ed-selected-title">${e(issue.title)}</h3><div class="ed-issue-detail">${UI.issueBody(id)}</div>`;
+    document.querySelectorAll('.ed-issue-link').forEach(b=>b.setAttribute('aria-current',String(b.dataset.issue===id)));
+    if(announce){
+      document.getElementById('ed-announcement').textContent=`Reading issue ${idx+1}: ${issue.title}. ${issue.status}.`;
+      window.scrollTo({top:document.getElementById('issue-review').getBoundingClientRect().top+window.scrollY-24,behavior:'auto'});
+      const heading=document.querySelector('.ed-selected-title');
+      heading.tabIndex=-1;
+      heading.focus({preventScroll:true});
+    }
+  }
+  window.addEventListener('dossier:issue',ev=>selectIssue(ev.detail.id,true));
+  selectIssue(D.issues[0].id,false);
+  UI.mount('editorial-dossier');
+})();
+</script>
+</body>
+</html>

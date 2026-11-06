@@ -141,6 +141,14 @@ collisions and unsafe identifiers. See [the workspace contract](references/works
 
 ## Repository map and validation
 
+Three offline [review-interface prototypes](design-demos/README.md) explore how to
+inspect a completed research run, trace evidence, and export human feedback:
+[Signal Desk](design-demos/signal-desk.html),
+[Editorial Dossier](design-demos/editorial-dossier.html), and
+[Evidence Table](design-demos/evidence-table.html).
+They share the actual projection-review test case. Automatic report generation
+will follow visual selection.
+
 - [SKILL.md](SKILL.md): discovery metadata, workflow, capability fallbacks, and decision gates.
 - [Research contracts](references/research.md): sources, candidates, design, experiments.
 - [Agent roles](references/roles.md) and [review protocol](references/review-protocol.md): dispatch, independence, discussion, scoring, closure.

@@ -1,0 +1,47 @@
+[
+  {
+    "direction": "signal-desk",
+    "desktop": {
+      "checked": 121,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    },
+    "narrow": {
+      "checked": 120,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    }
+  },
+  {
+    "direction": "editorial-dossier",
+    "desktop": {
+      "checked": 203,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    },
+    "narrow": {
+      "checked": 203,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    }
+  },
+  {
+    "direction": "evidence-table",
+    "desktop": {
+      "checked": 257,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    },
+    "narrow": {
+      "checked": 257,
+      "lowContrast": [],
+      "smallText": [],
+      "overflow": false
+    }
+  }
+]
