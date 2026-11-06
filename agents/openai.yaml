@@ -1,0 +1,4 @@
+interface:
+  display_name: "Idea Shaokao"
+  short_description: "Stress-test research ideas through independent review"
+  default_prompt: "Use $idea-shaokao to develop and rigorously review a research idea with an evidence-based implementation plan."
