@@ -1,219 +1,170 @@
-# idea-shaokao
+# Idea Shaokao
 
-<p align="center">
-  <img src="assets/logo.png" alt="Idea Shaokao logo: a lightbulb with a brain, flame, and barbecue grill" width="360">
-</p>
+<p align="center"><img src="assets/logo.png" alt="Idea Shaokao" width="300"></p>
 
-**Put research ideas through the heat before spending months on them.**
+Develop a research direction into a complete, literature-grounded paper proposal,
+challenge it with independent novelty adversaries, and iteratively review it under
+the target conference's actual criteria. The objective is work that merits a
+strong assessment, with honest abandonment when it does not.
 
-An installable Agent Skill for persistent research discovery and conference-style
-review: literature, competing ideas, technical design, experimental plans,
-independent reviewers, author rebuttals, AC synthesis, and SAC assessment.
+This repository is a portable Agent Skill with a standard-library Python workflow
+engine and offline review UI. It does not assume a model provider, API key, web
+server, or frontend build. Scientific outputs default to English.
 
-All instructions and generated research deliverables default to English. The
-result is a concrete **Proceed / Revise / Restart / Kill** decision with evidence
-and an implementation roadmap. A convincing proposal is never presented as an
-experimentally validated paper.
-
-## Install
-
-Use the [Skills CLI](https://github.com/vercel-labs/skills) from your project:
+## Install and invoke
 
 ```bash
 npx skills add SeanXunX/idea-shaokao --skill idea-shaokao
 ```
 
-Select your agents interactively, or specify them:
-
-```bash
-npx skills add SeanXunX/idea-shaokao --skill idea-shaokao \
-  -a codex -a claude-code -a opencode -a cursor
-```
-
-Add `-g` for a user-wide installation, `--copy` to copy rather than symlink, or
-`-y` to skip installer prompts. Preview discovery with:
-
-```bash
-npx skills add SeanXunX/idea-shaokao --list
-```
-
-The current Skills CLI requires Node.js 22.20 or later. The skill itself does not
-require Node.js, a provider API key, a specific model, or an MCP server. See the
-upstream [installation reference](https://github.com/vercel-labs/skills/blob/main/docs/commands.md)
-and [agent directory reference](https://github.com/vercel-labs/skills/blob/main/docs/agents.md)
-for current host support and destinations.
-
-For manual installation, clone this repository and copy `SKILL.md`, `references/`,
-`scripts/`, `assets/`, and optionally `agents/` into a directory named `idea-shaokao` inside
-your agent's skill directory. For example, a Claude Code project can use
-`.claude/skills/idea-shaokao/`. No build step is required. Do not copy the `.git/`
-directory or store research output inside the installed skill.
-
-## Use
-
-Invoke by the skill's name or your host's skill selector. In hosts that support
-`$skill-name` syntax:
+Or copy `SKILL.md`, `references/`, `scripts/`, `assets/`, `examples/`, and optionally
+`agents/` into your host's skill directory under `idea-shaokao`. Store research
+projects outside the installed skill.
 
 ```text
-Use $idea-shaokao to develop a research proposal on efficient retrieval under
-distribution shift. Target ICML. Assume one 24 GB GPU and a two-week prototype
-budget. Review at proposal stage, with up to three rounds. Save the work under
-research/efficient-retrieval. Deliver the final report in English.
+Use $idea-shaokao to develop research on retrieval under distribution shift.
+Target ICML 2026 Main Track. Assume one 24 GB GPU and a two-week prototype budget.
+Develop a complete proposal, verify novelty adversarially, and conduct up to four
+independent research/review rounds. Save to research/retrieval-shift.
 ```
 
-For an existing idea:
+The target conference, year and track are required for venue-calibrated review.
+A narrower exploration can proceed without them, with no acceptance-readiness
+claim. Honor a supplied idea and the user's actual resource constraints.
 
-```text
-Use idea-shaokao to stress-test the proposal in proposal.md. Do one independent
-review round with three reviewers, author rebuttal, AC discussion, and SAC
-assessment. Focus on whether the claimed novelty survives the closest prior work.
-```
+## Scientific workflow
 
-To continue a project:
+1. **Official venue configuration.** Retrieve current reviewer/form, author,
+   AC/SAC and CFP sources. Preserve exact scales, labels, definitions, questions,
+   response rules, source hashes, retrieval failures and historical uncertainty.
+   There is no universal scoring rubric or numerical acceptance threshold.
+2. **Evidence and insight.** Investigate foundational, recent, journal, preprint,
+   concurrent, closest and adjacent work. Compose a non-obvious insight through
+   problem → limitation → observation → hypothesis → mechanism → contribution →
+   falsification. Prefer significant research over convenient experiments.
+3. **Complete paper.** Write all fourteen parts, including technical design,
+   appropriate theory, rigorous experiments and explicitly hypothetical numerical
+   predictions with assumptions, uncertainty and failure conditions.
+4. **Mandatory novelty gate.** Three fresh adversaries investigate prior art,
+   conceptual originality and venue significance. The author responds by concern
+   ID. Conditional/fail requires recomposition and a repeated test; the cap ends
+   polishing of an indefensible idea.
+5. **Independent peer review.** Three or four blind initial reviewers use the exact
+   official form. Author rebuttal, permitted discussion, score reassessment,
+   AC synthesis and an independent senior audit preserve disagreement.
+6. **Research-level iteration.** Revise mechanisms, hypotheses, theory, experiments
+   or prediction calibration around actual concerns. Acceptance requires both
+   chairs' evidence-backed support and no unresolved major/critical issue.
+   Defaults are four rounds, three novelty attempts, and two consecutive eligible
+   rounds on the same rubric/core hypothesis. Budgets never reset silently.
 
-```text
-Use idea-shaokao to resume research/efficient-retrieval from its checkpoint.
-Preserve completed reviews and continue the first unfinished phase within the
-existing budget.
-```
+A **simulated Accept** means the proposal appears competitive under the
+reconstructed process. It does not guarantee real acceptance or substitute for
+completed experiments. Reviewers are not rewarded for favorable scores.
 
-The agent infers the workflow from the task. It asks for a topic if none is
-available; a target venue is optional. An ordinary brainstorming request does not
-need the full process.
+## Persistent engine
 
-## What happens
-
-1. **Discovery:** verify sources, map related work, compare distinct ideas when
-   ideation is requested, and explain the selection.
-2. **Design:** specify the method, assumptions, implementation path, resource
-   estimates, and falsifiable experiments with strong and simple baselines.
-3. **Independent review:** three or four reviewers assess novelty, correctness,
-   experimental rigor, and significance from separate contexts.
-4. **Discussion and rebuttal:** the AC identifies disagreements, the author
-   responds with evidence, and reviewers reassess their positions.
-5. **Decision and revision:** the AC synthesizes the record; a separate SAC audits
-   its quality and issues a recommendation. Revise within a bounded round budget.
-6. **Delivery:** a final report, versioned proposal, experiment plan, full review
-   history, issue resolutions, a first-week implementation roadmap, and an
-   offline interactive `final/review.html` with sourced issues and feedback export.
-
-The default limit is four rounds. Convergence requires two consecutive complete
-independent rounds with no new critical issues and no unresolved critical blocker.
-A single round can still yield a useful preliminary decision. A decisive failure
-can end the process immediately; extra rounds must not manufacture favorable scores.
-
-## Compatibility and evidence limits
-
-This repository uses the open [Agent Skills format](https://agentskills.io/specification)
-with progressive disclosure. `SKILL.md` is the portable entrypoint; the optional
-`agents/openai.yaml` adds Codex UI metadata. The instructions use capability-based
-dispatch instead of hard-coded orchestration APIs.
-
-| Available capability | Behavior |
-| --- | --- |
-| Isolated subagents | Full independent reviewer, AC, and SAC workflow |
-| Few concurrent slots | Batch isolated reviewers, then run chairs separately |
-| External reviewer sessions | Export packets and preserve returned reviews; missing roles stay pending |
-| One agent only | Clearly labeled self-critique; no invented independent reviews or SAC verdict |
-| No browsing | Assess supplied sources and disclose unresolved novelty/search coverage |
-| No code execution | Deliver experiment plans, without claiming measured results |
-| No filesystem | Return inline artifacts and a continuation checkpoint |
-
-Installation compatibility does not guarantee that a host provides independent
-subagents or browsing. A shared model family is also not a guarantee of diverse
-judgment. The workflow is conference-inspired, uses an explicitly unofficial
-rubric by default, and makes no promise of real conference acceptance.
-
-## Persistent workspaces
-
-The agent can create files directly, or use the optional Python 3.10+ helper:
+Python 3.10+; no third-party runtime dependency:
 
 ```bash
-python3 scripts/init_research.py --root research --slug retrieval-audit \
-  --topic "Retrieval under distribution shift" --stage proposal --max-rounds 4
-
-python3 scripts/init_research.py --root research --slug retrieval-audit --resume
+python3 scripts/research.py init research/retrieval-shift \
+  --topic "Retrieval under distribution shift" \
+  --conference ICML --year 2026 --track "Main Track"
 ```
 
-This creates `research/retrieval-audit/` with a state file, index, issue tracker,
-and directories for research artifacts. Resume validates and prints the checkpoint
-without changing files; it does not run the research workflow. The helper refuses
-collisions and unsafe identifiers. See [the workspace contract](references/workspace.md).
-
-## Interactive review report
-
-Every persisted research run ends with a compact research workspace in
-`final/review.html`, alongside `final/final_report.md`. Its primary views are
-**Overview**, **Idea & review**, and **Final plan**. Per-round idea snapshots,
-actual revisions, reviewer scores, discussion, and outcomes lead into a concrete
-final method, experiment configurations, research story, paper section designs,
-and implementation roadmap. Issues and original sources remain accessible as
-supporting views. The agent writes a sourced
-`final/review-data.json` index and automatically invokes the bundled renderer:
+Initialize first, then fetch official sources for this project. The ICML files
+below are a real retrospective validation example; discover and verify the
+requested venue/year instead of treating them as defaults:
 
 ```bash
-python3 <skill-dir>/scripts/render_review.py <research-workspace>
+python3 scripts/research.py fetch-sources examples/icml2026-sources.json \
+  --output /tmp/official-sources.json
+python3 scripts/research.py build-rubric /tmp/official-sources.json \
+  examples/icml2026-rubric-spec.json --output /tmp/rubric.json
+python3 scripts/research.py install-rubric research/retrieval-shift /tmp/rubric.json
 ```
 
-The renderer uses Python 3.10+ and the standard library. It reads this run's actual
-artifacts, embeds their original text and hashes, and supports multiple review
-rounds, arbitrary recorded score scales, and explicit missing-data states. It
-contains no demo research claims or verdicts. Source errors stop rendering while
-keeping the previous report intact.
+`build-rubric` re-extracts the fields from preserved official sources. An
+unsupported form or missing evidence blocks installation. The ICML example labels
+its official-instructions reconstruction, unknown optional flags, restricted
+OpenReview endpoint, and additional internal senior audit explicitly. Inspect
+retrieval failures and the source-linked specification before installation.
 
-Use the round navigator to follow the research process and the final plan's
-directory to read the full design. Each paper section states its purpose,
-content, and required evidence, with links to experiment specifications. Use the
-issue list and discussion threads for individual concerns. Annotations on rounds,
-experiments, and plan sections, plus unfinished drafts, survive regeneration
-through a persistent workspace identity. Changed sources or removed targets retain
-old comments with their original context. Export `review_feedback.md` for the
-agent; back up/restore `review_notes.json` when moving browsers or file locations.
-Notes remain separate from scientific issue dispositions and chair judgments.
+The host agent performs actual research with its tools. Native isolated-context
+dispatch uses the pending queue and structured JSON packets:
 
-The finalization instructions apply to completed, killed, budget-stopped, and
-incomplete scoped runs. See [the index and report contract](references/review-report.md).
-Browser tools are optional for generation; no server, frontend build, provider
-API, network call, or third-party runtime package is required.
+```bash
+python3 scripts/research.py status research/retrieval-shift
+python3 scripts/research.py packet research/retrieval-shift --output /tmp/packet.json
+# Execute the packet in the appropriate actual host-agent context.
+python3 scripts/research.py submit research/retrieval-shift /tmp/returned-response.json
+```
 
-## Repository map and validation
+An unattended adapter can execute one fresh process per task:
 
-The current [interactive design example](design-demos/research-workspace.html)
-uses an explicitly synthetic two-round study to demonstrate the complete final
-plan. Its [design notes](design-demos/README.md) preserve earlier explorations.
-Production reports use [the bundled assets](assets/review/template.html)
-and the [renderer](scripts/render_review.py) with each run’s own sources.
+```bash
+python3 scripts/research.py run research/retrieval-shift \
+  --agent-command '["/absolute/path/to/your-agent-adapter"]'
+```
 
-- [SKILL.md](SKILL.md): discovery metadata, workflow, capability fallbacks, and decision gates.
-- [Research contracts](references/research.md): sources, candidates, design, experiments.
-- [Agent roles](references/roles.md) and [review protocol](references/review-protocol.md): dispatch, independence, discussion, scoring, closure.
-- [Deliverables](references/deliverables.md): final report and implementation roadmap.
-- [Workspace helper](scripts/init_research.py): optional standard-library-only initialization.
-- [Report contract](references/review-report.md): sourced display index, finalization, and annotation continuity.
-- [Behavioral evaluation scenarios](tests/evals.md): realistic skill execution checks.
+The adapter receives one JSON packet on stdin and returns one validated JSON
+response on stdout. It owns model/tool integration and truthful isolation/session
+provenance. No provider-specific executable is bundled. The synthetic test adapter
+is exclusively a software fixture, never a research-quality model.
 
-Run the workspace and renderer tests:
+An append-only hash-linked journal is authoritative; `project.json` is a
+recoverable cache. Every report references its exact round, paper and context.
+Missing or failed outputs remain pending. Resume without overwriting history:
+
+```bash
+python3 scripts/research.py verify research/retrieval-shift
+python3 scripts/research.py status research/retrieval-shift
+python3 scripts/research.py render research/retrieval-shift
+```
+
+See [workspace and adapter contract](references/workspace.md),
+[conference configuration](references/conference.md),
+[role boundaries](references/roles.md), and [review protocol](references/review-protocol.md).
+
+## Review interface
+
+The generated `final/review.html` has three primary views:
+
+- **Overview:** final title, venue/year, summary, insight, novelty, contributions,
+  method, decisive validation and simulated outcome.
+- **Final Paper:** complete academic prose with section navigation, hypothetical
+  prediction tables, technical/experiment details and evidence references.
+- **Review Process:** each frozen submission, all novelty attempts, independent
+  reviews with exact original/updated labels, threaded author responses,
+  discussion, AC/SAC reasoning and side-by-side paper versions.
+
+Original journal sources and hashes are inspectable offline. Equations use the bundled KaTeX 0.19.1 renderer and embedded fonts, without CDN requests. Annotations, drafts,
+feedback export and JSON note backups retain stable identities across regeneration.
+No demo research is inserted into real workspaces. Existing schema-1 workspaces
+and their renderer remain supported; they do not acquire new gate guarantees
+merely by rendering successfully.
+
+## Validation and limitations
 
 ```bash
 python3 -m unittest discover -s tests -v
-```
-
-Development browser checks additionally use Playwright:
-
-```bash
 node tests/verify_review_browser.cjs
+node tests/verify_research_browser.cjs
 ```
 
-Set `PLAYWRIGHT_MODULE` to an external Playwright module path and
-`CHROMIUM_EXECUTABLE` to an existing Chromium binary when needed. The generated
-HTML itself needs neither Node nor Playwright.
+Browser tests use development-only Playwright. Set `PLAYWRIGHT_MODULE` to an
+existing Playwright module when it is not locally installed. Python tests cover
+real cached official-source extraction, exact options, full multi-round execution,
+scientific failure paths, session/context boundaries, journal recovery and legacy
+compatibility. Browser tests cover offline rendering, interactions, notes, sources
+and desktop/mobile layouts. The new engine was also checked by an independent
+forward-testing agent; findings received regression tests.
 
-Check local package discovery without installing:
-
-```bash
-npx skills add . --list
-```
-
-Tests verify workspace behavior, not research quality. Behavioral evaluation must
-inspect actual agent artifacts and decisions; a frontmatter check alone cannot
-establish that reviews were independent or that a research claim is true.
+**Test research and agent judgments are explicitly synthetic.** Software checks
+cannot prove research novelty or that a chosen model will produce rigorous papers.
+The framework requires a host with browsing and genuinely isolated review contexts;
+a fresh process or a session ID alone does not provide an OS security boundary.
+Official rubric layouts beyond supported HTML/OpenReview schemas require a tested
+parser extension. The engine assesses proposals, not experimentally completed
+papers. See [implementation and validation report](docs/implementation-report.md)
+for exact test evidence, remaining limitations and recommended follow-up work.

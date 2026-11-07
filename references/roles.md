@@ -1,91 +1,97 @@
-# Agent roles and dispatch contracts
+# Role contracts and context boundaries
 
-Read this when assigning independent review work. The author coordinates execution;
-reviewers and chairs own their judgments. None is rewarded for getting an idea accepted.
+The executable briefs live in `scripts/shaokao/prompts.py`; validators live in
+`contracts.py`. Native packets carry the brief, relevant context and output schema.
+The author cannot set reviewers' scores or make a chair ratify acceptance.
 
-## Context boundaries
+## Research roles
 
-- Use a fresh, separate agent context for each initial reviewer, AC, and SAC. Do not
-  fork the author's private reasoning, preferred verdict, or other reviews into it.
-- Give initial reviewers the same frozen submission packet, the relevant role below,
-  the review stage, rubric, resource limits, and their own output destination. Let
-  each independently retrieve sources when tools permit.
-- Initial reviewers must not read other review files, discussion files, or private
-  author notes before submitting. A shared filesystem does not provide isolation;
-  use explicit read scopes and separate writable destinations. State any limitations.
-- The AC receives all initial reports only after every reviewer has submitted.
-  The SAC receives the full record after the AC meta-review. Neither receives
-  instructions to ratify the author's or another chair's preferred decision.
-- Reuse a reviewer's own context for discussion. If it is unavailable, give a fresh
-  agent the role, packet, its predecessor's report, and discussion so far; record
-  the replacement. Do not silently treat the author's reconstruction as a review.
-- With limited concurrency, run fresh reviewers in batches, then AC, then SAC.
-  Sequential scheduling of independent contexts preserves initial independence;
-  role-playing all agents inside one context does not.
+**Literature Investigator** searches seven evidence categories, records queries,
+dates, provider failures, reading depth and a structured map. Every important
+paper records problem, insight, methodology, assumptions, results, limitations,
+relationship and exact contribution difference, with primary URL and locator.
 
-If the host cannot create independent contexts, complete research and explicitly
-label any critique **single-agent self-review**. Do not create fictitious reviewer
-identities, chair assessments, or an independent-review convergence claim. Save
-dispatch packets so a capable host or real reviewers can complete the process.
+**Idea Composer** compares distinct insights, classifies contribution levels and
+constructs the complete insight-to-validation chain. Scientific significance and
+novelty outrank convenience. Lower-level contributions require venue justification.
 
-## Role assignments
+**Author** writes a complete paper before review, with detailed technical design,
+falsifiable hypotheses and explicitly hypothetical quantitative predictions. It
+responds individually by concern ID and substantially revises the research when
+criticism is valid. It cannot close issues by declaration or change frozen papers.
 
-| Role | Decision preference | Required investigation | Authority |
-| --- | --- | --- | --- |
-| Author | A useful, falsifiable contribution | Literature, competing ideas, design, experiments, implementation when in scope | Select and revise the idea; accept or rebut criticism with evidence |
-| R1: novelty | Distinct contributions over combinations with new names | Closest prior art, recent preprints, equivalent formulations, missing citations | Challenge novelty; specify the exact overlapping claim and supporting source |
-| R2: technical soundness | Valid assumptions and mechanisms over plausible narratives | Counterexamples, boundary conditions, derivations, complexity, simpler alternatives | Identify invalid assumptions and define a decisive technical check |
-| R3: experimental rigor | Identifiable evidence over favorable metrics | Strong and simple baselines, equal budgets, leakage, controls, uncertainty, causal alternatives | Identify which experiments are necessary for the claimed conclusion |
-| R4: significance | A meaningful problem and transferable value over benchmark increments | Real bottlenecks, beneficiaries, scalability, generalization, costs, broader effects | Challenge importance and scope; identify conditions under which value disappears |
-| AC | Contribution relative to evidenced weaknesses | Conflicts, unsupported objections, misunderstandings, minority concerns, rebuttal adequacy | Direct discussion and recommend; never decide by averaging scores |
-| SAC | Reliable process and defensible conclusions | Review independence, source quality, missed fatal flaws, AC treatment of disagreement | Uphold or overturn the AC recommendation; require focused re-examination; decide next action |
+## Mandatory independent novelty adversaries
 
-Use four reviewers when resources allow, and at least three for a complete
-independent round. With three, explicitly assign significance and broader-impact
-coverage to R1 and R3; do not silently drop that perspective. Preferences guide
-attention, not predetermined negative verdicts. All reviewers may raise any material issue.
+Give each the same paper, idea, evidence map and venue rubric in a fresh context.
+No adversary receives peers' verdicts before submitting.
 
-The optional **red team** does not score or vote. It tries to falsify the central
-claim through an overlooked equivalent paper, a counterexample, an unnecessary
-component, or a simpler baseline. Preserve unsuccessful falsification attempts as
-inconclusive, not confirmation. Deliver findings with sources or reproductions to
-the author and AC; disclose them to all reviewers during discussion, or include
-them in the next frozen packet. Do not selectively seed initial reviewers.
+| Role | Required challenge |
+| --- | --- |
+| A: Prior-Art Investigator | Existing/concurrent/adjacent equivalent mechanisms, formulations and claims; rebranding, recombination and incremental overlap |
+| B: Conceptual Novelty Critic | Non-obviousness, falsifiable insight, hypothesis-to-mechanism logic, component removal and new capability/understanding |
+| C: Top-Conference Skeptic | Problem importance, contribution magnitude, venue/type fit, decisive experiments, future influence and strongest rejection case |
 
-## Initial reviewer dispatch
+Each report contains claim summary, claimed novelty, closest work, overlap
+evidence, insight weaknesses, significance weaknesses, rejection arguments,
+required defensive evidence, rationale and PASS / CONDITIONAL PASS / FAIL.
+A also provides a prior-art comparison table with registered evidence IDs and
+exact locations. Newly discovered papers may be supplied as `discovered_papers`
+with the complete evidence schema; do not discard discoveries because they were
+absent from the author's ledger. Prior-art PASS requires successful closest and
+concurrent searches and full-text inspection of the closest registered work.
 
-Adapt this brief to the host's delegation API; file paths are relative to the run:
+Major concerns retain stable IDs. Fundamental overlap must receive evidence or a
+changed hypothesis/mechanism/scope, not rewritten motivation. Only three PASS
+verdicts permit submission after the author's response. Conditional/fail repeats
+investigation, idea composition, paper and all adversaries, within the stress cap.
 
-```text
-Act as R2, the technical-soundness reviewer, for round 01.
-Stage: proposal. You are evaluating whether the idea merits implementation.
-Read the frozen packet listed in reviews/round-01/submission-manifest.md,
-your role in roles.md, and the reporting contract in review-protocol.md.
-You may retrieve primary sources within the stated resource limits.
-Do not read other reviews, discussions, or private author notes before submission.
-Evaluate independently; acceptance is not your objective. Identify evidence and
-counterexamples, distinguish untested hypotheses from observed results, and state
-what would change your judgment.
-Write only reviews/round-01/reviewer-R2-initial.md, then report completion.
-```
+## Formal reviewers
 
-Include the actual skill resource paths, packet file list, deadline or tool budget,
-rubric identifier, and allowed evidence access when dispatching. Never assume a
-child inherits the skill or can resolve the parent's relative paths.
+Dispatch 3–4 separate initial contexts from the same frozen submission packet.
+They do not receive private author reasoning, prior-round scores or peer reports.
+With three reviewers, significance/fit is assigned to R1 and R3 explicitly.
 
-## Chair dispatch
+| Role | Expertise and priority |
+| --- | --- |
+| R1 | Precise novelty, close prior art, non-obvious insight and research significance |
+| R2 | Technical correctness, assumptions, mathematics, mechanisms, complexity and counterexamples |
+| R3 | Experimental rigor, fair/strong/simple baselines, statistics, reproducibility, prediction plausibility and significance |
+| R4 | Overall contribution, completeness, narrative, venue/type fit, limitations and broader effects |
 
-For the **AC**, provide the submission packet and all initial reports. First ask
-for a bounded discussion agenda: issue ID, disputed proposition, reviewer asked,
-and evidence needed. Relay questions to reviewers and preserve their actual
-replies. After rebuttal and reassessment, ask for the final meta-review.
+Follow only actual official review fields/options. Supplementary scientific
+concerns and evidence justifications are labeled internal. Every choice score
+needs evidence; overall recommendation is an independent judgment, never an
+average. Reject unsubstantiated ambition, superficial combinations and implausible
+predictions. Do not demand favorable scores or force reviewers to change them.
 
-For the **SAC**, provide the same packet plus initial and final reports, both
-discussion records, rebuttal, issue tracker, and AC meta-review. Ask for an
-independent process audit and stage-specific recommendation. The SAC may require
-one focused clarification pass on a material omission; if evidence remains absent,
-record uncertainty and decide without creating an unbounded discussion loop.
+After the rebuttal, each reviewer reassesses every original concern, returns exact
+updated scores, explains changes/no changes, and retains uncertainty. Reuse that
+reviewer's own session or a documented fresh replacement; never an author or peer
+session. Expose shared reports only after the initial-review barrier.
 
-Reviewers and chairs do not edit the submission or another participant's report.
-The author owns the aggregate issue tracker and version transitions, while retaining
-each participant's original evidence, objections, and decisions.
+## Chairs
+
+**AC** inspects the complete paper, all initial/final reviews, rebuttal, exchanges,
+major novelty issues, disagreements and evidence. It assesses review quality,
+rebuts unsupported reviewer objections, adjudicates each concern and provides an
+independent meta-review and venue-authorized recommendation. No score averaging.
+
+**SAC / internal senior audit** receives the full record and AC meta-review in a
+fresh context. It audits reasoning, score/text consistency, missing evidence,
+borderline cases, dissent and readiness. It can disagree with the AC. The extra
+per-paper final-readiness audit is internal if the actual venue does not assign
+that authority. Use actual official decision options only when verified.
+
+Both chairs must supply evidence for each readiness criterion and disposition of
+all concerns, including major novelty objections and new discussion issues.
+A strong-acceptance case cannot accompany a reject/revise recommendation.
+Unresolved major/critical concerns or chair disagreement prevent convergence.
+
+## Host isolation
+
+Fresh processes/packets enforce context selection, not filesystem security or
+truthfulness of session IDs. The host must enforce read scopes. Do not fork the
+author conversation into adversaries or reviewers. Batching/sequential scheduling
+of isolated contexts is valid; impersonating several roles in one context is not.
+Unavailable independent roles remain pending. `single_agent` is honest self-critique
+and cannot produce an independent acceptance-readiness outcome.

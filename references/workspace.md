@@ -1,127 +1,137 @@
-# Persistent workspace and recovery
+# Persistent engine and host execution
 
-Keep each idea in a separate user workspace, never inside the installed skill.
-The default parent is `research/`; honor an existing user-selected location.
+## New projects
 
-## Initialize or inspect
-
-The optional helper needs Python 3.10+ and no third-party dependencies:
+Python 3.10+ and the standard library are sufficient. No provider API or build
+system is required. Create a distinct project outside the installed skill:
 
 ```bash
-python3 <skill-dir>/scripts/init_research.py \
-  --root research --slug efficient-retrieval \
-  --topic "Efficient retrieval under distribution shift" \
-  --venue "Unspecified" --stage proposal --max-rounds 4
-
-python3 <skill-dir>/scripts/init_research.py \
-  --root research --slug efficient-retrieval --resume
+python3 <skill-dir>/scripts/research.py init research/<slug> \
+  --topic "<direction>" --conference "<venue>" --year <year> --track "<track>" \
+  --max-rounds 4 --max-stress-iterations 3 --reviewers 4 --acceptance-rounds 2
 ```
 
-Replace `<skill-dir>` with the actual installed skill directory. Run from the
-user's project so the default workspace is created there. `--root` is the parent;
-the helper creates `<root>/<slug>`, not an additional nested `research/` directory.
-It refuses to overwrite an existing directory. `--resume` validates the checkpoint
-and required layout and prints state without writing. Supplied topic, venue,
-stage, or round options on resume must match the saved state. The helper does not
-launch agents, verify research conclusions, or perform the recorded next action.
+The conference/year/track are mandatory for the full venue-calibrated workflow.
+`--constraints` records actual resource assumptions. Limits are configurable
+positive integers up to 100; four rounds and three novelty attempts are defaults,
+not universal scientific thresholds. `--mode` can be `independent`,
+`external_review`, or `single_agent`. The latter cannot satisfy independent gates.
 
-Without Python, use file tools to create the layout and state below. Without file
-tools, return an inline checkpoint with artifact sections instead of claiming
-persistence. Do not install software solely to initialize a directory.
+Initialize first, then fetch sources for that project using
+[conference.md](conference.md). Installation refuses older project-independent
+cached rubrics, except explicitly synthetic test workspaces.
 
-## Layout
+## Authoritative data
 
 ```text
 research/<slug>/
-  README.md                       Artifact index and project status
-  state.json                      Checkpoint, configuration, next action
-  issue_tracker.md                Stable issue IDs and evidence-based dispositions
-  literature/
-    search_log.md
-    papers.md
-    research_landscape.md
-    related_work_matrix.md
-  ideation/
-    candidate_ideas.md
-    idea_selection.md
-  proposal/
-    v01/                          proposal.md, experiments.md, evidence.md, paper_plan.md
-    v02/                          Next submission, including changes.md
-    final/                        Selected version and its provenance
-  reviews/
-    score-history.md
-    round-01/                     Manifest, reviews, discussion, AC and SAC
-  rebuttals/
-    round-01.md
-  experiments/
-    <run-id>/                     Configuration, commands, raw logs, measurements
+  events/000001.json ...           Immutable, hash-linked transition records
+  project.json                    Rebuildable schema-2 checkpoint/cache
   final/
-    final_report.md
-    review-data.json                Sourced display index for this research run
-    review-manifest.json            Persistent annotation identity and source hashes
-    review.html                     Standalone interactive review report
+    final_report.md               Honest outcome and continuation
+    paper.md                      Selected complete paper, when available
+    review.html                   Offline Overview / Final Paper / Review Process
+    review-manifest.json          Persistent annotation identity and source hashes
 ```
 
-Only the top-level directories, README, state, and empty issue tracker are created
-by the helper. Write phase artifacts when work actually happens. The review
-filenames and contracts are in [review-protocol.md](review-protocol.md).
+Each record has sequence, previous hash, timestamp, event type, payload and hash.
+A complete fsynced temporary file is atomically linked into an exclusive event
+name. Partial writes never become transitions. Competing coordinators cannot
+commit the same sequence; reload and retry the still-pending task. One coordinator
+should own dispatch. A hash chain detects accidental tampering; it is not a
+cryptographic signature against someone who controls all files.
 
-## State contract
+The schema-2 project contains conference configuration, budgets, rounds and role
+session provenance. Each round freezes its rubric, predecessor, literature,
+research revisions, idea/paper versions, novelty attempts, submission, initial
+reviews, rebuttal, discussions, author follow-ups, final reviews, AC and SAC.
+Hypotheses, literature papers, experiments, predictions, concerns and responses
+have stable IDs. Every role output references its task, round, exact context hash,
+paper version, session and timestamp. Actual experiments are never synthesized
+from predictions; this engine's evidence stage is a paper-level **proposal**.
 
-`schema_version` is `1`. The helper creates these fields:
+`project.json` is a cache. Never manually edit it to advance a stage or close a
+concern. `verify` replays and checks the journal and rebuilds it. Rendered files
+are derived views of that same journal, not independent research truth.
 
-| Field | Meaning |
-| --- | --- |
-| `slug`, `topic`, `venue` | Stable workspace ID and research scope; venue may be `Unspecified` |
-| `review_stage` | `proposal`, `implementation`, or `paper` |
-| `execution_mode` | Initially `unselected`; then `independent`, `external_review`, or `single_agent` |
-| `current_round` | Latest round started, or `0` before review; never exceeds `max_rounds` |
-| `max_rounds` | Integer from 1 to 4; default 4 |
-| `status` | Initially `in_progress`; use `completed`, `budget_stopped`, `blocked`, or `killed` when applicable |
-| `next_action` | Initially `literature`; replace with a concrete next step and artifact/issue references |
-| `created_at`, `updated_at` | ISO 8601 UTC timestamps; retain creation time |
+## Native-host dispatch (preferred in an agent skill)
 
-Extend state as work proceeds with `last_completed_round`, `proposal_version`,
-`convergence` (`not_assessed`, `not_converged`, `converged`), `recommendation`,
-`constraints`, and `pending_tasks` when useful. Keep unknown extension fields on
-resume. A completed bounded review can still be `not_converged`; completion and
-scientific readiness are different facts. `blocked` means a concrete required
-input/tool is missing, not that the research conclusion is unfavorable.
+```bash
+python3 <skill-dir>/scripts/research.py status research/<slug>
+python3 <skill-dir>/scripts/research.py packet research/<slug> \
+  --task <pending-task-id> --output /tmp/task-packet.json
+```
 
-Record the topic scope, evidence inventory, compute/time budget, authorization
-limits, source cutoff, and capability limitations in the README or a linked intake
-note. Record agent/session identifiers and review provenance in each round's
-manifest. These identifiers document provenance; they do not grant independence.
+The packet contains a role-specific brief, frozen approved context, output
+contract and response envelope. Use the host's real isolated-context facility to
+execute it. A child does not inherit the author conversation, private notes,
+workspace path, peer reviews or prior-round scores for initial assessment. Give it
+only the packet and the tools needed to retrieve evidence; restrict its filesystem
+scope. Return its actual structured response as JSON, then:
 
-## Checkpoint and recovery
+```bash
+python3 <skill-dir>/scripts/research.py submit research/<slug> /tmp/response.json
+```
 
-One coordinator owns shared state and the aggregate issue tracker. Give each
-reviewer a separate report destination to prevent concurrent overwrites. Save
-completed artifacts first, then checkpoint state (prefer a temporary file plus an
-atomic rename), then update the index. Preserve original reviews and measurements.
+Use a distinct session for each novelty adversary, initial reviewer and chair.
+Reviewers may reuse their own session for discussion, or a fresh replacement with
+only approved materials. A reviewer cannot reuse an author's or peer's session.
+The session identifiers are host attestations, not proof of cognitive diversity.
+Do not falsely mark `independent: true` when the host cannot isolate contexts.
+Missing or rejected reports stay pending; do not fabricate a positive response.
 
-On resume, reconcile state against actual artifacts and the latest manifest:
+The host may queue independent tasks in batches. Initial-review and initial
+reassessment packet hashes stay stable while peer outputs arrive. Task/version
+hashes reject stale responses; submitted outputs cannot be replaced. Newly
+required stages appear only after their prerequisites are complete.
 
-1. Verify the active proposal version, stage, round, completed role outputs, and
-   open issues. A file that merely exists is not proof of a completed review.
-2. If state is ahead of disk, mark the operation incomplete and rerun only the
-   missing work. If disk is ahead of state, inspect the artifact before advancing
-   the checkpoint. Record the correction; do not silently rewrite history.
-3. Reattach an available reviewer context or dispatch a documented replacement
-   using only that role's approved materials. An unsubmitted initial reviewer
-   must still be blind to peer reports, even if they already exist on disk.
-4. Revalidate stale literature for novelty-sensitive work and check code/data
-   identifiers before reusing results. Preserve evidence dates and prior verdicts.
-5. Continue the exact pending phase within the existing round/resource budget.
-   Record changed constraints explicitly; do not reset rounds during recovery.
+## Unattended command adapter
 
-If the helper rejects malformed state, inspect the file and actual artifacts.
-Back up the existing checkpoint before a deliberate repair, then validate it.
-Never reinitialize over an existing project to conceal missing history.
+```bash
+python3 <skill-dir>/scripts/research.py run research/<slug> \
+  --agent-command '["/absolute/path/to/your-agent-adapter"]' \
+  --max-steps 100 --timeout 600
+```
 
-At every run's final checkpoint, generate the HTML using
-[review-report.md](review-report.md). Preserve the display index and manifest on
-resume; refresh the index from actual revised artifacts and regenerate the HTML.
-Read exported `review_feedback.md` against its original version and source hashes
-before applying it. Browser-local notes are not stored in the research directory;
-use the report's JSON backup/restore controls when moving browsers or file URLs.
+The command must be a JSON argv array. Each task launches a fresh process, takes
+one packet on stdin and returns exactly one JSON response on stdout. The adapter
+owns model/tool integration, true context isolation, source retrieval and session
+identity. No provider command, key, paid call, browser, or model is assumed or
+silently installed. Use absolute paths: the working directory is the workspace.
+
+The driver runs authorized stages until termination, the step budget, or an error.
+Timeout, process failure, malformed JSON and rejected scientific artifacts are
+journaled. Rerun `run` or use native packet dispatch to continue the same pending
+task. A fresh process is not an OS sandbox: use a provider/host with proper scopes.
+The bundled `tests/fixture_agent.py` is explicitly synthetic and only tests software.
+
+## Resume and target changes
+
+```bash
+python3 <skill-dir>/scripts/research.py verify research/<slug>
+python3 <skill-dir>/scripts/research.py status research/<slug>
+```
+
+The journal is authoritative even if `project.json` is missing or malformed.
+A broken sequence/hash blocks recovery instead of silently deleting history.
+Inspect corruption against backups. Old temporary `.pending-*` files are not
+committed events. Completed roles and budgets remain intact after interruption.
+
+A target change is allowed at a round boundary, including the next pending
+revision. `change-target --conference ... --year ... --track ...` invalidates the
+active rubric. Fetch new official sources and install a matching rubric. Previous
+rounds retain their original venue and scale. Acceptance streaks cannot cross
+rubric or core-insight/hypothesis/mechanism changes.
+
+## Legacy compatibility and capability limits
+
+`init_research.py` and schema-1 `state.json`/`final/review-data.json` remain supported
+for existing workspaces. Their source fidelity, annotations, missing-data behavior
+and renderer tests are retained. They do not enforce the new scientific gates;
+never claim a legacy report completed them without actual recorded evidence.
+Do not automatically convert legacy prose into fictional structured judgments.
+
+Without Python, follow the same contracts using native file tools and explicit
+checkpoints. Without browsing, preserve supplied sources and missing coverage;
+independent prior-art PASS is unavailable without adequate verified investigation.
+Without independent contexts, deliver honest self-critique and pending packets.

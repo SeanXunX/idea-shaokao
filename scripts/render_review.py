@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Render final/review.html from a research workspace and its sourced display index."""
 import argparse
+import base64
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -359,11 +360,18 @@ def compile_html(data):
     template = (ASSETS / 'template.html').read_text(encoding='utf-8')
     payload = json.dumps(data, ensure_ascii=False, separators=(',', ':'), allow_nan=False)
     payload = payload.replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
+    math_css, math_script = '', ''
+    if data['schema_version'] == 2:
+        vendor = ASSETS / 'vendor' / 'katex'
+        math_css = (vendor / 'katex.min.css').read_text(encoding='utf-8')
+        math_css = re.sub(r',url\(fonts/[^)]+\.(?:woff|ttf)\) format\("[^"]+"\)', '', math_css)
+        math_css = re.sub(r'url\((fonts/[^)]+\.woff2)\)', lambda match: 'url(data:font/woff2;base64,' + base64.b64encode((vendor / match[1]).read_bytes()).decode() + ')', math_css)
+        math_script = '<script>' + (vendor / 'katex.min.js').read_text(encoding='utf-8') + '</script>'
     replacements = {
-        '<!-- REVIEW_CSS -->': '<style>' + (ASSETS / 'styles.css').read_text(encoding='utf-8') + '</style>',
+        '<!-- REVIEW_CSS -->': '<style>' + math_css + (ASSETS / 'styles.css').read_text(encoding='utf-8') + '</style>',
         '<!-- REVIEW_DATA -->': '<script id="review-data" type="application/json">' + payload + '</script>',
-        '<!-- REVIEW_RUNTIME -->': '<script>' + (ASSETS / 'runtime.js').read_text(encoding='utf-8') + '</script>',
-        '<!-- REVIEW_APP -->': '<script>' + (ASSETS / 'app.js').read_text(encoding='utf-8') + '</script>',
+        '<!-- REVIEW_RUNTIME -->': math_script + '<script>' + (ASSETS / 'runtime.js').read_text(encoding='utf-8') + '</script>',
+        '<!-- REVIEW_APP -->': '<script>' + (ASSETS / ('research.js' if data['schema_version'] == 2 else 'app.js')).read_text(encoding='utf-8') + '</script>',
     }
     for marker, replacement in replacements.items():
         if template.count(marker) != 1:
@@ -388,6 +396,13 @@ def render(root, check=False):
     root = Path(root).expanduser().resolve()
     if not root.is_dir():
         fail('Research workspace does not exist')
+    if (root / 'events').is_dir():
+        from shaokao.engine import Store
+        from shaokao.report import render as render_engine
+        store = Store(root)
+        if store.project is None:
+            fail('No initialized research event journal found')
+        return render_engine(store, check=check)
     data, input_hash = load_workspace(root)
     workspace_id = identity(root, data['project']['slug'])
     data['project']['workspaceId'] = workspace_id

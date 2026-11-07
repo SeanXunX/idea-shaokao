@@ -1,176 +1,132 @@
-# Conference-inspired review protocol
+# Enforced conference-style research review
 
-Read this when preparing or conducting a review round. This is a research decision
-process, not an actual conference decision or a prediction of acceptance.
+Every assessment is simulated and proposal-stage. Hypothetical quantitative
+predictions never establish an empirical result. Formal review requires a complete
+paper, a passed independent novelty gate, and a verified exact venue rubric.
 
-## Establish the review stage
+## State transitions
 
-| Stage | Material to inspect | Meaning of a favorable recommendation |
-| --- | --- | --- |
-| Proposal | Question, closest prior art, method, assumptions, falsifiable hypotheses, executable experiment plan, resource estimates | Worth testing; novelty and expected benefits remain provisional |
-| Implementation | Proposal plus actual code, revision identifier, environment, tests, run records, known gaps | The implementation supports the stated design within tested limits |
-| Paper | Manuscript plus reproducible experiment records, baselines, uncertainty, analyses, limitations | Observed evidence supports the scoped claims; no real acceptance is implied |
+```text
+verified official rubric
+  → literature investigation
+  → insight-driven idea composition
+  → complete paper and hypothetical predictions
+  → three independent novelty adversaries
+  → author novelty response
+      ├─ conditional/fail: refresh literature → recompose → new paper → repeat
+      ├─ cap/abandonment: stop honestly
+      └─ three PASS verdicts: freeze formal submission
+  → 3–4 blind initial reviews (all must return)
+  → individual author rebuttal
+  → independent reviewer reassessment
+  → additional venue-authorized exchanges, if applicable
+  → final justification when the configured exchanges require it
+  → independent AC meta-review
+  → independent SAC or labeled internal senior audit
+      ├─ eligible acceptance streak: simulated acceptance readiness
+      ├─ round cap: budget exhausted, acceptance not established
+      └─ research revision → next complete round
+```
 
-Do not advance stages because scores improve. Implementation requires actual code
-and verification; paper review requires actual results. Missing empirical evidence
-in a proposal can be a planned validation requirement rather than an automatic
-rejection, but a plan never resolves a claim that an effect has been demonstrated.
+Each round contains the complete paper architecture, predictions, evidence,
+novelty reports and response, formal reviews, rebuttal, discussion, chairs and
+research transition. Failed novelty attempts are retained inside that round;
+formal review cannot run early. Failure does not become a hidden positive vote.
 
-## Freeze the submission
+## Scientific contribution and submission
 
-Create `reviews/round-01/submission-manifest.md` for the first round, incrementing
-the number thereafter. Record the idea/version, review stage, evidence cutoff,
-reviewer roster and coverage, rubric, constraints, and exact packet file paths.
-Use immutable snapshots or content hashes to identify what was reviewed. Include
-the proposal, references and evidence ledger, experiment plan, limitations, and
-any code/results appropriate to the stage. Mark unavailable material explicitly.
+Prefer level-3/4 scientific contributions. Record the entire insight chain,
+precise closest-work differences and conditions that would falsify the proposal.
+A complete submission includes all sections in [research.md](research.md), a
+hypothesis-linked experiment design and plausible, qualified predictions. Do not
+review an abstract or substitute a section-writing plan for the actual paper.
 
-Do not edit this packet during the round. Place rebuttal additions in separate,
-versioned evidence files and make them available to every reviewer. A material
-method or claim change becomes the next submission version and round, not a
-silent replacement. Start each new round by checking for newly relevant work.
+Freeze a content-addressed version after the novelty response. Reviews and
+rebuttals reference that version. New derivations/evidence may be discussed, but
+material mechanism or claim changes belong in the next immutable submission.
+Initial reviewers receive the common frozen packet without peers or old scores.
 
-## Round sequence
+## Exact official review form
 
-1. **Independent review.** Dispatch three or four separate reviewers using
-   [roles.md](roles.md). Collect every initial report before sharing any of them.
-   Preserve incomplete or failed assignments; retry within budget or disclose
-   that the round is incomplete. The author must not fabricate missing reports.
-2. **AC discussion before rebuttal.** The independent AC reads the reports,
-   reconciles duplicate concerns without erasing their origins, and identifies
-   decisive disagreements. Reviewers answer targeted questions and may revise
-   positions with reasons. Save actual exchanges in
-   `discussion-before-rebuttal.md`, including a provisional AC synthesis.
-3. **Author rebuttal.** Save `rebuttals/round-01.md`. Respond to every critical
-   and major concern, including disagreement introduced during discussion. Use
-   the table below; acknowledge missing evidence and reject unsupported demands
-   with reasons. Proposed experiments are not completed experiments.
-4. **Discussion after rebuttal.** Send the complete rebuttal and new evidence
-   to all reviewers. Each writes `reviewer-R1-final.md` (and equivalents), listing
-   resolved and unresolved concerns, evidence assessed, final scores, confidence,
-   and reasons for each score change or unchanged decisive objection. The AC
-   directs a focused exchange about remaining conflicts; save actual replies in
-   `discussion-after-rebuttal.md`. Disagreement may remain.
-5. **AC meta-review.** Write `ac-meta-review.md`: contribution and strengths,
-   decisive weaknesses, agreements, minority objections, rebuttal assessment,
-   remaining issues, and a reasoned recommendation. Explain any difference from
-   reviewer scores; never substitute a numerical average for judgment.
-6. **SAC assessment.** A separate SAC inspects the full record, audits review
-   quality and unresolved flaws, and writes `sac-assessment.md`. Record whether
-   the process was complete, whether the AC handled disputes fairly, the current
-   stage, critical remaining issues, confidence, decision, and next action.
-7. **Revision or termination.** Apply the SAC decision and evidence-based issue
-   updates. Save a new proposal version and change log before another round.
-   Preserve reports and score history; do not rewrite earlier judgments.
+Read [conference.md](conference.md). Required official dimensions, score options,
+labels, confidence and questions come from the source-linked rubric. No universal
+internal scoring fallback exists. A categorical recommendation need not be a
+number; numeric scales can be noncontiguous and have arbitrary ranges.
 
-Files other than the rebuttal above live under the current `reviews/round-NN/`.
+Every answered choice field needs an evidence-based justification. Initial and
+updated scores remain distinct; do not normalize them or compute an overall
+recommendation by averaging dimensions. A high confidence score does not replace
+supporting evidence. Additional issue assessments are internal, not new official
+scoring fields. Preserve exact score meanings across rounds and target changes.
 
-## Reviewer report contract
+## Rebuttal and discussion
 
-Every initial report states role, round, version, stage, rubric, and evidence
-actually inspected. Include:
+Use stable concern IDs and one response per major/critical objection, including
+carried novelty concerns. Each response records the answer, evidence, concrete
+change, remaining uncertainty and research action. A fundamental objection cannot
+be dismissed with revised motivation or additional benchmark plans. Acknowledge
+valid limitations and preserve unresolved concerns.
 
-- Summary of the problem, mechanism, and claimed contribution.
-- Strengths; critical/major weaknesses; moderate/minor concerns.
-- Novelty against named closest work, technical soundness, experimental adequacy,
-  significance, and clarity, with depth guided by the assigned role.
-- Questions for the author and required changes or decisive experiments.
-- Stable issue IDs, severity, supporting sources or reasoning, and a concrete
-  resolution criterion. Distinguish an observed contradiction from uncertainty.
-- Scores, recommendation, confidence, remaining uncertainty, and what evidence
-  would change the recommendation.
+Enforce the actual configured exchange/character limits. The engine separates
+bounded discussion comments from updated official score forms. Author response
+length includes its summary and individual response content. Do not use hidden
+metadata to circumvent the venue's prose limits.
 
-Use IDs such as `R01-R2-01` (round 1, reviewer 2, concern 1). A carried concern
-keeps its original ID; link duplicates rather than silently deleting them.
-Assign AC/SAC/red-team findings similarly, for example `R01-SAC-01`.
+Reviewers individually reassess every original concern with evidence and reasons.
+They may keep or change scores; favorable movement is never required. New concerns
+are retained through later exchanges and chair adjudication. A proposed experiment
+remains unperformed. Reviewers may inspect peer reports only after initial review
+is complete. Batched initial reassessment packets remain fixed while peers return.
 
-## Rubric and score history
+## Issue disposition and chair authority
 
-Default to **idea-shaokao internal rubric v1** below and label it unofficial.
-When the user requests venue-specific assessment or it materially helps the task,
-use the venue's official rubric only after verifying the venue/year and current
-public instructions. Save the source, access date, scale anchors, and applicable
-stage. If unavailable, retain the internal rubric and disclose the gap. Do not
-infer a current venue scale from memory.
+Concern severity is `critical`, `major`, `moderate`, or `minor`; `fundamental`
+marks an objection to central novelty/hypothesis/significance. Each records claim,
+evidence and a concrete resolution criterion. Carry a concern's ID/content/severity
+unchanged; create a linked new concern for a substantively different objection.
 
-| Dimension | Internal scale |
-| --- | --- |
-| Novelty, technical quality, experimental quality, significance, clarity | 1: serious deficiency; 2: weak; 3: mixed; 4: strong; 5: exceptional |
-| Overall recommendation | 1–2: strongly unfavorable; 3–4: unfavorable; 5–6: borderline; 7–8: favorable; 9–10: strongly favorable |
-| Reviewer confidence | 1: little relevant evidence/expertise; 2: limited; 3: moderate; 4: substantial; 5: deep and directly supported |
+Authors propose responses. Reviewers and chairs assess resolution. Chairs must
+adjudicate every concern, including major novelty concerns and later discussion
+findings, as resolved/open/pending with evidence. They cannot ignore minority
+objections or blindly average scores. The SAC audits the AC reasoning independently.
 
-At proposal stage, experimental quality measures the plan, not obtained results;
-overall favorability means worth investigating. A high-confidence review still
-requires supporting evidence. Use `not assessable` rather than a fabricated score
-when material is missing. Do not compare numeric scores across different rubrics
-or stages as if their meanings were unchanged.
+Decision labels and authority come from the verified procedure. Extra senior
+readiness stages and their options are explicitly internal. An official final
+conference decision is never made by this framework. Strong-acceptance cases must
+agree with the chair's declared acceptance option, not a reject/revise verdict.
+AC/SAC disagreement is preserved and prevents acceptance eligibility.
 
-Track reviewer, round, stage, rubric, initial score, final score, confidence, and
-reason for change in `reviews/score-history.md`. Score movement is diagnostic,
-not an optimization target or convergence criterion.
+## Research-level revision
 
-## Rebuttal and issue closure
+- **Strong acceptance potential:** every readiness criterion is evidenced, both
+  chairs support acceptance, major/critical concerns are resolved consistently.
+- **Borderline / weak acceptance:** identify the highest-impact unresolved issue
+  and revise the scientific proposal.
+- **Addressable rejection:** redesign methodology, theory, experiment strategy,
+  predictions or positioning around the actual concern IDs.
+- **Fundamental failure:** change the core insight/hypothesis, recompose, or abandon;
+  do not keep polishing an already-known or invalid contribution.
 
-Rebuttal table:
+Revision records describe insight/method changes, removed claims, changed
+predictions, motivating concern IDs and surviving uncertainty. A verification-only
+round is allowed only after a fully acceptance-eligible assessment. Literature,
+complete paper, novelty and formal review still repeat. It does not manufacture
+scientific changes to satisfy a round counter.
 
-| Issue ID / reviewer | Concern | Author response | Evidence | Change made or planned | Remaining uncertainty |
-| --- | --- | --- | --- | --- | --- |
+## Convergence and honest stopping
 
-Maintain `issue_tracker.md` with ID, source, claim, severity, resolution criterion,
-owner, response, evidence path/source, status, and reviewer/chair disposition.
+Both chairs must substantiate each criterion: defensible novelty, meaningful
+insight, venue significance, technical soundness, falsifiable experiments,
+plausible predictions and no fatal concerns. Both must resolve all major/critical
+concerns with evidence and support acceptance. No dimension-score threshold is
+used. By default, require two consecutive eligible rounds with the same rubric
+and core insight/hypothesis/mechanism; configure this explicitly in the budget.
 
-| Severity | Meaning |
-| --- | --- |
-| Critical | Threatens the core novelty, validity, feasibility, or ability to test the idea |
-| Major | Substantially weakens contribution, correctness, or evidential credibility |
-| Moderate | Material improvement that does not invalidate the central contribution |
-| Minor | Presentation or local detail |
+Repeated novelty failure stops at the configured stress cap. Unresolved critical
+issues, incomplete roles, contradictory chair decisions and unavailable official
+scales cannot converge. At the research-round cap, stop with `budget_exhausted`
+and explain unresolved scientific weaknesses. A new target or restart cannot
+reset the budget. Preserve all rejected versions and reusable lessons.
 
-Use statuses `Open`, `Partially resolved`, `Pending experiment`, `Resolved`, or
-`Rejected with justification`. Closure requires the resolution criterion to be
-met and reviewer or chair verification. Rejecting a concern requires a recorded
-reason and AC/SAC assessment, not the author's unilateral dismissal. A promised
-experiment remains pending; an inaccessible source cannot close a novelty dispute.
-Do not downgrade severity or narrow claims merely to hide a surviving fatal flaw.
-Legitimate scope changes must be explicit and re-reviewed.
-
-## Convergence and stopping
-
-The default ceiling is four full rounds for one idea; honor a smaller user budget.
-Rebuttal and discussion are parts of a round, not extra review rounds. A single
-round can support a preliminary next step, but cannot establish convergence.
-
-Declare **converged at the stated stage** only when all are true:
-
-- Two consecutive completed independent rounds on the same core idea and stage
-  produced no new critical issue. A fundamental redesign resets this streak.
-- No critical issue remains unresolved, partially resolved, or pending experiment;
-  AC and SAC substantiate that no fatal novelty or technical flaw remains.
-- Core claims are scoped to the available evidence, hypotheses have decisive
-  tests, the essential experiments are adequate, and implementation is feasible.
-- Major objections have evidence-based dispositions; remaining uncertainties and
-  disagreements are preserved with owners and next actions.
-
-At proposal stage, empirical unknowns can remain explicitly unvalidated when they
-do not prevent a sound research plan. Their existence still limits any claim of
-paper readiness. Convergence does not require unanimous favorable scores.
-
-The SAC chooses a recommendation after each round:
-
-| Recommendation | Consequence |
-| --- | --- |
-| Proceed | Advance to the next concrete stage or experiment, with remaining conditions; state whether convergence was actually met |
-| Revise | Address identified flaws within the remaining budget; specify the substantive change needed |
-| Restart | The current formulation lacks a defensible path; preserve rejected candidates and recommend a new ideation cycle, without automatically starting it |
-| Kill | Stop this idea, record the decisive evidence and reusable lessons |
-
-Consider early Restart/Kill when prior work covers the contribution, an essential
-assumption fails, feasibility or compute requirements defeat the constraints, no
-experiment can test the claim, or substantive revisions do not remove fatal flaws.
-Do not spend remaining rounds to manufacture agreement.
-
-At the round/resource ceiling, finish with a candid verdict and unresolved issues.
-If unconverged, record `not_converged` and specify a fundamental revision, Restart,
-or Kill. A fundamental revision is a proposed next action, not permission to silently reset the budget
-and continue indefinitely. If tools or evidence prevent completion, report the
-incomplete stage and resumable next step without inventing a SAC assessment.
+A simulated Accept means competitiveness under the reconstructed process, not
+experimental validation, real submission readiness, or guaranteed acceptance.

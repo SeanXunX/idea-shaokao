@@ -1,3 +1,11 @@
+# Legacy schema-1 report contract
+
+This document applies only to existing `state.json` / manually indexed schema-1
+workspaces. New research uses the journal-backed schema-2 engine and the three-view
+report in [workspace.md](workspace.md) and [deliverables.md](deliverables.md). Legacy
+rendering preserves source fidelity and annotations; it does not imply that new
+scientific gates occurred.
+
 # Generate the final review interface
 
 Run this finalization step for every persisted research run, including a Kill,

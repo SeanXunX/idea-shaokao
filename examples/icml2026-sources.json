@@ -1,0 +1,12 @@
+{
+  "conference": {"name": "ICML", "year": 2026, "track": "Main Track"},
+  "official_domains": ["icml.cc", "api2.openreview.net"],
+  "sources": [
+    {"id": "reviewer", "kind": "reviewer_guidelines_and_form", "year": 2026, "track": "Main Track", "url": "https://icml.cc/Conferences/2026/ReviewerInstructions"},
+    {"id": "openreview", "kind": "review_form", "year": 2026, "track": "Main Track", "url": "https://api2.openreview.net/invitations?id=ICML.cc/2026/Conference/-/Official_Review"},
+    {"id": "ac", "kind": "ac_guidelines", "year": 2026, "track": "Main Track", "url": "https://icml.cc/Conferences/2026/AreaChairInstructions"},
+    {"id": "sac", "kind": "sac_guidelines", "year": 2026, "track": "Main Track", "url": "https://icml.cc/Conferences/2026/SeniorAreaChairInstructions"},
+    {"id": "author", "kind": "author_response_guidelines", "year": 2026, "track": "Main Track", "url": "https://icml.cc/Conferences/2026/AuthorInstructions"},
+    {"id": "cfp", "kind": "call_for_papers", "year": 2026, "track": "Main Track", "url": "https://icml.cc/Conferences/2026/CallForPapers"}
+  ]
+}

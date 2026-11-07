@@ -377,3 +377,91 @@ dd { margin:0; min-width:0 }
 .rubric-details summary { cursor:pointer; width:fit-content; color:var(--accent) }
 .rubric-details p { display:grid; grid-template-columns:80px minmax(0,1fr); gap:16px; margin-top:10px; padding:10px 14px; border:1px solid var(--line); border-radius:5px; line-height:1.7 }
 .rubric-details strong { color:var(--text) }
+/* Research-to-acceptance interface: paper reading and threaded peer review. */
+body:has(.research-overview),body:has(.process-record),body:has(.academic-paper) { --accent:#8c2332 }
+.research-overview { max-width:960px; margin:0 auto }
+.research-overview section { margin:26px 0 }
+.research-overview h2 { font-size:17px; margin-bottom:8px }
+.research-overview p { line-height:1.85 }
+.overview-abstract { font-size:17px; margin:14px 0 32px }
+.summary-pair { display:grid; grid-template-columns:1fr 1fr; gap:36px; border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+.outcome-panel { padding:22px; border:1px solid var(--line); background:var(--subtle); margin-top:32px; border-radius:4px }
+.outcome-panel strong { font-size:16px; display:block; margin:8px 0 }
+.outcome-panel p { margin-top:8px }
+.overview-actions { display:flex; flex-wrap:wrap; gap:12px; margin:26px 0 }
+.paper-title { text-align:center; margin:8px auto 38px; max-width:900px }
+.paper-title h1 { font-family:Georgia,"Times New Roman",serif; font-size:34px; line-height:1.35; margin:18px 0 }
+.paper-title .record-links { justify-content:center }
+.academic-paper { min-width:0; font:17px/1.85 Georgia,"Times New Roman",serif }
+.academic-section { margin-bottom:34px; scroll-margin-top:24px }
+.academic-section h2 { font-family:var(--body-font); font-size:20px; border-bottom:1px solid var(--line); padding-bottom:10px; margin-bottom:17px }
+.academic-prose p+p,.record-section p+p { margin-top:14px }
+.academic-prose h4 { margin:18px 0 10px }
+.paper-toc { display:block; font-size:12px; padding:4px 0 }
+.paper-equation { white-space:pre-wrap; padding:16px; overflow-wrap:anywhere; background:var(--subtle); font-size:14px }
+.prediction-notice { font:500 13px/1.6 var(--body-font); color:#795b00; border-left:3px solid #b38900; background:#fff9e8; padding:12px; margin:18px 0 }
+.academic-paper table { font:13px/1.6 var(--body-font) }
+.experiment-appendix { font:14px/1.7 var(--body-font); border-top:1px solid var(--line); padding:20px 0 }
+.experiment-appendix section { margin-top:24px }
+.process-record { min-width:0 }
+.process-stage { margin:32px 0 }
+.process-stage>h2 { font-size:19px; margin-bottom:14px }
+.process-stage>h3 { margin:20px 0 12px }
+.review-record { background:#fff; border:1px solid var(--line); border-radius:4px; margin:14px 0; overflow:hidden }
+.review-record>summary { cursor:pointer; padding:16px 20px; background:#fafbfc; list-style:none }
+.review-record>summary::before { content:'▸'; float:right; color:var(--muted) }
+.review-record[open]>summary::before { content:'▾' }
+.record-heading { display:flex; align-items:center; gap:12px; margin-right:20px }
+.record-heading h3,.review-record summary>h3 { font-size:15px }
+.record-role { font-weight:600; color:var(--accent); font-size:12px; flex-shrink:0 }
+.record-metadata { display:flex; flex-wrap:wrap; gap:5px 14px; color:var(--muted); font-size:11px; margin-top:10px }
+.record-score-line { display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:8px }
+.record-score { font-size:12px; max-width:100%; line-height:1.6 }
+.record-score strong { margin-right:5px }
+.review-record-body { border-top:1px solid var(--line); padding:22px; overflow-wrap:anywhere }
+.review-fields { display:block }
+.review-fields dt { color:var(--text); font-weight:600; font-size:14px; margin:20px 0 7px }
+.review-fields dt:first-child { margin-top:0 }
+.review-fields dt small { display:block; color:var(--muted); font-size:10px; font-weight:400; margin-top:2px }
+.review-fields dd { font-size:14px; line-height:1.8 }
+.review-fields dd p+p { margin-top:10px }
+.score-justification { border-left:2px solid var(--line); padding-left:12px; margin-top:10px; color:var(--muted) }
+.record-section { margin:18px 0 }
+.record-section h4 { text-transform:capitalize; font-size:13px; margin-bottom:6px }
+.record-section p { font-size:14px; line-height:1.8 }
+.record-novelty { border-left:3px solid #a2662e }
+.record-author { border-left:3px solid #457c9e }
+.record-chair { border-left:3px solid #785a86 }
+.review-concerns section { padding:18px 0; border-top:1px solid var(--line) }
+.review-concerns p { margin-top:8px; font-size:14px }
+.response-thread { margin:20px 0 0 8px; padding-left:22px; border-left:2px solid #cad9e3 }
+.response-comment+.response-comment { margin-top:24px; padding-top:20px; border-top:1px solid var(--line) }
+.response-comment p { font-size:14px; margin:8px 0 }
+.novelty-iteration { padding:14px; border:1px solid var(--line); border-radius:4px; margin-bottom:16px }
+.novelty-iteration>summary { cursor:pointer; font-weight:500; margin-bottom:10px }
+.pending-record { border:1px dashed var(--line); padding:16px 20px; margin:14px 0; border-radius:4px }
+.pending-record h3 { color:var(--muted); font-size:14px }
+.pending-record .missing { margin:8px 0 0 }
+.rubric-details { padding:16px; margin:20px 0; font-size:13px }
+.rubric-details>summary { cursor:pointer }
+.rubric-details h4 { margin:18px 0 10px }
+.rubric-details p { margin:12px 0 }
+.compare-link { display:block; margin:10px 0 22px }
+.disagreement { padding:14px; border-left:3px solid #aa7200; background:#fff9e8 }
+.version-comparison { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px; margin:24px 0 }
+.version-comparison>article { min-width:0; font:15px/1.8 Georgia,serif }
+.version-comparison>article+article { padding-left:28px; border-left:1px solid var(--line) }
+.version-comparison header { margin-bottom:26px }
+.comparison-summary { margin:20px 0; max-width:960px }
+@media(max-width:800px) { .summary-pair,.version-comparison { grid-template-columns:1fr; gap:0 }.version-comparison>article+article { padding:24px 0 0; border-left:0; border-top:1px solid var(--line) }.paper-title h1 { font-size:27px }.academic-paper { font-size:16px }.record-heading { display:block }.record-role { display:block; margin-bottom:5px }.review-record>summary,.review-record-body { padding:15px }.response-thread { padding-left:14px; margin-left:0 } }
+.research-mode { --accent:#8c2332 }
+.research-mode .rubric-details p { display:block; padding:0; border:0; margin:12px 0 }
+.research-mode .round-heading>.ui-button { flex-shrink:0; white-space:nowrap }
+.math-display { display:block; max-width:100%; overflow-x:auto; padding:8px 0 }
+.math-inline { white-space:nowrap }
+.bibliography-entry { margin:14px 0; font-size:14px }
+@media(max-width:800px) {
+  .research-mode .reading-nav .round-link { flex-direction:column; align-items:flex-start; gap:3px }
+  .research-mode .round-heading { flex-wrap:wrap }
+  .research-mode .round-link small { overflow-wrap:normal }
+}

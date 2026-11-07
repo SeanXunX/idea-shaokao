@@ -1,0 +1,74 @@
+{
+  "version": "ICML-2026-main-official-instructions-v1",
+  "status": "verified",
+  "form_basis": "official_form_instructions",
+  "form_extraction": {
+    "source_id": "reviewer",
+    "start": "Main Track Reviewer Form Instructions",
+    "end": "Position Paper Reviewer Form Instructions"
+  },
+  "overall_field": "overall_recommendation",
+  "confidence_field": "confidence",
+  "historical": false,
+  "uncertainties": [
+    "The public OpenReview invitation may require authentication. The form is reconstructed from official form instructions, not an authenticated invitation schema.",
+    "Official required/optional status and unnumbered ethics subfields cannot be inferred from prose. Guideline headings are required by the internal completeness contract; official_required remains null.",
+    "The SAC calibration role is official; the extra per-paper final readiness audit is an internal simulation and does not replace the program chairs' decision.",
+    "These are instructions for a retrospective software validation case. Refresh sources for every real project; do not infer future-year rules from this example."
+  ],
+  "differences_previous_year": "Not verified against the previous-year form; current instructions explicitly require Final Justification (Post-Rebuttal). No broader comparison is claimed.",
+  "procedures": {
+    "exchanges": [
+      {
+        "role": "author",
+        "label": "Author rebuttal",
+        "max_chars": 5000,
+        "source_id": "reviewer",
+        "quote": "There are three rounds in the author-reviewer discussion (rebuttal, reviewer follow-up, author follow-up), each limited to 5000 characters."
+      },
+      {
+        "role": "reviewers",
+        "label": "Reviewer follow-up",
+        "max_chars": 5000,
+        "source_id": "reviewer",
+        "quote": "There are three rounds in the author-reviewer discussion (rebuttal, reviewer follow-up, author follow-up), each limited to 5000 characters."
+      },
+      {
+        "role": "author",
+        "label": "Author follow-up",
+        "max_chars": 5000,
+        "source_id": "reviewer",
+        "quote": "There are three rounds in the author-reviewer discussion (rebuttal, reviewer follow-up, author follow-up), each limited to 5000 characters."
+      }
+    ],
+    "ac": {
+      "summary": "Read reviews and discussions, assess their quality, and make an accept/reject recommendation with an informed meta-review; do not average numerical scores.",
+      "scope": "official_simulation",
+      "source_id": "ac",
+      "quote": "Carefully read reviews and discussions to write informed meta-reviews and make accept/reject recommendations.",
+      "decision_options": [
+        "accept",
+        "reject"
+      ],
+      "acceptance_options": [
+        "accept"
+      ]
+    },
+    "sac": {
+      "summary": "Internal per-paper senior readiness audit, informed by the official SAC duties of AC oversight, calibration, borderline cases and discussion with PCs. It is not an official final conference decision.",
+      "scope": "internal_simulation",
+      "source_id": "sac",
+      "quote": "During the final decision-making phase, SACs discuss the proposed decisions with the program chairs (PCs).",
+      "decision_options": [],
+      "internal_decision_options": [
+        "Accept",
+        "Revise",
+        "Restart",
+        "Abandon"
+      ],
+      "acceptance_options": [
+        "Accept"
+      ]
+    }
+  }
+}
