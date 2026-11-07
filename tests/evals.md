@@ -19,7 +19,7 @@ are in `fixtures/`; all research/agent data is explicitly synthetic.
 | Multi-round substantive revision and convergence/failure | Full two-round test, acceptance streak, fatal overlap and budget exhaustion |
 | Immutable cross-round history and resume | Replay equality, stale response, duplicate report, concurrent commit, cache recovery and chain tamper tests |
 | Unattended orchestration | Fresh-process fixture adapter; injected command failure resumes same task |
-| Full UI | New browser suite: paper, exact scores, threaded responses, side-by-side revisions, sources, annotations, four viewports, offline behavior |
+| Full UI | New browser suite: paper, final experiment specifications/predictions, searchable related-paper links and comparisons, exact scores, threaded responses, side-by-side revisions, sources, annotations, four viewports, offline behavior |
 | Existing workspaces remain usable | Existing 26 Python cases and legacy browser suite retained |
 
 A separate forward-testing agent exercised native packet/submit and interruption

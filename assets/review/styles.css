@@ -465,3 +465,53 @@ body:has(.research-overview),body:has(.process-record),body:has(.academic-paper)
   .research-mode .round-heading { flex-wrap:wrap }
   .research-mode .round-link small { overflow-wrap:normal }
 }
+/* Final experiment plan and evidence-linked related papers. */
+.research-mode .section-nav { overflow-x:auto; gap:24px }
+.research-mode .section-link { flex-shrink:0 }
+.plan-version { display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; padding-bottom:20px; margin-bottom:24px; border-bottom:1px solid var(--line); font-size:13px }
+.experiment-thesis { margin-bottom:30px; max-width:1000px }
+.experiment-thesis h2 { font-size:17px; margin-bottom:8px }
+.experiment-thesis p { line-height:1.85 }
+.experiment-thesis details { margin-top:16px }
+.experiment-thesis summary,.paper-evidence-details summary { cursor:pointer; color:var(--accent) }
+.experiment-thesis details p { margin-top:12px }
+.experiment-plan { min-width:0 }
+.experiment-nav .paper-toc { margin-bottom:8px }
+.experiment-card,.literature-card { border:1px solid var(--line); border-radius:5px; margin-bottom:26px; background:var(--surface); min-width:0; scroll-margin-top:24px }
+.experiment-card>header { padding:22px 24px; background:var(--subtle); border-bottom:1px solid var(--line) }
+.experiment-card-label { font:12px/1.6 var(--mono-font); color:var(--muted); margin-bottom:8px }
+.experiment-card h2,.literature-card h2 { font-size:20px; line-height:1.5 }
+.experiment-card>header h3 { font-size:13px; margin:16px 0 6px }
+.experiment-card>header p { font-size:14px; line-height:1.8 }
+.experiment-plan-fields { margin:0; padding:0 24px }
+.experiment-plan-fields>div { display:grid; grid-template-columns:165px minmax(0,1fr); gap:22px; padding:18px 0; border-bottom:1px solid var(--line) }
+.experiment-plan-fields dt { font-size:13px; font-weight:600; color:var(--text) }
+.experiment-plan-fields dd { line-height:1.85 }
+.experiment-plan-fields dd p+p { margin-top:12px }
+.experiment-predictions { padding:24px }
+.experiment-predictions h3 { font-size:16px }
+.prediction-papers { margin-top:18px }
+.prediction-papers h4 { font-size:13px; margin-bottom:8px }
+.prediction-papers>a { display:block; margin-top:6px }
+.experiment-card-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 20px; padding:15px 24px; border-top:1px solid var(--line); font-size:12px }
+.literature-controls { display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:20px; margin:25px 0 12px }
+.literature-controls label { display:block; font-size:12px; font-weight:600; margin-bottom:7px }
+.literature-controls input,.literature-controls select { width:100%; min-height:39px; padding:8px 12px; border:1px solid var(--line); border-radius:5px; background:var(--surface) }
+.literature-count { font-size:12px; color:var(--muted); margin:14px 0 20px }
+.literature-card>header,.paper-relation,.paper-evidence-details { padding:22px 24px }
+.literature-card>header { border-bottom:1px solid var(--line) }
+.literature-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px }
+.paper-byline { color:var(--muted); margin:9px 0; font-size:13px }
+.paper-primary-url { font-size:12px; overflow-wrap:anywhere }
+.paper-relation h3 { font-size:14px; margin-bottom:8px }
+.paper-relation h3:not(:first-child) { margin-top:20px }
+.paper-relation p { line-height:1.85 }
+.paper-evidence-details { padding-top:0; font-size:13px }
+.paper-evidence-details>.review-fields { margin-top:20px }
+.paper-claim-links { font-size:12px; color:var(--muted); padding:0 24px 18px }
+@media(max-width:640px) {
+  .research-mode .section-nav { gap:22px }
+  .literature-controls { grid-template-columns:1fr; gap:12px }
+  .experiment-plan-fields>div { grid-template-columns:1fr; gap:8px }
+  .experiment-card>header,.experiment-plan-fields,.experiment-predictions,.experiment-card-footer,.literature-card>header,.paper-relation,.paper-evidence-details { padding-left:16px; padding-right:16px }
+}

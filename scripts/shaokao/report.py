@@ -26,6 +26,36 @@ def paper_markdown(paper, literature=None):
     return output
 
 
+def related_papers(attempt):
+    """Use the selected version's evidence, including independent discoveries."""
+    if not attempt:
+        return []
+    records = [(row, attempt['literature']['source_id'], 'Literature investigation')
+               for row in attempt['literature']['result']['papers']]
+    for role, report in attempt['stress'].items():
+        records += [(row, report['source_id'], role.replace('_', ' ').title())
+                    for row in report['result'].get('discovered_papers', [])]
+    catalog = {}
+    closest = set(attempt['literature']['result']['closest_ids'])
+    for row, source_id, origin in records:
+        key = (row['url'], row['version'])
+        entry = catalog.setdefault(key, dict(row, ids=[], sources=[], origins=[]))
+        if row['id'] not in entry['ids']:
+            entry['ids'].append(row['id'])
+        if source_id not in entry['sources']:
+            entry['sources'].append(source_id)
+        entry['origins'].append({'role': origin, 'source_id': source_id, 'evidence_id': row['id']})
+    for entry in catalog.values():
+        ids = set(entry['ids'])
+        entry['closest'] = bool(ids & closest)
+        entry['claim_ids'] = [row['id'] for row in attempt['idea']['result']['novelty_claims']
+                              if ids.intersection(row['evidence_ids'])]
+        entry['prediction_ids'] = [row['id'] for row in attempt['paper']['result']['predictions']
+                                   if ids.intersection(row['evidence_ids'])]
+        entry['target_id'] = 'literature:' + attempt['paper_id'] + ':' + C.digest([entry['url'], entry['version']])[:16]
+    return sorted(catalog.values(), key=lambda row: (not row['closest'], -row['year'], row['title']))
+
+
 def build_data(store):
     project = store.project
     sources, lookup = {}, {}
@@ -88,15 +118,27 @@ def build_data(store):
          'paperStatus': 'Submitted proposal' if selected_attempt and selected_attempt['paper_id'] in submitted_ids else 'Unsubmitted proposal',
          'sources': source_ids, 'testCase': project['config']['test_mode'], 'workspaceId': project['id'],
          'nextAction': ', '.join(t['id'] for t in pending(project)) or 'Review the final assessment and remaining scientific uncertainty.'}
-    for key in ('overview', 'paper', 'process'):
+    for key in ('overview', 'paper', 'process', 'experiments', 'literature'):
         targets['section:' + key] = {'title': key.title(), 'sources': source_ids}
     for r, a in papers:
         targets['paper:' + a['paper_id']] = {'title': a['paper']['result']['title'], 'sources': [a['paper']['source_id']],
                                             'version': a['paper_id'], 'round': r['number'], 'stage': 'proposal'}
+    catalog = related_papers(selected_attempt)
+    if selected_attempt:
+        context = {'version': selected_attempt['paper_id'], 'round': selected_round['number'], 'stage': 'proposal'}
+        targets['section:experiments'] = dict(context, title='Final experiment plan', sources=[selected_attempt['paper']['source_id']])
+        for experiment in selected_attempt['paper']['result']['experiments']:
+            targets['experiment:' + selected_attempt['paper_id'] + ':' + experiment['id']] = dict(
+                context, title=experiment['id'] + ' · ' + experiment['hypothesis'], sources=[selected_attempt['paper']['source_id']])
+        targets['section:literature'] = dict(context, title='Related papers', sources=list(dict.fromkeys(
+            [selected_attempt['literature']['source_id']] + [ref for row in catalog for ref in row['sources']])))
+        for row in catalog:
+            targets[row['target_id']] = dict(context, title=row['title'], sources=row['sources'])
     rubric = project.get('rubric')
     return {'schema_version': 2, 'project': p, 'sources': sources, 'targets': targets,
             'research': {'conference': project['conference'], 'rounds': rounds,
                          'selected_paper_id': selected_attempt['paper_id'] if selected_attempt else None,
+                         'related_papers': catalog,
                          'rubric': {key: value for key, value in rubric.items() if key != 'sources'} if rubric else None,
                          'failures': project['failures'], 'pending': pending(project), 'config': project['config']}}
 

@@ -408,6 +408,55 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(Store(self.root).project,self.store.project)
 
 
+    def test_final_plan_and_related_papers_retain_versioned_evidence_and_discoveries(self):
+        self.advance('revision')
+        self.advance('paper')
+        paper=response_for(self.store)
+        paper['result']['predictions'][0]['evidence_ids']=['P-LRU']
+        self.store.submit(paper)
+        report=response_for(self.store)
+        existing=deepcopy(current(self.store.project)['literature']['result']['papers'][0])
+        alias=dict(existing,id='P-ALIAS')
+        discovered=dict(existing,id='P-DISCOVERED',title='Synthetic concurrent-work fixture',url='https://example.org/papers/concurrent-fixture')
+        report['result']['discovered_papers']=[alias,discovered]
+        self.store.submit(report)
+        drive(self.store)
+        data=build_data(self.store)
+        catalog=data['research']['related_papers']
+        self.assertEqual(len(catalog),2)
+        closest=catalog[0]
+        self.assertTrue(closest['closest'])
+        self.assertEqual(closest['ids'],['P-LRU','P-ALIAS'])
+        self.assertEqual(closest['claim_ids'],['H01'])
+        self.assertEqual(closest['prediction_ids'],['P01'])
+        self.assertEqual(len(closest['sources']),2)
+        self.assertEqual(catalog[1]['id'],'P-DISCOVERED')
+        self.assertFalse(catalog[1]['closest'])
+        for row in catalog:
+            target=data['targets'][row['target_id']]
+            self.assertEqual(target['version'],data['research']['selected_paper_id'])
+            self.assertEqual(target['round'],2)
+            for source_id in row['sources']:
+                self.assertIn(source_id,data['sources'])
+        experiment=data['targets']['experiment:round-02.paper-01:E01']
+        self.assertEqual(experiment['version'],'round-02.paper-01')
+        self.assertEqual(experiment['round'],2)
+        self.assertEqual(data['targets']['section:experiments']['sources'],experiment['sources'])
+
+    def test_incomplete_run_has_no_fabricated_final_plan_or_related_papers(self):
+        data=build_data(self.store)
+        self.assertIsNone(data['research']['selected_paper_id'])
+        self.assertEqual(data['research']['related_papers'],[])
+        self.assertFalse(any(key.startswith('experiment:') for key in data['targets']))
+        self.advance('revision')
+        submitted=self.store.project['rounds'][0]['submission']['paper_id']
+        self.advance('stress')
+        data=build_data(self.store)
+        self.assertEqual(data['research']['selected_paper_id'],submitted)
+        self.assertTrue(all(data['targets'][row['target_id']]['round']==1 for row in data['research']['related_papers']))
+        self.assertNotIn('experiment:round-02.paper-01:E01',data['targets'])
+
+
 def hashlib_sha(raw):
     import hashlib
     return hashlib.sha256(raw).hexdigest()

@@ -8,6 +8,9 @@ UI.mount();
   const titles = {abstract:'Abstract',introduction:'Introduction',related_work:'Related Work',problem_formulation:'Problem Formulation',insight_hypothesis:'Key Insight and Research Hypothesis',proposed_method:'Proposed Method',technical_design:'Technical Design',theoretical_analysis:'Theoretical Analysis',experimental_design:'Experimental Design',expected_results:'Expected Results and Quantitative Predictions',expected_contributions:'Expected Contributions',limitations:'Limitations and Risks',conclusion:'Conclusion'};
   const allPapers = rounds.flatMap(r => r.iterations.filter(a => a.paper).map(a => ({...a,round:r.number})));
   const selected = allPapers.find(a => a.paper_id === research.selected_paper_id);
+  const sections = {overview:'Overview',paper:'Final Paper',experiments:'Experiment Plan',literature:'Related Papers',process:'Review Process'};
+  const literature = research.related_papers || [];
+  let literatureQuery = '', literatureFilter = 'all';
   const source = (id,label='Original record ↗') => `<button type="button" class="link-button" data-evidence="${e(id)}">${e(label)}</button>`;
   const missing = message => `<p class="missing">${e(message)}</p>`;
   const chip = value => `<span class="badge">${e(value)}</span>`;
@@ -47,11 +50,12 @@ UI.mount();
   function table(headers,rows) {
     return '<div class="table-scroll"><table class="simple-table"><thead><tr>'+headers.map(h=>'<th>'+e(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(c=>'<td>'+e(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
   }
-  function predictions(paper) {
-    return '<div class="prediction-notice">Hypothetical predictions · These are estimates to test, not completed measurements.</div>'+table(['Experiment / metric','Estimated baseline','Predicted range','Assumptions & rationale','Failure condition'],paper.predictions.map(row=>[
+  function predictionRows(rows) {
+    return '<div class="prediction-notice">Hypothetical predictions · These are estimates to test, not completed measurements.</div>'+table(['Experiment / metric','Estimated baseline','Predicted range','Assumptions & rationale','Failure condition'],rows.map(row=>[
       row.experiment_id+' · '+row.metric,row.baseline,row.estimate?row.estimate.join('–')+' '+row.unit:row.nonquantitative_reason,
       row.assumptions+' '+row.rationale+(row.unsupported_estimate_warning?' '+row.unsupported_estimate_warning:''),row.failure_condition]));
   }
+  const predictions = paper => predictionRows(paper.predictions);
   function paperBody(paper,idPrefix='paper') {
     return Object.entries(titles).map(([key,label])=>`<section class="academic-section" id="${e(idPrefix+'-'+key)}"><h2>${e(label)}</h2><div class="academic-prose">${prose(paper.sections[key])}</div>${key==='expected_results'?predictions(paper):''}</section>`).join('');
   }
@@ -70,6 +74,41 @@ UI.mount();
     if(!a){app.innerHTML=heading('Final Paper')+missing('No complete paper-level proposal has been recorded.');return}
     const paper=a.paper.result;
     app.innerHTML=`<header class="paper-title">${chip((a.paper_id===p.version?p.paperStatus:'Research proposal')+' · hypothetical results')}<h1>${e(paper.title)}</h1><p>${e(research.conference.name)} ${research.conference.year} · ${e(research.conference.track)} · ${e(a.paper_id)}</p><div class="record-links">${source(a.paper.source_id,'Frozen paper record ↗')}${notify('paper:'+a.paper_id)}</div></header><div class="reading-layout"><aside class="reading-nav" aria-label="Paper sections"><div class="nav-caption">Paper contents</div>${Object.entries(titles).map(([key,label])=>`<a class="paper-toc" href="#paper/${e(a.paper_id)}/${key}">${e(label)}</a>`).join('')}</aside><article class="academic-paper">${paperBody(paper)}<section class="academic-section"><h2>References and evidence limits</h2>${a.literature.result.papers.map(row=>`<p class="bibliography-entry">[${e(row.id)}] ${e(row.authors)} (${e(row.year)}). <a href="${e(row.url)}" target="_blank" rel="noopener noreferrer">${e(row.title)}</a>. Inspected: ${e(row.access_depth)}; ${e(row.locator)}.</p>`).join('')}</section><details class="experiment-appendix"><summary>Detailed experiment specifications</summary>${paper.experiments.map(x=>`<section><h3>${e(x.id)} · ${e(x.hypothesis)}</h3><dl class="review-fields">${Object.entries(x).filter(([key])=>key!=='id'&&key!=='hypothesis').map(([key,value])=>'<dt>'+e(key)+'</dt><dd>'+prose(value)+'</dd>').join('')}</dl></section>`).join('')}</details>${storage()}</article></div>`;
+  }
+  function experimentsView(experimentId) {
+    app.innerHTML=heading('Final Experiment Plan','The experiment plan from the selected paper version, with explicit tests, controls, resources, and hypothetical outcomes.');
+    if(!selected){app.innerHTML+=missing('No complete paper has been recorded, so a final experiment plan is not available yet.');return}
+    const paper=selected.paper.result;
+    const labels={data:'Data and splits',baselines:'Baselines',protocol:'Experimental protocol',metrics:'Evaluation metrics',ablations:'Controls and ablations',robustness:'Robustness and generalization',statistics:'Statistical analysis',reproducibility:'Reproducibility',resources:'Resources and execution',falsification:'Falsification and stopping criterion'};
+    app.innerHTML+=`<div class="plan-version"><span class="mono">${e(selected.paper_id)}</span>${chip('Planned · not executed')}<a href="#paper/${e(selected.paper_id)}/experimental_design">Read paper context →</a>${source(selected.paper.source_id,'Plan source ↗')}${notify('section:experiments')}</div><section class="experiment-thesis"><h2>Most important validation</h2><p>${e(paper.key_validation)}</p><details><summary>Experimental rationale</summary>${prose(paper.sections.experimental_design)}</details></section><div class="reading-layout"><aside class="reading-nav experiment-nav" aria-label="Planned experiments"><div class="nav-caption">Experiments</div>${paper.experiments.map(x=>`<a class="paper-toc" href="#experiments/${encodeURIComponent(x.id)}">${e(x.title?x.id+' · '+x.title:x.id)}</a>`).join('')}</aside><div class="experiment-plan">${paper.experiments.map(x=>{
+      const forecasts=paper.predictions.filter(row=>row.experiment_id===x.id);
+      const evidenceIds=new Set(forecasts.flatMap(row=>row.evidence_ids));
+      const papers=literature.filter(row=>row.ids.some(id=>evidenceIds.has(id)));
+      return `<article class="experiment-card" id="experiment-${e(x.id)}"><header><div class="experiment-card-label">${e(x.id)} · Planned experiment</div><h2>${e(x.title||'Experiment '+x.id)}</h2><h3>Hypothesis</h3>${prose(x.hypothesis)}</header><dl class="experiment-plan-fields">${Object.entries(labels).map(([key,label])=>`<div><dt>${e(label)}</dt><dd>${prose(x[key])}</dd></div>`).join('')}</dl><section class="experiment-predictions"><h3>Expected results and failure conditions</h3>${forecasts.length?predictionRows(forecasts):missing('No prediction is recorded for this experiment.')}${papers.length?`<div class="prediction-papers"><h4>Prediction evidence</h4>${papers.map(row=>`<a href="#literature/${encodeURIComponent(row.id)}">${e(row.title)} →</a>`).join('')}</div>`:''}</section><footer class="experiment-card-footer">${source(selected.paper.source_id,'Original experiment record ↗')}${notify('experiment:'+selected.paper_id+':'+x.id)}</footer></article>`;
+    }).join('')}${storage()}</div></div>`;
+    if(experimentId)requestAnimationFrame(()=>{
+      const target=document.getElementById('experiment-'+experimentId);
+      if(target){target.scrollIntoView({block:'start'});target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}
+    });
+  }
+  function literatureView(paperId) {
+    if(paperId){literatureQuery='';literatureFilter='all'}
+    app.innerHTML=heading('Related Papers','Primary-source links and comparisons from the selected paper’s literature investigation and independent novelty checks.');
+    if(!selected){app.innerHTML+=missing('No selected paper version is available yet. Related work will appear with its recorded evidence.');return}
+    app.innerHTML+=`<div class="plan-version"><span class="mono">${e(selected.paper_id)}</span><a href="#paper/${e(selected.paper_id)}/related_work">Read Related Work →</a>${notify('section:literature')}</div><form class="literature-controls" id="literature-search"><div><label for="literature-query">Find a paper</label><input id="literature-query" type="search" placeholder="Title, author, problem, or mechanism" value="${e(literatureQuery)}"></div><div><label for="literature-filter">Relationship</label><select id="literature-filter"><option value="all">All related papers</option><option value="closest" ${literatureFilter==='closest'?'selected':''}>Closest prior work</option><option value="other" ${literatureFilter==='other'?'selected':''}>Other related work</option></select></div></form><p class="literature-count" id="literature-count" aria-live="polite"></p><div id="literature-list"></div>${storage()}`;
+    renderLiteratureList();
+    if(paperId)requestAnimationFrame(()=>{
+      const target=Array.from(app.querySelectorAll('.literature-card')).find(card=>JSON.parse(card.dataset.evidenceIds).includes(paperId));
+      if(target){target.scrollIntoView({block:'start'});target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}
+    });
+  }
+  function renderLiteratureList() {
+    const query=literatureQuery.toLocaleLowerCase().trim();
+    const rows=literature.filter(row=>(literatureFilter==='all'||row.closest===(literatureFilter==='closest'))&&(!query||[row.title,row.authors,row.year,...row.ids,row.problem,row.insight,row.methodology,row.relationship,row.contribution_difference].join(' ').toLocaleLowerCase().includes(query)));
+    const labels={problem:'Research problem',insight:'Main insight',methodology:'Methodology',assumptions:'Key assumptions',results:'Reported results',limitations:'Limitations',relationship:'Relationship to this proposal',contribution_difference:'Precise contribution difference'};
+    const depth={full_text:'Full text inspected',abstract:'Abstract only',metadata:'Metadata only'};
+    document.getElementById('literature-count').textContent=`${rows.length} of ${literature.length} recorded papers`;
+    document.getElementById('literature-list').innerHTML=rows.length?rows.map(row=>`<article class="literature-card" data-evidence-ids="${e(JSON.stringify(row.ids))}"><header><div class="literature-tags">${chip(row.closest?'Closest prior work':'Related work')}${chip(depth[row.access_depth]||row.access_depth)}</div><h2><a class="paper-external-link" href="${e(row.url)}" target="_blank" rel="noopener noreferrer">${e(row.title)} ↗</a></h2><p class="paper-byline">${e(row.authors)} · ${e(row.year)}</p><a class="paper-primary-url" href="${e(row.url)}" target="_blank" rel="noopener noreferrer">${e(row.url)}</a></header><section class="paper-relation"><h3>Why this paper matters here</h3>${prose(row.relationship)}<h3>Difference from our proposal</h3>${prose(row.contribution_difference)}</section><details class="paper-evidence-details"><summary>Paper analysis and evidence limits</summary><dl class="review-fields">${Object.entries(labels).filter(([key])=>!['relationship','contribution_difference'].includes(key)).map(([key,label])=>`<dt>${e(label)}</dt><dd>${prose(row[key])}</dd>`).join('')}<dt>Version and reading location</dt><dd>${e(row.version)} · ${e(row.locator)}</dd><dt>Retrieved</dt><dd>${e(row.retrieved_at)}</dd><dt>Evidence classification</dt><dd>${e(row.knowledge_status)}</dd></dl></details>${row.claim_ids.length||row.prediction_ids.length?`<p class="paper-claim-links">Referenced by ${e([...row.claim_ids,...row.prediction_ids].join(', '))}</p>`:''}<footer class="experiment-card-footer"><span class="quiet">${e([...new Set(row.origins.map(x=>x.role))].join(' · '))}</span>${row.sources.map(id=>source(id,'Evidence record ↗')).join('')}${notify(row.target_id)}</footer></article>`).join(''):missing(literature.length?'No papers match this search. Change the query or relationship filter.':'No related papers are recorded for this version. No citations have been fabricated.');
   }
   function choice(field,value) {
     const row=field.options.find(x=>typeof x.value===typeof value&&x.value===value);
@@ -125,17 +164,22 @@ UI.mount();
   document.getElementById('project-slug').textContent=p.slug;
   document.getElementById('header-tools').innerHTML=UI.notesButton()+UI.exportButton();
   document.getElementById('project-context').innerHTML=`<div class="project-label">${e(research.conference.name)} ${research.conference.year} <span class="quiet">${e(research.conference.track)}</span></div><div class="project-meta">${p.testCase?'<strong>SOFTWARE TEST FIXTURE · synthetic agent judgments</strong>':'Simulated peer review · research proposal'}</div>`;
-  document.getElementById('section-nav').innerHTML=[['overview','Overview'],['paper','Final Paper'],['process','Review Process']].map(([key,label])=>`<a class="section-link" data-section="${key}" href="#${key}">${label}</a>`).join('');
+  document.getElementById('section-nav').innerHTML=Object.entries(sections).map(([key,label])=>`<a class="section-link" data-section="${key}" href="#${key}">${label}</a>`).join('');
   function route() {
     const parts=location.hash.slice(1).split('/'),raw=parts[0]||'overview';
-    const section=raw==='compare'?'process':['overview','paper','process'].includes(raw)?raw:'overview';
+    const section=raw==='compare'?'process':Object.hasOwn(sections,raw)?raw:'overview';
+    let targetId='';try{targetId=decodeURIComponent(parts[1]||'')}catch{}
     window.scrollTo(0,0);
-    if(raw==='compare')compareView(parts[1]);else if(section==='paper')paperView(parts[1]);else if(section==='process')processView(parts[1]);else overview();
+    if(raw==='compare')compareView(parts[1]);else if(section==='paper')paperView(parts[1]);else if(section==='experiments')experimentsView(targetId);else if(section==='literature')literatureView(targetId);else if(section==='process')processView(parts[1]);else overview();
     document.querySelectorAll('[data-section]').forEach(a=>a.setAttribute('aria-current',a.dataset.section===section?'page':'false'));
-    document.title=`${section==='paper'?'Final Paper':section==='process'?'Review Process':'Overview'} · ${p.title}`;
+    document.querySelector('[data-section][aria-current="page"]')?.scrollIntoView({block:'nearest',inline:'nearest'});
+    document.title=`${sections[section]} · ${p.title}`;
     app.dataset.route=parts.join('/')||'overview';UI.status();
     if(section==='paper'&&parts[2])requestAnimationFrame(()=>document.getElementById('paper-'+parts[2])?.scrollIntoView({block:'start'}));
   }
+  app.addEventListener('submit',event=>{if(event.target.id==='literature-search')event.preventDefault()});
+  app.addEventListener('input',event=>{if(event.target.id==='literature-query'){literatureQuery=event.target.value;renderLiteratureList()}});
+  app.addEventListener('change',event=>{if(event.target.id==='literature-filter'){literatureFilter=event.target.value;renderLiteratureList()}});
   document.querySelector('.skip-link').addEventListener('click',event=>{event.preventDefault();document.getElementById('main-content').focus()});
   window.addEventListener('hashchange',route);route();
 })();

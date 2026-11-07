@@ -29,7 +29,7 @@ The pre-implementation audit and plan are in [redesign-plan.md](redesign-plan.md
 | Workflow / persistence | `scripts/shaokao/engine.py` | Append-only atomic journal, replayable state, immutable task/paper hashes, independent-role session checks, barriers, novelty retries, research revision, bounded convergence and honest stopping |
 | Agent briefs | `scripts/shaokao/prompts.py` | Distinct investigator, composer, author, three adversaries, four reviewer specialties, discussion, AC and senior-audit prompts and output contracts |
 | Derived paper/report | `scripts/shaokao/report.py`, `scripts/render_review.py` | Actual journal-to-HTML normalization, complete Markdown paper with bibliography/prediction tables, summary/report, stable annotation identity; legacy renderer remains available |
-| Frontend | `assets/review/research.js`, `styles.css` | Concise Overview, academic Final Paper, threaded Review Process, exact scores, complete submissions, comparisons, source reader, notes and honest missing stages |
+| Frontend | `assets/review/research.js`, `styles.css` | Concise Overview, academic Final Paper, final Experiment Plan, linked/searchable Related Papers, threaded Review Process, exact scores, complete submissions, comparisons, source reader, notes and honest missing stages |
 | Offline mathematics | `assets/review/vendor/katex/*` | Pinned KaTeX 0.19.1 runtime, WOFF2 fonts, MIT license and integrity manifest embedded into standalone reports; no CDN requests |
 | Software validation | `tests/test_research_engine.py`, `engine_fixture.py`, `fixture_agent.py`, `verify_research_browser.cjs`, official-source fixture | Multi-round orchestration and scientific/error invariants with explicitly synthetic agent responses; retains all legacy tests |
 | Reviewable example | `design-demos/research-workspace.html`, `src/build_workspace_demo.py` | Generated through the actual engine using clearly labeled synthetic data; archived design explorations remain separate |
@@ -111,7 +111,7 @@ cannot silently replace the selected submitted paper on the final overview.
 
 ## Verification results
 
-- **59 Python tests passed**, including all 26 retained legacy cases and 33 new
+- **61 Python tests passed**, including all 26 retained legacy cases and 35 new
   engine/conference tests. These cover complete two-round execution, three/four
   reviewers, exact scores, hypothetical estimates, novelty recomposition/caps,
   individual responses/limits, fatal overlap, implausible forecasts flagged by a
@@ -119,9 +119,9 @@ cannot silently replace the selected submitted paper on the final overview.
   failures, new chair concerns, immutable versions, replay and concurrency.
 - **Fresh-process adapter passed** a complete two-round workflow after an injected
   command failure. Native packet/submit was also independently exercised.
-- **Both Playwright suites passed.** The new interface checks all three views,
+- **Both Playwright suites passed.** The new interface checks all five views,
   thirteen complete body sections plus title/references, math/MathML, prediction
-  ranges, actual venue labels, threaded responses, source hashes, side-by-side
+  ranges isolated per experiment, final-version plan annotations, paper links/search/closest-work filters, actual venue labels, threaded responses, source hashes, side-by-side
   versions, annotations and safe escaped content. Routes were checked at 1440,
   1024, 768 and 390 pixels, offline, with no browser errors or HTTP requests.
   Desktop and mobile screenshots were visually inspected and mobile controls fixed.
@@ -151,6 +151,21 @@ PLAYWRIGHT_MODULE=/path/to/playwright node tests/verify_review_browser.cjs
 PLAYWRIGHT_MODULE=/path/to/playwright node tests/verify_research_browser.cjs
 python3 design-demos/src/build_workspace_demo.py
 ```
+
+## Final experiment plan and related-paper pages
+
+The Experiment Plan page is bound to the selected submitted paper, including when
+an unreviewed later draft exists. It exposes all experiment specifications,
+resources, falsification criteria, and separate hypothetical forecasts per
+experiment. Experiment annotations preserve their paper/round source identity.
+
+Related Papers uses the same version's literature ledger and novelty-agent
+new-paper discoveries. It links original sources, authors/years, reading depth,
+relevance and precise contribution differences, with search and closest-work
+filters. The same URL/version is shown once while retaining evidence aliases and
+all source records. Prediction evidence links navigate directly to the relevant
+paper. Missing final versions have explicit empty states. Both pages are offline
+and were checked at four viewports; only the external paper links require network.
 
 ## Remaining limitations and recommended next steps
 

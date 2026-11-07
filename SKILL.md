@@ -150,8 +150,8 @@ python3 <skill-dir>/scripts/research.py render research/<slug>
 ```
 
 Deliver `final/review.html`, `final/paper.md` when available, and
-`final/final_report.md`. The UI has **Overview**, **Final Paper**, and **Review
-Process**, rendering actual journal records with version comparisons, exact venue
+`final/final_report.md`. The UI has **Overview**, **Final Paper**, **Experiment Plan**, **Related Papers**,
+and **Review Process**, rendering actual journal records with version comparisons, exact venue
 scores, threaded responses, sources and persistent annotations. Follow
 [deliverables.md](references/deliverables.md) for the final handoff. If execution or
 filesystem tools are unavailable, provide the actual artifacts inline and a precise

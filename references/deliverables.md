@@ -22,6 +22,12 @@ The complete paper contains all required academic sections and explicitly
 hypothetical predicted-result ranges, assumptions, rationale and failure cases.
 Use the selected frozen submitted version, never an unreviewed last-minute edit
 presented as accepted. Unsubmitted proposals must remain labeled unsubmitted.
+The Experiment Plan page uses the selected final paper version, with every
+experiment specification and clearly hypothetical predictions. Related Papers
+provides source links, relevance/contribution comparisons, search and closest-work
+filters from that version’s literature and novelty discoveries. Both preserve
+source provenance and version-specific annotations.
+
 The UI preserves every actual paper version and comparison, including rejected
 novelty attempts, rebuttals, original/updated scores, discussions, chair reasoning
 and motivating revision concerns.

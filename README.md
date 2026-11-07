@@ -128,12 +128,18 @@ See [workspace and adapter contract](references/workspace.md),
 
 ## Review interface
 
-The generated `final/review.html` has three primary views:
+The generated `final/review.html` has five primary views:
 
 - **Overview:** final title, venue/year, summary, insight, novelty, contributions,
   method, decisive validation and simulated outcome.
 - **Final Paper:** complete academic prose with section navigation, hypothetical
   prediction tables, technical/experiment details and evidence references.
+- **Experiment Plan:** the selected final version’s hypotheses, data/splits,
+  baselines, protocols, metrics, ablations, robustness, statistics, reproducibility,
+  resource requirements, falsification criteria and hypothetical predictions.
+- **Related Papers:** searchable primary links, authors/years, closest-work filters,
+  relationships and precise contribution differences, reading depth and source
+  provenance, including papers discovered by novelty adversaries.
 - **Review Process:** each frozen submission, all novelty attempts, independent
   reviews with exact original/updated labels, threaded author responses,
   discussion, AC/SAC reasoning and side-by-side paper versions.

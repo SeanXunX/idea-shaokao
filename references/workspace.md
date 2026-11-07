@@ -30,7 +30,7 @@ research/<slug>/
   final/
     final_report.md               Honest outcome and continuation
     paper.md                      Selected complete paper, when available
-    review.html                   Offline Overview / Final Paper / Review Process
+    review.html                   Offline paper, experiment plan, related papers and reviews
     review-manifest.json          Persistent annotation identity and source hashes
 ```
 
