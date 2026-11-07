@@ -143,7 +143,12 @@ silently; record an alternative and stop unless further work is already in scope
 Use the final report contract in [deliverables.md](references/deliverables.md).
 Deliver the research discovery, final proposal, experiment plan, complete review
 history, implementation roadmap, and final SAC assessment (or an explicitly
-labeled author assessment if no independent SAC exists). Include three essential
+labeled author assessment if no independent SAC exists). For a developed proposal,
+deliver the complete research story and a sourced paper design for each section:
+purpose, concrete argument/content, required figures/evidence, and linked experiments.
+Preserve each round's submitted idea/version, actual changes, and outcome; expose
+these in the interactive report alongside the final method and full experiment settings.
+Include three essential
 experiments, the first implementation step, biggest rejection risk, remaining
 uncertainty, evidence stage, execution mode, and links to saved artifacts. For a
 narrow or interrupted run, deliver completed work and the exact continuation step;

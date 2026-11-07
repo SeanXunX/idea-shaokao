@@ -142,8 +142,13 @@ collisions and unsafe identifiers. See [the workspace contract](references/works
 
 ## Interactive review report
 
-Every persisted research run ends with the approved GitHub Issues-style
-`final/review.html`, alongside `final/final_report.md`. The agent writes a sourced
+Every persisted research run ends with a compact research workspace in
+`final/review.html`, alongside `final/final_report.md`. Its primary views are
+**Overview**, **Idea & review**, and **Final plan**. Per-round idea snapshots,
+actual revisions, reviewer scores, discussion, and outcomes lead into a concrete
+final method, experiment configurations, research story, paper section designs,
+and implementation roadmap. Issues and original sources remain accessible as
+supporting views. The agent writes a sourced
 `final/review-data.json` index and automatically invokes the bundled renderer:
 
 ```bash
@@ -156,8 +161,11 @@ rounds, arbitrary recorded score scales, and explicit missing-data states. It
 contains no demo research claims or verdicts. Source errors stop rendering while
 keeping the previous report intact.
 
-Use the issue list and discussion threads to inspect concerns, rebuttals,
-reassessments, and evidence. Annotations and unfinished drafts survive regeneration
+Use the round navigator to follow the research process and the final plan's
+directory to read the full design. Each paper section states its purpose,
+content, and required evidence, with links to experiment specifications. Use the
+issue list and discussion threads for individual concerns. Annotations on rounds,
+experiments, and plan sections, plus unfinished drafts, survive regeneration
 through a persistent workspace identity. Changed sources or removed targets retain
 old comments with their original context. Export `review_feedback.md` for the
 agent; back up/restore `review_notes.json` when moving browsers or file locations.
@@ -170,9 +178,10 @@ API, network call, or third-party runtime package is required.
 
 ## Repository map and validation
 
-The approved [design prototype](design-demos/github-review.html) and its
-[design notes](design-demos/README.md) preserve the visual reference and earlier
-explorations. Production reports use [the bundled assets](assets/review/template.html)
+The current [interactive design example](design-demos/research-workspace.html)
+uses an explicitly synthetic two-round study to demonstrate the complete final
+plan. Its [design notes](design-demos/README.md) preserve earlier explorations.
+Production reports use [the bundled assets](assets/review/template.html)
 and the [renderer](scripts/render_review.py) with each run’s own sources.
 
 - [SKILL.md](SKILL.md): discovery metadata, workflow, capability fallbacks, and decision gates.

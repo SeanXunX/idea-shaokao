@@ -25,6 +25,12 @@ work comparison, and limitations. Link `proposal/final/` to the selected immutab
 version or copy that version with its identity recorded. Do not label an unreviewed
 last-minute edit as the reviewed final proposal.
 
+Include the final research story and versioned `paper_plan.md` when produced:
+problem → gap → insight → mechanism → evidence → contribution and limitations.
+Give each manuscript section a purpose, concrete content/argument design,
+required evidence or figures, and linked experiments. A generic table of
+contents does not satisfy a developed proposal's paper-design deliverable.
+
 ## C. Experimental plan and evidence
 
 Hypotheses, data/workloads, baselines, metrics, main experiments, ablations,
@@ -71,9 +77,12 @@ without rewriting an unfavorable assessment. Otherwise title this section
 After saving the real research artifacts and checkpoint, follow
 [review-report.md](review-report.md) to write the sourced display index and run
 the bundled renderer. Every persisted run delivers `final/review.html` alongside
-this Markdown report, including negative and incomplete outcomes. Use the approved
-GitHub Issues-style assets, with actual issue discussions, all recorded rounds,
-source documents, and honest missing-data states. Preserve the report manifest
+this Markdown report, including negative and incomplete outcomes. Use the bundled
+research-workspace assets. The overview leads into sourced per-round idea,
+change, and outcome snapshots and a full final plan: idea and method, experiment
+configurations, research story, paper section designs, and roadmap. Retain actual
+issue discussions, all recorded rounds, source documents, and honest missing-data
+states. Preserve the report manifest
 for stable annotations and feedback export on later versions.
 
 ## Delivery check

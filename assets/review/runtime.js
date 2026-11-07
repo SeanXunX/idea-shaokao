@@ -12,7 +12,7 @@ const UI = (() => {
   const noteButton=(id,label='Add feedback')=>`<button type="button" class="ui-button" data-annotate="${escape(id)}">${escape(label)}</button>`;
   const notesButton=()=>'<button type="button" class="ui-button" data-show-notes>My notes <span data-note-count>0</span></button>';
   const exportButton=()=>'<button type="button" class="ui-button" data-export-feedback>Export feedback</button>';
-  function snapshot(id){const t=target(id);return {title:t.title,version:D.project.version,round:D.project.round,stage:D.project.stage,sources:t.sources.map(id=>({id,path:D.sources[id].path,sha256:D.sources[id].sha256}))}}
+  function snapshot(id){const t=target(id);return {title:t.title,version:t.version??D.project.version,round:t.round??D.project.round,stage:t.stage??D.project.stage,sources:t.sources.map(id=>({id,path:D.sources[id].path,sha256:D.sources[id].sha256}))}}
   function validContext(c){return c&&typeof c.title==='string'&&typeof c.version==='string'&&Number.isInteger(c.round)&&typeof c.stage==='string'&&Array.isArray(c.sources)&&c.sources.every(s=>s&&typeof s.id==='string'&&typeof s.path==='string'&&typeof s.sha256==='string'&&/^[a-f0-9]{64}$/.test(s.sha256))}
   function validNote(n){return n&&typeof n.id==='string'&&typeof n.target==='string'&&types.includes(n.type)&&typeof n.text==='string'&&validContext(n.context)&&typeof n.createdAt==='string'&&typeof n.updatedAt==='string'}
   function validDraft(d){return d&&typeof d.key==='string'&&typeof d.target==='string'&&types.includes(d.type)&&typeof d.text==='string'&&validContext(d.context)&&(d.editingId===null||typeof d.editingId==='string')}

@@ -1,77 +1,84 @@
-# Research Review — GitHub Issues direction
+# Research workspace
 
-**[Open the current prototype](github-review.html)** — a single offline HTML file.
+**[Open the current interface example](research-workspace.html)**
 
-![Issue list](screenshots/github-review-1440.png)
+The interface is organized around the research rather than an issue tracker:
+**Overview → Idea & review → Final plan**. Issues and original sources remain
+available as supporting views. It uses native system fonts, white and gray
+surfaces, thin borders, a blue interaction color, and small status labels.
+There are no display fonts, decorative statistics, external fonts, or animations.
 
-The current interface follows the GitHub Issues page supplied by the user:
-https://github.com/addyosmani/agent-skills/issues. It uses a white background,
-native system fonts, compact rows, gray borders, state filters, and sequential
-comment threads. The previous Huashu-based exploration has been superseded.
+![Research overview](verification/workspace/overview-1440.png)
 
-## Review flow
+## Reading flow
 
-- **Issues:** search titles, concerns, or original reviewer IDs. Filter by Open,
-  Resolved, All, or severity. Three duplicate correctness concerns form one group.
-- **Issue detail:** read the reviewer concern, author rebuttal, and final
-  reassessment in order. Original IDs and closure criteria sit beside the thread.
-- **Overview:** inspect the idea, recommendation, claims, and experiment status.
-- **Review history:** inspect actual scores and the complete one-round sequence.
-- **Sources:** open any of the 18 exact bundled original documents and its hash.
-- **Feedback:** add a question, evidence request, or suggestion to a claim, issue,
-  or section. Edit/delete it under My notes and download `review_feedback.md`.
+- **Overview:** current idea, method, claim/evidence states, round progression,
+  recommendation, and exact next action.
+- **Idea & review:** choose a round; read the submitted idea and actual changes,
+  reviewer assessments, full recorded process, concerns/responses, and outcome.
+  Historical versions are explicit; a new round does not imply a new proposal.
+- **Final plan:** a readable document with a local directory for the method,
+  experiment specifications, research story, paper design, and roadmap.
+- **Experiment specifications:** hypothesis, setup, data/workloads, baselines,
+  metrics, controls/ablations, success/stop criteria, resources, and observed
+  evidence. Planned work remains separate from measured results.
+- **Paper outline:** each section has a purpose, concrete content design, and
+  required evidence/figures. Experiment references jump to the corresponding
+  specification.
+- **Issues and Sources:** full discussion threads and exact original source text
+  with SHA-256 hashes. Sources remain attached to the relevant decisions.
 
-![Issue discussion](screenshots/github-review-detail-1440.png)
+![Per-round idea and review](verification/workspace/round-1440.png)
 
-Search and filters survive navigation and reload in the same tab when session
-storage is available. Notes and unfinished comments use local browser storage.
-The HTML itself is not rewritten: export feedback to share or retain your notes
-when moving the file. If local storage is blocked, a visible session-only message
-appears and annotation/export continue to work.
+Rounds, experiments, and individual method/story/paper/roadmap blocks support
+annotations. Notes and unfinished drafts survive regeneration; Markdown export
+and JSON backup/restore preserve original context. Local-storage restrictions
+produce an explicit session-only indicator.
 
-Everything opens without a server or network. The current prototype uses native
-UI fonts, with source data and scripts embedded in the HTML. Human feedback is
-separate from the scientific record.
+![Paper section design](verification/workspace/paper-1440.png)
 
-## Evidence and verification
+## Example data and production rendering
 
-All content comes from the actual projection-review test case. The Kill verdict,
-unknown novelty/runtime, unchanged frozen v01, open technical defects, and canceled
-E02/E03 checks are preserved. No research results or reviewer scores were invented.
-
-The prototype passed at 1440×900 and 1024×768, including issue routing, filters,
-search/empty states, source fidelity, all reading sections, annotation editing and
-deletion, saved notes/draft recovery, safe verbatim text, Markdown export, and
-storage-denied fallback. No console errors or HTTP(S) requests were recorded.
-See [interaction results](verification/github-review-results.json) and
-[readability results](verification/readability-results.json).
-
-Rebuild with Python 3.10+ and the standard library:
+The current example uses **explicitly synthetic software-test artifacts** to show
+a two-round proposal and a complete writing plan. Its scores and settings are
+illustrations, not real research findings. No experiment is represented as run.
+Build it from the production renderer and sourced fixtures:
 
 ```bash
-python3 design-demos/src/build_demos.py
+python3 design-demos/src/build_workspace_demo.py
 ```
 
-Run browser checks with Playwright available to Node:
+Actual runs use their own `final/review-data.json` and original artifacts:
 
 ```bash
-node design-demos/src/verify_github_review.cjs
-node design-demos/src/check_readability.cjs github-review
+python3 scripts/render_review.py <research-workspace>
 ```
 
-`PLAYWRIGHT_MODULE` can point to an external Playwright installation and
-`CHROMIUM_EXECUTABLE` to an existing Chromium binary. These are development-only
-requirements; the HTML file has none.
+The production renderer never imports the synthetic fixture. Existing indices
+remain compatible and expose missing round snapshots, experiment settings, or
+paper designs explicitly. The schema and generation instructions are in
+[review-report.md](../references/review-report.md).
+
+## Validation
+
+The integration check exercises all routes at 1440, 1024, 768, and 390 pixels,
+round snapshots, scoring/missing-data states, experiment settings, paper links,
+source fidelity, original issue-ID search, annotations, draft recovery, changed
+sources, removed targets, feedback export, portable backups, and denied storage.
+It checks for page overflow, JavaScript errors, and HTTP(S) requests.
+
+```bash
+python3 -m unittest discover -s tests -v
+node tests/verify_review_browser.cjs
+```
+
+`PLAYWRIGHT_MODULE` and `CHROMIUM_EXECUTABLE` can point to an external Playwright
+installation and existing Chromium binary. These are development-only tools.
+The generated report is a single offline HTML file with no server or build step.
 
 ## Earlier explorations
 
-The earlier prototypes are retained for comparison and history:
-[Signal Desk](signal-desk.html), [Editorial Dossier](editorial-dossier.html), and
-[Evidence Table](evidence-table.html). Their templates, embedded font licenses,
-and verification records are unchanged. The build helper regenerates all four
-prototypes; `verify_demos.cjs` checks the earlier three.
-
-This direction is now integrated into the skill. Every persisted research run
-produces `final/review.html` through the [production renderer](../scripts/render_review.py)
-and [report contract](../references/review-report.md). The production assets use
-the current run’s own sources, not the fixed dataset in these design explorations.
+The previous [GitHub Issues layout](github-review.html), [Signal Desk](signal-desk.html),
+[Editorial Dossier](editorial-dossier.html), and [Evidence Table](evidence-table.html)
+are retained as historical explorations. Their templates and original verification
+records are preserved. They are superseded by the research-workspace interface.

@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Research workspace · idea-shaokao</title>
+<style>:root {
+  --bg:#ffffff; --surface:#ffffff; --subtle:#f6f8fa; --text:#1f2328;
+  --muted:#59636e; --line:#d1d9e0; --accent:#0969da; --green:#1a7f37;
+  --body-font:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;
+  --mono-font:ui-monospace,SFMono-Regular,"SF Mono",Consolas,"Liberation Mono",monospace;
+}
+* { box-sizing:border-box }
+body { margin:0; background:var(--bg); color:var(--text); font:14px/1.6 var(--body-font); -webkit-font-smoothing:antialiased }
+button,input,select,textarea { font:inherit; color:inherit }
+button,a { touch-action:manipulation }
+button { cursor:pointer }
+a { color:var(--accent); text-decoration:none }
+a:hover { text-decoration:underline }
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible { outline:2px solid var(--accent); outline-offset:3px }
+h1,h2,h3,h4,p,ol,dl { margin:0 }
+h1,h2,h3,h4 { line-height:1.4; font-weight:600 }
+button,a,p,h1,h2,h3,dd,td,th { overflow-wrap:anywhere }
+[hidden] { display:none!important }
+.mono,code { font-family:var(--mono-font); font-size:12px }
+.quiet,.section-caption,.page-description { color:var(--muted) }
+.sr-only,.skip-link:not(:focus) { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap }
+.skip-link:focus { position:fixed; top:10px; left:10px; z-index:100; padding:8px 16px; background:var(--bg); border:1px solid var(--accent) }
+#main-content:focus { outline:none }
+.workspace-header { min-height:60px; background:var(--subtle); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:24px; padding:12px 32px }
+.workspace-brand { display:flex; gap:14px; align-items:center; min-width:0; font-size:14px }
+.workspace-brand a { color:var(--text); font-weight:600; white-space:nowrap }
+.header-divider { color:#8c959f }
+#project-slug { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted) }
+.header-tools { display:flex; gap:8px; flex-shrink:0 }
+.workspace-shell { max-width:1312px; margin:0 auto; padding:0 40px }
+.project-context { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:25px 0 17px }
+.project-label { display:flex; align-items:center; gap:12px; font-weight:600; font-size:15px }
+.project-label .badge { color:var(--muted); font-weight:400 }
+.project-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; color:var(--muted); font-size:12px }
+.section-nav { display:flex; gap:24px; border-bottom:1px solid var(--line); min-height:45px }
+.section-link { display:flex; align-items:center; gap:8px; position:relative; color:var(--muted); padding:9px 0 12px; white-space:nowrap }
+.section-link:hover { color:var(--text); text-decoration:none }
+.section-link[aria-current="page"] { color:var(--text); font-weight:600 }
+.section-link[aria-current="page"]::after { content:""; height:2px; background:var(--accent); position:absolute; bottom:-1px; left:0; right:0 }
+.secondary-start { margin-left:auto }
+.count { background:#eaeef2; border-radius:16px; padding:0 6px; font-size:12px; line-height:20px; font-weight:500 }
+.main { padding:30px 0 56px; min-height:70vh; min-width:0 }
+.page-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:24px }
+.page-heading h1 { font-size:26px; letter-spacing:-.45px; line-height:1.35; margin-bottom:6px }
+.page-description { max-width:870px; font-size:14px; line-height:1.6 }
+.page-heading>.ui-button { flex-shrink:0; margin-top:3px }
+.ui-button,.btn { appearance:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; max-width:100%; min-height:32px; padding:5px 12px; border:1px solid var(--line); border-radius:6px; background:var(--subtle); font:500 13px/20px var(--body-font); color:var(--text); cursor:pointer; text-decoration:none }
+.ui-button:hover,.btn:hover { background:#eef1f4; border-color:#b7c0ca; text-decoration:none }
+.ui-button [aria-hidden="true"] { display:none }
+.ui-button [data-note-count] { border-radius:12px; background:#e4e9ee; padding:0 5px; font-size:12px; line-height:18px }
+.btn-primary { background:var(--accent); border-color:#0962c9; color:#fff }
+.btn-primary:hover { color:#fff; background:#055fcb; border-color:#055fcb }
+.link-button { border:0; background:none; padding:0; color:var(--accent); font:inherit; text-align:left; cursor:pointer }
+.link-button:hover { text-decoration:underline }
+.badge { display:inline-flex; align-items:center; width:fit-content; border:1px solid var(--line); padding:1px 8px; border-radius:20px; font-size:12px; font-weight:500; line-height:20px }
+.recommendation-kill { color:#a40e26; background:#ffebe9; border-color:#ffcecb }
+.recommendation-proceed { color:#116329; background:#dafbe1; border-color:#aceebb }
+.recommendation-revise { color:#6e5200; background:#fff8c5; border-color:#e6cf85 }
+.recommendation-restart,.recommendation-undetermined { color:var(--muted); background:var(--subtle) }
+.decision-strip { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 24px; background:var(--subtle); border:1px solid var(--line); border-radius:6px; padding:16px 20px; margin-bottom:30px }
+.decision-strip>div { display:flex; align-items:center; gap:12px }
+.decision-strip>p { grid-row:2; max-width:1020px; line-height:1.65 }
+.decision-strip>.link-button { align-self:start; grid-column:2; grid-row:1; font-size:12px; margin-top:3px; white-space:nowrap }
+.decision-strip .quiet { font-size:12px }
+.overview-layout { display:grid; grid-template-columns:minmax(0,1fr) 284px; gap:40px }
+.overview-main,.overview-aside { min-width:0 }
+.overview-section+.overview-section { margin-top:32px }
+.section-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:16px }
+.section-heading h2 { font-size:18px; letter-spacing:-.2px }
+.section-heading>.text-link,.section-heading>.quiet { font-size:12px; flex-shrink:0 }
+.idea-summary { font-size:15px; line-height:1.8 }
+.method-summary { margin:20px 0; padding:16px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+.method-summary h3 { font-size:14px; margin-bottom:7px }
+.method-summary p { line-height:1.75 }
+.record-links { display:flex; align-items:center; flex-wrap:wrap; gap:4px 8px; font-size:12px; color:var(--muted); margin-top:10px }
+.record-links .link-button { max-width:100% }
+.claim-list { margin-top:22px }
+.claim-row { display:grid; grid-template-columns:60px minmax(0,1fr); gap:12px; padding:15px 0; border-bottom:1px solid #e5e9ed }
+.claim-row:first-child { border-top:1px solid #e5e9ed }
+.record-id { color:var(--muted); font:12px/1.6 var(--mono-font); padding-top:2px; overflow-wrap:anywhere }
+.claim-row h3 { font-size:14px; margin-bottom:3px }
+.claim-row p { color:var(--muted); line-height:1.7 }
+.claim-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-top:8px }
+.claim-meta .record-links { margin:0 }
+.evidence-state { font-size:12px; font-weight:500 }
+.claim-meta .ui-button { border:0; background:none; color:var(--accent); box-shadow:none; padding:0; min-height:24px; font-size:12px; font-weight:400 }
+.round-summary-list { border:1px solid var(--line); border-radius:6px; overflow:hidden }
+.round-summary { display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:14px; padding:18px; color:var(--text); border-bottom:1px solid var(--line) }
+.round-summary:last-child { border:0 }
+.round-summary:hover { background:var(--subtle); text-decoration:none }
+.round-number { color:var(--muted); font:12px/1.7 var(--mono-font); padding-top:1px }
+.round-summary-heading { display:flex; align-items:center; gap:12px; margin-bottom:6px }
+.round-summary p { color:var(--muted); line-height:1.7; margin-bottom:8px }
+.round-outcome { font-size:12px; line-height:1.7 }
+.round-summary-end { color:var(--muted); font-size:12px; text-align:right; min-width:64px }
+.round-summary-end>span { display:block; color:var(--accent); margin-top:8px }
+.section-caption { font-size:12px; line-height:1.7; margin-top:12px }
+.next-action { background:var(--subtle); padding:20px; border:1px solid var(--line); border-radius:6px }
+.next-action h2,.record-context h2 { font-size:14px; margin-bottom:12px }
+.next-action p { line-height:1.75; margin-bottom:18px }
+.next-action .btn { width:100%; justify-content:space-between }
+.record-context { margin-top:24px; padding-top:20px; border-top:1px solid var(--line) }
+.record-context dl { display:grid; grid-template-columns:100px minmax(0,1fr); gap:10px 12px; margin-bottom:16px; font-size:12px }
+dt { color:var(--muted) }
+dd { margin:0; min-width:0 }
+.record-context>.link-button { font-size:12px }
+.record-context>a { display:flex; gap:14px; font:12px/1.7 var(--mono-font); padding:5px 0; color:var(--muted) }
+.record-context>a span { font:14px/1.7 var(--body-font); color:var(--accent) }
+.reading-layout { display:grid; grid-template-columns:190px minmax(0,1fr); gap:40px; align-items:start }
+.reading-nav { position:sticky; top:24px; padding-right:20px; border-right:1px solid var(--line); font-size:13px }
+.nav-caption { color:var(--muted); font-size:12px; font-weight:600; margin-bottom:12px }
+.round-link,.plan-link { display:flex; gap:12px; color:var(--muted); border-radius:5px; padding:9px 10px; margin:0 0 4px -10px }
+.round-link { flex-direction:column; gap:2px }
+.plan-link>.mono { flex:0 0 16px; white-space:nowrap }
+.round-link small { font:12px/1.5 var(--mono-font) }
+.round-link:hover,.plan-link:hover { text-decoration:none; color:var(--text); background:var(--subtle) }
+.round-link[aria-current="page"],.plan-link[aria-current="location"] { background:#ddf4ff; color:#0550ae; font-weight:600 }
+.nav-help { border-top:1px solid var(--line); margin-top:20px; padding-top:16px; color:var(--muted); font-size:12px; line-height:1.8 }
+.reading-content { min-width:0 }
+.round-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:20px }
+.round-heading h2 { font-size:22px; margin-bottom:6px }
+.inline-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; color:var(--muted); font-size:12px }
+.round-snapshot { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:6px; overflow:hidden }
+.round-snapshot>section { padding:20px; min-width:0 }
+.round-snapshot>section+section { border-left:1px solid var(--line); background:var(--subtle) }
+.round-snapshot h3 { font-size:14px; margin-bottom:10px }
+.record-text { white-space:pre-line; line-height:1.8 }
+.missing { color:var(--muted); line-height:1.8; padding:12px 0 }
+.missing-inline { color:var(--muted); font-size:12px }
+.reading-section { margin-top:30px }
+.table-scroll { overflow-x:auto; border:1px solid var(--line); border-radius:6px }
+.simple-table { width:100%; border-collapse:collapse; font-size:13px; text-align:left; table-layout:fixed }
+.simple-table th { padding:10px 14px; color:var(--muted); background:var(--subtle); font-size:12px; font-weight:500; border-bottom:1px solid var(--line) }
+.simple-table td { padding:14px; vertical-align:top; border-bottom:1px solid var(--line) }
+.simple-table tr:last-child td { border-bottom:0 }
+.review-table th:first-child { width:29% }
+.review-table th:nth-child(2),.review-table th:nth-child(3) { width:16% }
+.table-detail { display:block; color:var(--muted); font-size:12px; line-height:1.6; margin-top:4px }
+.score-cell>.link-button { font-size:15px; font-weight:600; font-variant-numeric:tabular-nums }
+.phase-timeline { list-style:none; padding:0 }
+.phase-timeline>li { position:relative; display:grid; grid-template-columns:32px minmax(0,1fr); gap:14px; padding:0 0 24px }
+.phase-timeline>li:last-child { padding-bottom:0 }
+.phase-timeline>li:not(:last-child)::before { content:""; position:absolute; left:15px; top:30px; bottom:0; width:1px; background:var(--line) }
+.phase-number { height:30px; display:flex; align-items:center; justify-content:center; background:var(--subtle); border:1px solid var(--line); border-radius:50%; color:var(--muted); font:11px/1 var(--mono-font) }
+.phase-heading { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; padding-top:3px }
+.phase-heading h3 { font-size:14px }
+.phase-heading .quiet { font-size:12px }
+.phase-content p { margin:7px 0; line-height:1.75 }
+.phase-content>.link-button { font-size:12px }
+.concern-list { border-top:1px solid var(--line) }
+.concern-item { padding:16px 0; border-bottom:1px solid var(--line) }
+.concern-item>div { display:flex; align-items:baseline; flex-wrap:wrap; gap:10px }
+.concern-item>p:not(.issue-subline) { margin:9px 0; line-height:1.75 }
+.concern-item>.link-button { font-size:12px }
+.issue-title { border:0; padding:0; background:none; text-align:left; font-weight:600; font-size:14px; line-height:1.6; color:var(--text) }
+.issue-title:hover { color:var(--accent) }
+.issue-subline { font-size:12px; color:var(--muted); margin-top:5px }
+.severity-label { display:inline-flex; border:1px solid var(--line); border-radius:20px; padding:0 7px; font-size:11px; line-height:20px; font-weight:500; white-space:nowrap }
+.severity-critical { color:#a40e26; background:#ffebe9; border-color:#ffcecb }
+.severity-major { color:#6e5200; background:#fff8c5; border-color:#e6cf85 }
+.severity-moderate { color:#0550ae; background:#ddf4ff; border-color:#b6e3ff }
+.severity-minor { color:var(--muted); background:var(--subtle) }
+.round-conclusion { background:var(--subtle); border:1px solid var(--line); border-radius:6px; padding:20px; margin-top:28px }
+.round-conclusion h3 { font-size:14px; margin-bottom:8px }
+.reading-pagination { display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding-top:20px; margin-top:30px; font-size:13px }
+.plan-context { display:flex; align-items:center; flex-wrap:wrap; gap:12px; padding:0 0 20px; margin-top:-8px; margin-bottom:28px; border-bottom:1px solid var(--line); font-size:12px; color:var(--muted) }
+.plan-context>.link-button { margin-left:auto }
+.plan-section { padding-bottom:36px; margin-bottom:32px; border-bottom:1px solid var(--line); scroll-margin-top:24px }
+.plan-section:last-of-type { margin-bottom:0 }
+.plan-section>.section-heading { margin-bottom:20px }
+.section-index { color:var(--muted); font:12px var(--mono-font) }
+.section-intro { color:var(--muted); margin:-8px 0 20px; line-height:1.75 }
+.plan-block+.plan-block { margin-top:24px }
+.block-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:9px }
+.block-heading h3 { font-size:15px }
+.block-heading .ui-button { min-height:24px; padding:0; border:0; background:none; color:var(--accent); font-size:12px; font-weight:400; flex-shrink:0 }
+.plan-claims { padding-top:22px; margin-top:24px; border-top:1px solid var(--line) }
+.plan-claims>h3 { font-size:14px; margin-bottom:12px }
+.plan-claims>div { display:grid; grid-template-columns:55px minmax(0,1fr) auto; align-items:start; gap:12px; padding:12px 0 }
+.plan-claims code { color:var(--muted); padding-top:3px; overflow-wrap:anywhere }
+.plan-claims .ui-button { font-size:12px; min-height:28px }
+.experiment-block { border:1px solid var(--line); border-radius:6px; margin-top:20px; overflow:hidden; scroll-margin-top:24px }
+.experiment-block>header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); background:var(--subtle) }
+.experiment-block>header h3 { font-size:15px }
+.experiment-block>header p { color:var(--muted); font-size:12px; margin-top:4px }
+.experiment-block>header>.badge { margin-left:auto; flex-shrink:0 }
+.experiment-id { color:var(--muted); padding-top:3px }
+.experiment-summary { padding:16px 20px 8px; line-height:1.75 }
+.experiment-fields { padding:0 20px 8px }
+.experiment-fields>div { display:grid; grid-template-columns:160px minmax(0,1fr); gap:20px; padding:11px 0; border-bottom:1px solid #eaeef2 }
+.experiment-fields>div:last-child { border:0 }
+.experiment-fields dt { font-size:12px; padding-top:1px }
+.experiment-fields dd { line-height:1.75; white-space:pre-line }
+.block-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; border-top:1px solid var(--line); font-size:12px }
+.block-footer .record-links { margin-top:0 }
+.block-footer .ui-button { font-size:12px; min-height:28px }
+.target-highlight { outline:2px solid var(--accent); outline-offset:3px }
+.paper-section { display:grid; grid-template-columns:30px minmax(0,1fr); gap:14px; padding:24px 0; border-top:1px solid var(--line) }
+.paper-section:first-child { padding-top:0; border-top:0 }
+.paper-section:last-child { padding-bottom:0 }
+.paper-section-number { color:var(--muted); padding-top:3px }
+.paper-fields { display:grid; grid-template-columns:120px minmax(0,1fr); gap:10px 20px }
+.paper-fields dt { font-size:12px; padding-top:2px }
+.paper-fields dd { line-height:1.8; white-space:pre-line }
+.experiment-references { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px }
+.experiment-references a { color:var(--accent) }
+.roadmap-step { display:grid; grid-template-columns:30px minmax(0,1fr); gap:14px; padding:20px 0; border-top:1px solid var(--line) }
+.roadmap-step:first-child { padding-top:0; border:0 }
+.roadmap-step>span { padding-top:3px }
+.roadmap-step p { line-height:1.8 }
+.roadmap-fields { display:grid; grid-template-columns:120px minmax(0,1fr); gap:8px 20px; font-size:13px; margin-top:12px }
+.next-step { padding:18px 20px; margin-top:24px; background:var(--subtle); border:1px solid var(--line); border-radius:6px }
+.next-step h3 { font-size:14px; margin-bottom:8px }
+.document-end { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px }
+.search-form { display:flex; gap:8px; margin-bottom:16px }
+.search-input { width:100%; min-width:0; height:36px; border:1px solid var(--line); border-radius:6px; padding:7px 12px; background:var(--bg) }
+.search-input::placeholder { color:var(--muted) }
+.list-box,.source-list { border:1px solid var(--line); border-radius:6px; overflow:hidden }
+.list-toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:var(--subtle); padding:12px 16px; border-bottom:1px solid var(--line) }
+.state-filters,.filter-controls { display:flex; gap:20px; align-items:center; flex-wrap:wrap }
+.state-filter { border:0; padding:0; background:none; display:flex; align-items:center; gap:7px; color:var(--muted); font-size:13px; min-height:28px }
+.state-filter[aria-pressed="true"] { color:var(--text); font-weight:600 }
+.severity-select { border:1px solid var(--line); border-radius:5px; background:var(--bg); color:var(--muted); padding:4px 8px; font-size:12px; max-width:160px }
+.issue-row { display:grid; grid-template-columns:18px minmax(0,1fr) 18px; gap:12px; padding:17px 16px; border-bottom:1px solid var(--line) }
+.issue-row:last-child { border:0 }
+.issue-row:hover { background:var(--subtle) }
+.issue-row-title { display:flex; flex-wrap:wrap; align-items:baseline; gap:10px }
+.issue-status { color:var(--green); font-size:20px; line-height:24px }
+.issue-status.resolved { color:#8250df; font-size:17px }
+.row-chevron { color:var(--muted); padding-top:3px }
+.empty-panel { padding:40px 24px; text-align:center }
+.empty-panel h2 { font-size:18px; margin-bottom:10px }
+.empty-panel p { color:var(--muted); margin-bottom:20px }
+.back-link { display:inline-block; margin-bottom:18px; font-size:13px }
+.detail-heading { padding-bottom:22px; border-bottom:1px solid var(--line); margin-bottom:26px }
+.detail-heading h1 { font-size:26px; margin-bottom:14px; font-weight:600; letter-spacing:-.4px }
+.detail-layout { display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:36px }
+.comment { border:1px solid var(--line); border-radius:6px; overflow:hidden; margin-bottom:18px }
+.comment-header { display:flex; align-items:baseline; flex-wrap:wrap; justify-content:space-between; gap:10px; padding:10px 16px; background:var(--subtle); border-bottom:1px solid var(--line); color:var(--muted); font-size:12px }
+.comment-header strong { color:var(--text) }
+.comment-body { padding:18px 16px }
+.comment-body p { white-space:pre-line; line-height:1.8 }
+.thread-action { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:12px; margin-top:24px }
+.detail-sidebar { font-size:13px; min-width:0 }
+.detail-sidebar>section { padding:0 0 18px; margin-bottom:18px; border-bottom:1px solid var(--line) }
+.detail-sidebar h2 { font-size:12px; color:var(--muted); margin-bottom:10px }
+.detail-sidebar code { display:block; line-height:1.8 }
+.detail-sidebar p { line-height:1.75 }
+.source-links { display:grid; gap:9px; font-size:12px }
+.source-row { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 18px; border-bottom:1px solid var(--line) }
+.source-row:last-child { border:0 }
+.source-row p { color:var(--muted); font-size:12px; margin-top:4px }
+.source-row>.source-hash { color:var(--muted); flex-shrink:0 }
+.workspace-footer { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:20px 0 30px; border-top:1px solid var(--line); color:var(--muted); font-size:12px }
+.storage-message:not(.storage-fallback) { display:none }
+.storage-message { margin-top:20px; font-size:12px }
+.storage-fallback { color:#9a6700 }
+/* Offline source reader and portable annotations. */
+.dossier-dialog { width:min(1000px,calc(100vw - 48px)); max-height:88vh; padding:0; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); box-shadow:0 12px 40px #1f232833; font:14px/1.7 var(--body-font) }
+.dossier-dialog::backdrop { background:#1f232866 }
+.dossier-dialog>header { position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:16px 20px; background:var(--subtle); border-bottom:1px solid var(--line); z-index:1 }
+.dossier-dialog h2 { font-size:18px }
+.dossier-dialog .dialog-content { padding:20px }
+.dossier-dialog label { display:block; font-weight:600; font-size:13px; margin:16px 0 7px }
+.dossier-dialog label:first-child { margin-top:0 }
+.dossier-dialog input,.dossier-dialog select,.dossier-dialog textarea { width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; background:var(--surface); font-size:14px; line-height:1.6 }
+.dossier-dialog textarea { min-height:180px; resize:vertical }
+.dossier-dialog select { min-height:40px }
+.source-meta { color:var(--muted); white-space:pre-line; overflow-wrap:anywhere; font:12px/1.8 var(--mono-font); margin:14px 0 }
+.source-text { font:13px/1.8 var(--mono-font); padding:20px; margin:0; white-space:pre-wrap; overflow-wrap:anywhere; background:var(--subtle); border:1px solid var(--line); border-radius:6px }
+.dialog-actions { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:20px }
+.dialog-help,.feedback-separation { color:var(--muted); font-size:12px; line-height:1.7; margin:12px 0 }
+.dossier-dialog button[type="submit"] { color:#fff; background:var(--accent); border-color:var(--accent) }
+.note-entry { padding:18px 0; border-bottom:1px solid var(--line) }
+.note-entry h3 { font-size:14px }
+.note-entry p { white-space:pre-wrap; overflow-wrap:anywhere; margin:12px 0 }
+.note-context { font:12px/1.7 var(--mono-font); white-space:pre-line; color:var(--muted); overflow-wrap:anywhere }
+.empty-notes { padding:30px 0 }
+.dossier-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 20px; max-width:90vw; background:var(--text); color:#fff; font-size:13px; border-radius:6px; z-index:100 }
+@media(max-width:1100px) {
+  .workspace-header { padding:12px 24px }
+  .workspace-shell { padding:0 28px }
+  .project-meta { gap:8px 12px }
+  .overview-layout { grid-template-columns:minmax(0,1fr) 250px; gap:28px }
+  .reading-layout { grid-template-columns:165px minmax(0,1fr); gap:28px }
+  .reading-nav { padding-right:12px }
+  .round-summary { gap:10px; padding:16px 14px }
+  .detail-layout { grid-template-columns:minmax(0,1fr) 210px; gap:28px }
+  .experiment-fields>div { grid-template-columns:140px minmax(0,1fr); gap:16px }
+}
+@media(max-width:800px) {
+  .project-context { align-items:flex-start; flex-direction:column; gap:9px; padding-top:20px }
+  .overview-layout { grid-template-columns:1fr }
+  .overview-aside { display:grid; grid-template-columns:1fr 1fr; gap:24px }
+  .overview-aside .next-action { grid-column:1/-1 }
+  .record-context { margin-top:0 }
+  .reading-layout { grid-template-columns:1fr; gap:24px }
+  .reading-nav { position:static; display:flex; flex-wrap:wrap; gap:8px; border:0; border-bottom:1px solid var(--line); padding:0 0 14px }
+  .nav-caption { width:100%; margin:0 }
+  .round-link,.plan-link { margin:0; padding:7px 10px }
+  .nav-help { display:none }
+  .round-link { flex-direction:row; align-items:center; gap:10px }
+  .plan-link { font-size:12px; gap:7px }
+  .detail-layout { grid-template-columns:1fr }
+  .detail-sidebar { display:grid; grid-template-columns:1fr 1fr; gap:0 24px }
+}
+@media(max-width:540px) {
+  .workspace-header { padding:12px 16px; flex-wrap:wrap; gap:10px }
+  .workspace-brand { width:100%; font-size:13px; gap:10px }
+  .header-tools { width:100% }
+  .header-tools .ui-button { font-size:12px }
+  .workspace-shell { padding:0 16px }
+  .project-meta { gap:6px 12px }
+  .section-nav { gap:0; justify-content:space-between; overflow-x:auto }
+  .section-link { font-size:12px; gap:4px; padding:10px 6px 12px }
+  .section-link:first-child { padding-left:0 }
+  .section-link:last-child { padding-right:0 }
+  .secondary-start { margin-left:0 }
+  .section-link .count { font-size:10px; padding:0 4px }
+  .main { padding-top:24px }
+  .page-heading { flex-direction:column; gap:12px; margin-bottom:20px }
+  .page-heading h1,.detail-heading h1 { font-size:23px }
+  .decision-strip { display:block; padding:16px; margin-bottom:24px }
+  .decision-strip p { margin:10px 0 }
+  .decision-strip>.link-button { margin-top:0 }
+  .section-heading { gap:10px }
+  .section-heading h2 { font-size:17px }
+  .section-heading>.text-link { max-width:115px; text-align:right }
+  .overview-aside { grid-template-columns:1fr }
+  .overview-aside .next-action { grid-column:auto }
+  .round-summary { grid-template-columns:22px minmax(0,1fr); gap:8px }
+  .round-summary-end { display:none }
+  .round-summary-heading { gap:8px }
+  .round-snapshot { grid-template-columns:1fr }
+  .round-snapshot>section+section { border-left:0; border-top:1px solid var(--line) }
+  .round-snapshot>section { padding:16px }
+  .round-heading { gap:12px }
+  .round-heading h2 { font-size:20px }
+  .simple-table { min-width:560px }
+  .experiment-block>header { padding:14px; flex-wrap:wrap; gap:8px }
+  .experiment-block>header>div:nth-child(2) { flex:1; min-width:150px }
+  .experiment-block>header>.badge { margin-left:0 }
+  .experiment-summary { padding:14px }
+  .experiment-fields { padding:0 14px 8px }
+  .experiment-fields>div { grid-template-columns:1fr; gap:5px }
+  .block-footer { padding:12px 14px }
+  .paper-section { grid-template-columns:24px minmax(0,1fr); gap:8px }
+  .paper-fields { grid-template-columns:1fr; gap:5px }
+  .paper-fields dd { margin-bottom:9px }
+  .roadmap-fields { grid-template-columns:1fr; gap:5px }
+  .roadmap-fields dd { margin-bottom:7px }
+  .plan-claims>div { grid-template-columns:46px minmax(0,1fr); gap:8px }
+  .plan-claims .ui-button { grid-column:2; justify-self:start }
+  .plan-context { gap:8px 12px }
+  .plan-context>.link-button { margin-left:0 }
+  .filter-controls { gap:8px }
+  .state-filters { gap:16px }
+  .issue-row { padding:14px 12px; gap:8px }
+  .detail-sidebar { grid-template-columns:1fr }
+  .source-row { padding:14px }
+  .source-hash { display:none }
+  .dossier-dialog { width:calc(100vw - 24px); max-height:92vh }
+  .dossier-dialog>header,.dossier-dialog .dialog-content { padding:16px }
+  .dossier-dialog h2 { font-size:16px }
+  .source-text { padding:14px; font-size:12px }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important } }
+@media print {
+  .workspace-header,.section-nav,.reading-nav,.header-tools,.ui-button,.btn,.workspace-footer { display:none }
+  .workspace-shell { padding:0; max-width:none }
+  .reading-layout,.overview-layout { display:block }
+  .main { padding:20px 0 }
+  .plan-section,.experiment-block,.paper-section { break-inside:avoid }
+}
+.confidence-cell { color:var(--muted); font-size:12px; line-height:1.7 }
+.rubric-details { margin-top:10px; font-size:12px; color:var(--muted) }
+.rubric-details summary { cursor:pointer; width:fit-content; color:var(--accent) }
+.rubric-details p { display:grid; grid-template-columns:80px minmax(0,1fr); gap:16px; margin-top:10px; padding:10px 14px; border:1px solid var(--line); border-radius:5px; line-height:1.7 }
+.rubric-details strong { color:var(--text) }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="workspace-header">
+  <div class="workspace-brand"><a href="#overview">idea-shaokao</a><span class="header-divider" aria-hidden="true">/</span><span id="project-slug"></span></div>
+  <div class="header-tools" id="header-tools"></div>
+</header>
+<div class="workspace-shell">
+  <div class="project-context" id="project-context"></div>
+  <nav class="section-nav" aria-label="Research sections" id="section-nav"></nav>
+  <div id="main-content" tabindex="-1"><main class="main" id="github-app"></main></div>
+  <footer class="workspace-footer">idea-shaokao<span>Research record · original sources included</span></footer>
+</div>
+<script id="review-data" type="application/json">{"schema_version":1,"project":{"slug":"adaptive-cache","title":"Adaptive cache eviction","description":"Illustrative software test fixture: adapt cache eviction to changing workloads, then test whether it lowers miss rate under the same memory and tuning budget. No experiments have run.","version":"v01","stage":"proposal","mode":"independent","round":2,"maxRounds":4,"lastCompletedRound":null,"convergence":"not_converged","status":"completed","recommendation":"Proceed","assessor":"SAC","rationale":"Proceed to a proposal-stage feasibility test; empirical claims remain pending.","nextAction":"Run the essential baseline test.","sources":["sac"],"testCase":true,"workspaceId":"baaeef9a-ed59-578a-9fa5-55e4ebf3bde1","generatedAt":"2026-11-07T06:42:53+00:00"},"issues":[{"id":"I-1","title":"Cost claim needs a fair baseline","severity":"Critical","status":"Pending experiment","round":2,"aliases":["I-1","R01-R2-01"],"criterion":"Run the specified fair-baseline test.","discussion":[{"author":"R2","phase":"Initial review","text":"Cost is unmeasured.","source":"initial","round":1},{"author":"Author","phase":"Rebuttal","text":"The test is planned, not performed.","source":"response","round":1},{"author":"R2","phase":"Reassessment","text":"The design is improved; the effect is still untested.","source":"final","round":2}],"sources":["initial","response","final","issues"]},{"id":"I-2","title":"Document the workload split","severity":"Moderate","status":"Resolved","round":1,"aliases":["I-2"],"criterion":"Record the intended split in the plan.","discussion":[],"sources":["plan"]}],"claims":[{"title":"Lower miss rate","text":"Adaptive eviction may reduce misses.","status":"Hypothesis — untested","id":"H-cost","sources":["proposal"]}],"reviewers":[{"id":"R2","round":1,"focus":"Not recorded","stage":"proposal","rubric":"Fixture scale 1–8","confidence":"Not recorded","initial":{"score":"5/8","source":"initial"},"final":null},{"id":"R2","round":2,"focus":"Not recorded","stage":"proposal","rubric":"Fixture scale 1–8","confidence":"Limited empirical evidence","initial":null,"final":{"score":"6/8","source":"final"}}],"timeline":[{"label":"Initial review","role":"R2","summary":"A baseline was requested.","id":"round-1","round":1,"source":"initial"},{"label":"Author response","role":"Author","summary":"Specify the held-out split and matched-budget test; measurements remain pending.","id":"rebuttal","round":1,"source":"response"},{"label":"Assessment","role":"SAC","summary":"Proceed to a feasibility test, without empirical validation.","id":"round-2","round":2,"source":"sac"}],"experiments":[{"title":"Fair baseline","kind":"Proposed experiment","status":"Planned","summary":"Match budgets; no measurement is available.","id":"E-early","source":"plan","sources":["plan"],"hypothesis":"H-cost: adapting eviction to workload changes reduces misses at the same cache memory budget.","setup":"Compare adaptive eviction with LRU on the same replay harness. Hold cache capacity fixed at 64 MiB and include adaptation state in that budget.","data":"Synthetic access traces: stationary, abrupt working-set switch, and gradual drift. Separate tuning traces from held-out evaluation traces.","baselines":"Exact LRU as the primary comparator; FIFO as a simple control. Use identical trace order and capacity for every policy.","metrics":"Miss rate (misses / requests), processing time per request, and peak resident memory. Report per-workload values and variability across five trace seeds.","controls":"Disable adaptation to isolate its contribution. Match warm-up, capacity, access sequence, tuning trials, and measurement boundaries.","success":"Advance only if held-out miss rate improves over LRU without exceeding the total memory budget. Predefine a practical effect size and time-overhead limit before running.","failure":"Stop if the apparent gain disappears with matched memory, or if it depends on tuning on held-out traces. Do not claim a latency benefit from miss rate alone.","resources":"First build a CPU trace-replay harness and verify identical accounting. A single workstation is the assumed starting point; runtime and engineering estimates remain to be established.","result":"Not run. No measured miss rate, speedup, confidence interval, or successful outcome exists."}],"rounds":[{"round":1,"version":"v01","status":"Initial assessment","stage":"proposal","idea":{"text":"Adapt the eviction policy to recent access patterns. The proposed benefit is a lower miss rate under a fixed cache budget.","sources":["proposal"]},"changes":{"text":"Initial submission. A fair comparison and the intended workload split still need to be specified.","sources":["initial"]},"outcome":{"text":"R2 requests a fair baseline before the cost claim can be assessed. Initial score: 5/8; no post-rebuttal score is recorded in this round.","sources":["initial"]}},{"round":2,"version":"v01","status":"Plan reassessment","stage":"proposal","idea":{"text":"Keep the adaptive eviction hypothesis and test it against an exact LRU baseline under matched workloads, memory, and tuning budgets.","sources":["proposal","plan"]},"changes":{"text":"The author specifies a held-out workload split and a matched-budget feasibility test. The proposal stays at v01; no replacement submission or measured result is claimed.","sources":["response","plan"]},"outcome":{"text":"Proceed to the feasibility test at proposal stage. The plan improves to a recorded 6/8; the effect remains unmeasured.","sources":["final","sac"]}}],"plan":{"idea":[{"id":"problem","title":"Research question","sources":["proposal"],"text":"Can an eviction policy respond to workload drift and reduce cache misses without extra memory or unequal tuning?"},{"id":"method","title":"Method design","sources":["proposal"],"text":"Track recent access patterns, update the eviction preference on a fixed schedule, and choose a victim within the same total cache budget. Keep the replay harness and trace input shared with the baselines."},{"id":"positioning","title":"Contribution & boundaries","sources":["proposal","plan"],"text":"The proposed contribution is adaptation under a matched total resource budget. Novelty against external prior work is not established by this fixture; neither cache-miss improvements nor lower latency have been measured."}],"story":[{"id":"problem","title":"Problem → gap","sources":["proposal"],"text":"Workload changes can make a fixed eviction rule a poor fit. The research question is whether adaptation helps once the cost of its own state and tuning is included."},{"id":"insight","title":"Insight → mechanism","sources":["proposal","plan"],"text":"Use recent workload behavior to change eviction preferences. The causal claim is about responding to drift; the no-adaptation control must isolate that mechanism."},{"id":"evidence","title":"Evidence → conclusion","sources":["plan"],"text":"First establish a fair replay protocol, then test the main effect, and finally disable adaptation. A paper can claim a benefit only if held-out traces support it within the same resource budget."},{"id":"limits","title":"Limits of the story","sources":["plan"],"text":"Synthetic traces alone would not establish production relevance. Report regressions, workload-specific effects, and policy overhead. The current artifact is an experiment plan, not a result."}],"paper":[{"id":"abstract","title":"Abstract","sources":["proposal","plan"],"goal":"Summarize the research question, mechanism, evidence stage, and supported contribution.","design":"Use one sentence each for the problem, adaptive policy, fair evaluation, and evidence-limited conclusion. Replace planned outcomes with measured findings only after execution.","evidence":"The present proposal can describe a testable hypothesis and protocol; it has no result numbers to report.","experiments":["E-early"]},{"id":"introduction","title":"Introduction","sources":["proposal"],"goal":"Establish why adaptation under a fixed resource budget is the research question.","design":"Open with workload drift, state the limitation of a fixed eviction rule, then describe the proposed mechanism and falsifiable contribution. Keep claims conditional until experiments run.","evidence":"A workload-shift illustration and a concise statement of H-cost. No fabricated headline improvement.","experiments":[]},{"id":"related-work","title":"Related work","sources":["proposal"],"goal":"Position the mechanism against the closest eviction and adaptive-policy methods.","design":"Compare the information each policy observes, adaptation schedule, tuning allowance, and memory overhead. Explain the substantive difference after a verified literature search.","evidence":"A sourced comparison matrix is required; external novelty is currently unestablished.","experiments":[]},{"id":"method","title":"Method","sources":["proposal"],"goal":"Make the proposed policy implementable and its resource accounting auditable.","design":"Define access events, state, update schedule, victim selection, and total memory accounting. Give pseudocode and analyze per-request overhead.","evidence":"One policy-flow figure and pseudocode; report adaptation-state memory alongside cached objects.","experiments":[]},{"id":"experiments","title":"Experimental design & results","sources":["plan"],"goal":"Decide whether the mechanism improves the primary metric under fair conditions.","design":"Describe held-out traces and the matched-budget protocol first. Compare with LRU and FIFO, then remove adaptation. Present per-workload outcomes, overhead, variability, and failures after execution.","evidence":"Planned main comparison table, workload-shift curve, and adaptation ablation. All results remain pending.","experiments":["E-early"]},{"id":"analysis","title":"Mechanism analysis & ablations","sources":["plan"],"goal":"Separate the adaptation mechanism from extra state, tuning, and incidental workload effects.","design":"Compare the adaptive policy with adaptation disabled under the same budget. Analyze stationary, abrupt-switch, and gradual-drift traces separately; account for processing-time and memory overhead.","evidence":"A planned no-adaptation ablation and per-workload effect/overhead plots. Outcomes remain pending.","experiments":["E-early"]},{"id":"discussion","title":"Discussion & limitations","sources":["plan"],"goal":"Explain when the mechanism helps, when it fails, and the limits of generalization.","design":"Relate any effect to drift and policy overhead. Discuss synthetic-trace coverage, tuning sensitivity, and production workloads that have not been evaluated.","evidence":"Negative outcomes and resource regressions belong in the analysis. No production claim follows from this fixture.","experiments":["E-early"]},{"id":"conclusion","title":"Conclusion","sources":["plan"],"goal":"Answer the original research question at the evidence stage actually reached.","design":"State the supported finding and scope, then the most consequential next test. If the test fails, explain what was falsified rather than restating the intended contribution.","evidence":"Only completed, reproducible evidence can support a final performance claim.","experiments":["E-early"]}],"roadmap":[{"id":"harness","title":"Build the shared replay harness","sources":["plan"],"task":"Implement trace replay, LRU, FIFO, and consistent memory accounting before adding the adaptive policy.","dependencies":"Freeze the workload split and measurement protocol.","artifact":"A reproducible harness, trace manifests, and accounting checks.","estimate":"CPU workstation assumed; engineering effort has not been estimated."},{"id":"gate","title":"Run the decisive feasibility test","sources":["plan"],"task":"Execute E-early on held-out traces with matched budgets; report all workload outcomes and the no-adaptation control.","dependencies":"Verified harness, frozen thresholds, and a policy implementation.","artifact":"Raw logs, configuration, memory accounting, and a per-workload comparison table.","estimate":"Five trace seeds planned; wall-clock cost is unknown until a pilot run."},{"id":"write","title":"Write from the evidence","sources":["plan"],"task":"Build the paper around the supported mechanism and its failure boundaries. Revisit the contribution if the matched-budget effect fails.","dependencies":"Completed feasibility evidence and verified related work.","artifact":"Section-by-section manuscript with traceable figures and limitations.","estimate":"Writing effort depends on the outcome; no submission readiness is implied."}]},"sources":{"proposal":{"id":"proposal","path":"proposal/v01/proposal.md","title":"proposal.md","text":"# Synthetic proposal v01\n\nCan an eviction policy respond to workload drift and reduce cache misses without extra memory or unequal tuning?\n\nTrack recent access patterns, update the eviction preference on a fixed schedule, and choose a victim within the same total cache budget. Keep the replay harness and trace input shared with the baselines.\n\nThe proposed contribution is adaptation under a matched total resource budget. Novelty against external prior work is not established by this fixture; neither cache-miss improvements nor lower latency have been measured.\n\nWorkload changes can make a fixed eviction rule a poor fit. The research question is whether adaptation helps once the cost of its own state and tuning is included.\n\nUse recent workload behavior to change eviction preferences. The causal claim is about responding to drift; the no-adaptation control must isolate that mechanism.\n\n{\"id\": \"abstract\", \"title\": \"Abstract\", \"goal\": \"Summarize the research question, mechanism, evidence stage, and supported contribution.\", \"design\": \"Use one sentence each for the problem, adaptive policy, fair evaluation, and evidence-limited conclusion. Replace planned outcomes with measured findings only after execution.\", \"evidence\": \"The present proposal can describe a testable hypothesis and protocol; it has no result numbers to report.\", \"experiments\": [\"E-early\"], \"sources\": [\"proposal\", \"plan\"]}\n\n{\"id\": \"introduction\", \"title\": \"Introduction\", \"goal\": \"Establish why adaptation under a fixed resource budget is the research question.\", \"design\": \"Open with workload drift, state the limitation of a fixed eviction rule, then describe the proposed mechanism and falsifiable contribution. Keep claims conditional until experiments run.\", \"evidence\": \"A workload-shift illustration and a concise statement of H-cost. No fabricated headline improvement.\", \"experiments\": [], \"sources\": [\"proposal\"]}\n\n{\"id\": \"related-work\", \"title\": \"Related work\", \"goal\": \"Position the mechanism against the closest eviction and adaptive-policy methods.\", \"design\": \"Compare the information each policy observes, adaptation schedule, tuning allowance, and memory overhead. Explain the substantive difference after a verified literature search.\", \"evidence\": \"A sourced comparison matrix is required; external novelty is currently unestablished.\", \"experiments\": [], \"sources\": [\"proposal\"]}\n\n{\"id\": \"method\", \"title\": \"Method\", \"goal\": \"Make the proposed policy implementable and its resource accounting auditable.\", \"design\": \"Define access events, state, update schedule, victim selection, and total memory accounting. Give pseudocode and analyze per-request overhead.\", \"evidence\": \"One policy-flow figure and pseudocode; report adaptation-state memory alongside cached objects.\", \"experiments\": [], \"sources\": [\"proposal\"]}\n","sha256":"418af9d274aea7a87a3efde4e764fa0480985febe5228cda9b2c42551121987d"},"initial":{"id":"initial","path":"reviews/round-01/reviewer-R2-initial.md","title":"reviewer-R2-initial.md","text":"# R2 initial\nRound 1. Cost claim needs a fair baseline. Score: 5/8.\n","sha256":"2ea75b488770841af43c7f2e74461b90df9639e224958921857d4ab8307fcaf3"},"response":{"id":"response","path":"rebuttals/round-01.md","title":"round-01.md","text":"# Synthetic author response\n\nThe author specifies a held-out workload split and a matched-budget feasibility test. The proposal stays at v01; no replacement submission or measured result is claimed.\n","sha256":"64d050b8fcd32095392fef459239a87838f981333495eb80c93da1906863b058"},"final":{"id":"final","path":"reviews/round-02/reviewer-R2-final.md","title":"reviewer-R2-final.md","text":"# R2 reassessment\nRound 2. Experimental plan improved. Cost remains unmeasured. Score: 6/8.\n","sha256":"acdb20efb2389f158859a523f34f49b122c569fa07d0f1be9d3237b7d1640b2a"},"sac":{"id":"sac","path":"reviews/round-02/sac-assessment.md","title":"sac-assessment.md","text":"# SAC\nProceed to the feasibility experiment at proposal stage; this is not a validated paper.\n","sha256":"0bd61a101085999e36d19c5f4670cc86b8c6cf16e1c00bbb2b5539e86d8f0940"},"plan":{"id":"plan","path":"proposal/v01/experiments.md","title":"experiments.md","text":"# Synthetic experiment and writing plan — no runs\n\n{\n  \"id\": \"E-early\",\n  \"title\": \"Fair baseline\",\n  \"kind\": \"Proposed experiment\",\n  \"status\": \"Planned\",\n  \"summary\": \"Match budgets; no measurement is available.\",\n  \"source\": \"plan\",\n  \"hypothesis\": \"H-cost: adapting eviction to workload changes reduces misses at the same cache memory budget.\",\n  \"setup\": \"Compare adaptive eviction with LRU on the same replay harness. Hold cache capacity fixed at 64 MiB and include adaptation state in that budget.\",\n  \"data\": \"Synthetic access traces: stationary, abrupt working-set switch, and gradual drift. Separate tuning traces from held-out evaluation traces.\",\n  \"baselines\": \"Exact LRU as the primary comparator; FIFO as a simple control. Use identical trace order and capacity for every policy.\",\n  \"metrics\": \"Miss rate (misses / requests), processing time per request, and peak resident memory. Report per-workload values and variability across five trace seeds.\",\n  \"controls\": \"Disable adaptation to isolate its contribution. Match warm-up, capacity, access sequence, tuning trials, and measurement boundaries.\",\n  \"success\": \"Advance only if held-out miss rate improves over LRU without exceeding the total memory budget. Predefine a practical effect size and time-overhead limit before running.\",\n  \"failure\": \"Stop if the apparent gain disappears with matched memory, or if it depends on tuning on held-out traces. Do not claim a latency benefit from miss rate alone.\",\n  \"resources\": \"First build a CPU trace-replay harness and verify identical accounting. A single workstation is the assumed starting point; runtime and engineering estimates remain to be established.\",\n  \"result\": \"Not run. No measured miss rate, speedup, confidence interval, or successful outcome exists.\"\n}\n\n{\n  \"idea\": [\n    {\n      \"id\": \"problem\",\n      \"title\": \"Research question\",\n      \"text\": \"Can an eviction policy respond to workload drift and reduce cache misses without extra memory or unequal tuning?\",\n      \"sources\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"method\",\n      \"title\": \"Method design\",\n      \"text\": \"Track recent access patterns, update the eviction preference on a fixed schedule, and choose a victim within the same total cache budget. Keep the replay harness and trace input shared with the baselines.\",\n      \"sources\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"positioning\",\n      \"title\": \"Contribution & boundaries\",\n      \"text\": \"The proposed contribution is adaptation under a matched total resource budget. Novelty against external prior work is not established by this fixture; neither cache-miss improvements nor lower latency have been measured.\",\n      \"sources\": [\n        \"proposal\",\n        \"plan\"\n      ]\n    }\n  ],\n  \"story\": [\n    {\n      \"id\": \"problem\",\n      \"title\": \"Problem \\u2192 gap\",\n      \"text\": \"Workload changes can make a fixed eviction rule a poor fit. The research question is whether adaptation helps once the cost of its own state and tuning is included.\",\n      \"sources\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"insight\",\n      \"title\": \"Insight \\u2192 mechanism\",\n      \"text\": \"Use recent workload behavior to change eviction preferences. The causal claim is about responding to drift; the no-adaptation control must isolate that mechanism.\",\n      \"sources\": [\n        \"proposal\",\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"evidence\",\n      \"title\": \"Evidence \\u2192 conclusion\",\n      \"text\": \"First establish a fair replay protocol, then test the main effect, and finally disable adaptation. A paper can claim a benefit only if held-out traces support it within the same resource budget.\",\n      \"sources\": [\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"limits\",\n      \"title\": \"Limits of the story\",\n      \"text\": \"Synthetic traces alone would not establish production relevance. Report regressions, workload-specific effects, and policy overhead. The current artifact is an experiment plan, not a result.\",\n      \"sources\": [\n        \"plan\"\n      ]\n    }\n  ],\n  \"paper\": [\n    {\n      \"id\": \"abstract\",\n      \"title\": \"Abstract\",\n      \"goal\": \"Summarize the research question, mechanism, evidence stage, and supported contribution.\",\n      \"design\": \"Use one sentence each for the problem, adaptive policy, fair evaluation, and evidence-limited conclusion. Replace planned outcomes with measured findings only after execution.\",\n      \"evidence\": \"The present proposal can describe a testable hypothesis and protocol; it has no result numbers to report.\",\n      \"experiments\": [\n        \"E-early\"\n      ],\n      \"sources\": [\n        \"proposal\",\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"introduction\",\n      \"title\": \"Introduction\",\n      \"goal\": \"Establish why adaptation under a fixed resource budget is the research question.\",\n      \"design\": \"Open with workload drift, state the limitation of a fixed eviction rule, then describe the proposed mechanism and falsifiable contribution. Keep claims conditional until experiments run.\",\n      \"evidence\": \"A workload-shift illustration and a concise statement of H-cost. No fabricated headline improvement.\",\n      \"experiments\": [],\n      \"sources\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"related-work\",\n      \"title\": \"Related work\",\n      \"goal\": \"Position the mechanism against the closest eviction and adaptive-policy methods.\",\n      \"design\": \"Compare the information each policy observes, adaptation schedule, tuning allowance, and memory overhead. Explain the substantive difference after a verified literature search.\",\n      \"evidence\": \"A sourced comparison matrix is required; external novelty is currently unestablished.\",\n      \"experiments\": [],\n      \"sources\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"method\",\n      \"title\": \"Method\",\n      \"goal\": \"Make the proposed policy implementable and its resource accounting auditable.\",\n      \"design\": \"Define access events, state, update schedule, victim selection, and total memory accounting. Give pseudocode and analyze per-request overhead.\",\n      \"evidence\": \"One policy-flow figure and pseudocode; report adaptation-state memory alongside cached objects.\",\n      \"experiments\": [],\n      \"sources\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"experiments\",\n      \"title\": \"Experimental design & results\",\n      \"goal\": \"Decide whether the mechanism improves the primary metric under fair conditions.\",\n      \"design\": \"Describe held-out traces and the matched-budget protocol first. Compare with LRU and FIFO, then remove adaptation. Present per-workload outcomes, overhead, variability, and failures after execution.\",\n      \"evidence\": \"Planned main comparison table, workload-shift curve, and adaptation ablation. All results remain pending.\",\n      \"experiments\": [\n        \"E-early\"\n      ],\n      \"sources\": [\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"analysis\",\n      \"title\": \"Mechanism analysis & ablations\",\n      \"goal\": \"Separate the adaptation mechanism from extra state, tuning, and incidental workload effects.\",\n      \"design\": \"Compare the adaptive policy with adaptation disabled under the same budget. Analyze stationary, abrupt-switch, and gradual-drift traces separately; account for processing-time and memory overhead.\",\n      \"evidence\": \"A planned no-adaptation ablation and per-workload effect/overhead plots. Outcomes remain pending.\",\n      \"experiments\": [\n        \"E-early\"\n      ],\n      \"sources\": [\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"discussion\",\n      \"title\": \"Discussion & limitations\",\n      \"goal\": \"Explain when the mechanism helps, when it fails, and the limits of generalization.\",\n      \"design\": \"Relate any effect to drift and policy overhead. Discuss synthetic-trace coverage, tuning sensitivity, and production workloads that have not been evaluated.\",\n      \"evidence\": \"Negative outcomes and resource regressions belong in the analysis. No production claim follows from this fixture.\",\n      \"experiments\": [\n        \"E-early\"\n      ],\n      \"sources\": [\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"conclusion\",\n      \"title\": \"Conclusion\",\n      \"goal\": \"Answer the original research question at the evidence stage actually reached.\",\n      \"design\": \"State the supported finding and scope, then the most consequential next test. If the test fails, explain what was falsified rather than restating the intended contribution.\",\n      \"evidence\": \"Only completed, reproducible evidence can support a final performance claim.\",\n      \"experiments\": [\n        \"E-early\"\n      ],\n      \"sources\": [\n        \"plan\"\n      ]\n    }\n  ],\n  \"roadmap\": [\n    {\n      \"id\": \"harness\",\n      \"title\": \"Build the shared replay harness\",\n      \"task\": \"Implement trace replay, LRU, FIFO, and consistent memory accounting before adding the adaptive policy.\",\n      \"dependencies\": \"Freeze the workload split and measurement protocol.\",\n      \"artifact\": \"A reproducible harness, trace manifests, and accounting checks.\",\n      \"estimate\": \"CPU workstation assumed; engineering effort has not been estimated.\",\n      \"sources\": [\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"gate\",\n      \"title\": \"Run the decisive feasibility test\",\n      \"task\": \"Execute E-early on held-out traces with matched budgets; report all workload outcomes and the no-adaptation control.\",\n      \"dependencies\": \"Verified harness, frozen thresholds, and a policy implementation.\",\n      \"artifact\": \"Raw logs, configuration, memory accounting, and a per-workload comparison table.\",\n      \"estimate\": \"Five trace seeds planned; wall-clock cost is unknown until a pilot run.\",\n      \"sources\": [\n        \"plan\"\n      ]\n    },\n    {\n      \"id\": \"write\",\n      \"title\": \"Write from the evidence\",\n      \"task\": \"Build the paper around the supported mechanism and its failure boundaries. Revisit the contribution if the matched-budget effect fails.\",\n      \"dependencies\": \"Completed feasibility evidence and verified related work.\",\n      \"artifact\": \"Section-by-section manuscript with traceable figures and limitations.\",\n      \"estimate\": \"Writing effort depends on the outcome; no submission readiness is implied.\",\n      \"sources\": [\n        \"plan\"\n      ]\n    }\n  ]\n}\n","sha256":"18ff54b343fae40fe98975603b9b2caf5dd1d2e0a8c8abb49d671a46f55dc7f5"},"state":{"id":"state","path":"state.json","title":"state.json","text":"{\"schema_version\": 1, \"slug\": \"adaptive-cache\", \"topic\": \"Adaptive cache eviction\", \"venue\": \"Unspecified\", \"review_stage\": \"proposal\", \"execution_mode\": \"independent\", \"current_round\": 2, \"max_rounds\": 4, \"status\": \"completed\", \"next_action\": \"Run the essential baseline test.\", \"proposal_version\": \"v01\", \"convergence\": \"not_converged\", \"recommendation\": \"Proceed\", \"created_at\": \"2026-11-07T00:00:00+00:00\", \"updated_at\": \"2026-11-07T01:00:00+00:00\"}","sha256":"da35c8688a04b5b5f363720a6491d3f44eaba5324fb9420d5e0d6c17c87e2224"},"report":{"id":"report","path":"final/final_report.md","title":"final_report.md","text":"# Adaptive cache study\n\nSoftware test fixture. Proposal only; no measured result. Proceed to an essential feasibility test.\n","sha256":"981c180c0a6e8b3805e67ac21d910ad1c0bd6f44c0f2d950bf5575a33a02a80a"},"issues":{"id":"issues","path":"issue_tracker.md","title":"issue_tracker.md","text":"# Issues\nI-1: Critical, Pending experiment. I-2: Moderate, Resolved.\n","sha256":"38f38fb46ad37c2156453edefbf35abd44410128d20bb27549c7b4a3ee027599"}},"targets":{"section:decision":{"title":"Research recommendation","sources":["sac"]},"section:overview":{"title":"Research overview","sources":["sac"]},"section:reviews":{"title":"Review history","sources":["initial","response","sac","report"]},"section:experiments":{"title":"Experiment plan and evidence","sources":["plan","report"]},"section:plan":{"title":"Final research plan","sources":["proposal","plan","report"]},"issue:I-1":{"title":"Cost claim needs a fair baseline","sources":["initial","response","final","issues"]},"issue:I-2":{"title":"Document the workload split","sources":["plan"]},"claim:H-cost":{"title":"Lower miss rate","sources":["proposal"]},"experiment:E-early":{"title":"Fair baseline","sources":["plan"]},"round:1":{"title":"Round 1 idea and review","sources":["proposal","initial"],"round":1,"version":"v01","stage":"proposal"},"round:2":{"title":"Round 2 idea and review","sources":["proposal","plan","response","final","sac"],"round":2,"version":"v01","stage":"proposal"},"plan:idea:problem":{"title":"Research question","sources":["proposal"]},"plan:idea:method":{"title":"Method design","sources":["proposal"]},"plan:idea:positioning":{"title":"Contribution & boundaries","sources":["proposal","plan"]},"plan:story:problem":{"title":"Problem → gap","sources":["proposal"]},"plan:story:insight":{"title":"Insight → mechanism","sources":["proposal","plan"]},"plan:story:evidence":{"title":"Evidence → conclusion","sources":["plan"]},"plan:story:limits":{"title":"Limits of the story","sources":["plan"]},"plan:paper:abstract":{"title":"Abstract","sources":["proposal","plan"]},"plan:paper:introduction":{"title":"Introduction","sources":["proposal"]},"plan:paper:related-work":{"title":"Related work","sources":["proposal"]},"plan:paper:method":{"title":"Method","sources":["proposal"]},"plan:paper:experiments":{"title":"Experimental design & results","sources":["plan"]},"plan:paper:analysis":{"title":"Mechanism analysis & ablations","sources":["plan"]},"plan:paper:discussion":{"title":"Discussion & limitations","sources":["plan"]},"plan:paper:conclusion":{"title":"Conclusion","sources":["plan"]},"plan:roadmap:harness":{"title":"Build the shared replay harness","sources":["plan"]},"plan:roadmap:gate":{"title":"Run the decisive feasibility test","sources":["plan"]},"plan:roadmap:write":{"title":"Write from the evidence","sources":["plan"]}}}</script>
+<script>'use strict';
+const D = JSON.parse(document.getElementById('review-data').textContent);
+const UI = (() => {
+  const escape = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const own = (object,key) => Object.prototype.hasOwnProperty.call(object,key);
+  const target = id => own(D.targets,id) ? D.targets[id] : null;
+  const types = ['Question','Needs evidence','Suggested change'];
+  const key = 'idea-shaokao:review:v1:'+D.project.workspaceId;
+  let notes=[], drafts=new Map(), available=false, active=null, toastTimer;
+  const newId=()=>globalThis.crypto?.randomUUID?.()||'note-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+  const sourceButton=(id,label)=>`<button type="button" class="ui-button" data-evidence="${escape(id)}">${escape(label||D.sources[id]?.title||'Read source')}</button>`;
+  const noteButton=(id,label='Add feedback')=>`<button type="button" class="ui-button" data-annotate="${escape(id)}">${escape(label)}</button>`;
+  const notesButton=()=>'<button type="button" class="ui-button" data-show-notes>My notes <span data-note-count>0</span></button>';
+  const exportButton=()=>'<button type="button" class="ui-button" data-export-feedback>Export feedback</button>';
+  function snapshot(id){const t=target(id);return {title:t.title,version:t.version??D.project.version,round:t.round??D.project.round,stage:t.stage??D.project.stage,sources:t.sources.map(id=>({id,path:D.sources[id].path,sha256:D.sources[id].sha256}))}}
+  function validContext(c){return c&&typeof c.title==='string'&&typeof c.version==='string'&&Number.isInteger(c.round)&&typeof c.stage==='string'&&Array.isArray(c.sources)&&c.sources.every(s=>s&&typeof s.id==='string'&&typeof s.path==='string'&&typeof s.sha256==='string'&&/^[a-f0-9]{64}$/.test(s.sha256))}
+  function validNote(n){return n&&typeof n.id==='string'&&typeof n.target==='string'&&types.includes(n.type)&&typeof n.text==='string'&&validContext(n.context)&&typeof n.createdAt==='string'&&typeof n.updatedAt==='string'}
+  function validDraft(d){return d&&typeof d.key==='string'&&typeof d.target==='string'&&types.includes(d.type)&&typeof d.text==='string'&&validContext(d.context)&&(d.editingId===null||typeof d.editingId==='string')}
+  function status(){
+    document.querySelectorAll('[data-note-count]').forEach(el=>el.textContent=notes.length);
+    document.querySelectorAll('[data-storage-status]').forEach(el=>{el.textContent=available?'Notes stay in this browser. Export or back up to keep a portable copy.':'Session only · export or back up to keep notes';el.classList.toggle('storage-fallback',!available)});
+    window.dispatchEvent(new CustomEvent('dossier:notes',{detail:{count:notes.length}}));
+  }
+  function persist(){if(available){try{localStorage.setItem(key,JSON.stringify(notes));localStorage.setItem(key+':drafts',JSON.stringify([...drafts.values()]))}catch{available=false}}status()}
+  function toast(text){const el=document.getElementById('dossier-toast');el.textContent=text;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,3200)}
+  function showEvidence(id){
+    if(!own(D.sources,id))return;
+    const s=D.sources[id],dlg=document.getElementById('evidence-dialog');
+    document.getElementById('source-title').textContent=s.title;
+    document.getElementById('source-select').value=id;
+    document.getElementById('source-meta').textContent=s.path+'\nSHA-256: '+s.sha256;
+    document.getElementById('source-text').textContent=s.text;
+    if(!dlg.open)dlg.showModal();dlg.scrollTop=0;
+  }
+  function condition(note){
+    if(!target(note.target))return 'Target no longer appears in this report. Original context retained.';
+    const changed=note.context.sources.some(s=>!own(D.sources,s.id)||D.sources[s.id].sha256!==s.sha256);
+    return [note.context.version!==D.project.version?'From proposal '+note.context.version:null,changed?'Source content has changed since this annotation.':null].filter(Boolean).join(' · ');
+  }
+  function annotate(id,noteId=null,draftId=null){
+    const note=notes.find(n=>n.id===noteId),draftKey=draftId||(noteId?'edit:'+noteId:'new:'+id),draft=drafts.get(draftKey);
+    if(!target(id)&&!note&&!draft)return;
+    active={target:id,editingId:noteId,key:draftKey,context:draft?.context||note?.context||snapshot(id)};
+    document.getElementById('note-heading').textContent=note?'Edit annotation':'Add annotation';
+    document.getElementById('note-target').textContent=id+' · '+active.context.title+'\nProposal '+active.context.version+' · '+active.context.stage+' · round '+active.context.round;
+    document.getElementById('note-type').value=draft?.type||note?.type||types[0];
+    document.getElementById('note-text').value=draft?.text??note?.text??'';
+    document.getElementById('note-context-status').textContent=condition({target:id,context:active.context});
+    document.getElementById('note-error').hidden=true;
+    document.getElementById('notes-dialog').close();document.getElementById('annotation-dialog').showModal();document.getElementById('note-text').focus();
+  }
+  function saveDraft(){if(!active)return;const value=document.getElementById('note-text').value;if(value)drafts.set(active.key,{...active,text:value,type:document.getElementById('note-type').value});else drafts.delete(active.key);persist()}
+  function renderNotes(){
+    document.getElementById('notes-list').innerHTML=notes.length?notes.map(n=>`<article class="note-entry"><div class="note-context">${escape(n.type)} · ${escape(n.target)} · ${escape(n.context.version)}</div><h3>${escape(n.context.title)}</h3>${condition(n)?`<p class="note-context">${escape(condition(n))}</p>`:''}<p>${escape(n.text)}</p><div class="note-context">${n.context.sources.map(s=>escape(s.path)).join(' · ')}</div><div class="dialog-actions"><button type="button" class="ui-button" data-edit-note="${escape(n.id)}">Edit</button><button type="button" class="ui-button" data-delete-note="${escape(n.id)}">Delete</button></div></article>`).join(''):'<p class="empty-notes">No saved annotations. Add feedback to an issue, claim, or report section.</p>';
+    document.getElementById('draft-list').innerHTML=drafts.size?`<h3>Unfinished drafts</h3>`+[...drafts.values()].map(d=>`<article class="note-entry"><div class="note-context">${escape(d.target)} · ${escape(d.context.version)}</div><h3>${escape(d.context.title)}</h3><div class="dialog-actions"><button type="button" class="ui-button" data-resume-draft="${escape(d.key)}">Resume draft</button><button type="button" class="ui-button" data-delete-draft="${escape(d.key)}">Discard draft</button></div></article>`).join(''):'';
+  }
+  function showNotes(){renderNotes();document.getElementById('notes-dialog').showModal()}
+  function markdown(){
+    const p=D.project;
+    let out=`# Idea Shaokao — Review Feedback\n\nProject: ${p.slug}\nWorkspace ID: ${p.workspaceId}\nCurrent proposal: ${p.version}\nReview round: ${p.round} of ${p.maxRounds}\nStage: ${p.stage}\nRecorded recommendation: ${p.recommendation}\n\nHuman feedback is separate from the research record. Each annotation retains the version and sources originally reviewed.\n`;
+    if(!notes.length)return out+'\nNo saved annotations. Unfinished drafts are available in the JSON backup.\n';
+    notes.forEach((n,i)=>{const fence='`'.repeat(Math.max(3,...(n.text.match(/`+/g)||[]).map(s=>s.length+1)));out+=`\n## ${i+1}. ${n.context.title}\n\nTarget ID: ${n.target}\nType: ${n.type}\nAnnotated proposal: ${n.context.version}\nAnnotated round: ${n.context.round}\nAnnotated stage: ${n.context.stage}\nUpdated: ${n.updatedAt}\n${condition(n)?'Context: '+condition(n)+'\n':''}Source references:\n`;n.context.sources.forEach(s=>out+=`- ${s.path} (SHA-256: ${s.sha256})\n`);out+=`\n${fence}text\n${n.text}\n${fence}\n`});return out;
+  }
+  function download(name,contents,type){const url=URL.createObjectURL(new Blob([contents],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+  function exportFeedback(){download('review_feedback.md',markdown(),'text/markdown;charset=utf-8');toast('Feedback exported. The research record is unchanged.')}
+  function backup(){return {schema_version:1,workspace_id:D.project.workspaceId,notes,drafts:[...drafts.values()]}}
+  function exportBackup(){download('review_notes.json',JSON.stringify(backup(),null,2)+'\n','application/json');toast('Notes and unfinished drafts backed up.')}
+  function restore(input){
+    if(!input||input.schema_version!==1||input.workspace_id!==D.project.workspaceId)throw new Error('This backup belongs to a different workspace or uses an unsupported format.');
+    if(!Array.isArray(input.notes)||!input.notes.every(validNote)||!Array.isArray(input.drafts)||!input.drafts.every(validDraft))throw new Error('Invalid notes backup. Existing annotations were kept.');
+    if(new Set(input.notes.map(n=>n.id)).size!==input.notes.length||new Set(input.drafts.map(d=>d.key)).size!==input.drafts.length)throw new Error('Backup has duplicate identifiers. Existing annotations were kept.');
+    for(const d of input.drafts){const n=input.notes.find(n=>n.id===d.editingId)||notes.find(n=>n.id===d.editingId);if(n&&n.target!==d.target)throw new Error('Draft target does not match its annotation. Existing annotations were kept.');}
+    const renamed=new Map();
+    for(const n of input.notes){const prior=notes.find(x=>x.id===n.id);if(!prior)notes.push(n);else if(JSON.stringify(prior)!==JSON.stringify(n)){const id=newId();renamed.set(n.id,id);notes.push({...n,id})}}
+    for(const original of input.drafts){const edited=renamed.get(original.editingId),d=edited?{...original,editingId:edited,key:'edit:'+edited}:original;const prior=drafts.get(d.key);if(!prior)drafts.set(d.key,d);else if(JSON.stringify(prior)!==JSON.stringify(d)){const name=d.key+':import:'+newId();drafts.set(name,{...d,key:name})}}
+    persist();renderNotes();toast('Backup restored. Conflicting versions were retained as separate entries.');
+  }
+  function mount(){
+    try{localStorage.setItem(key+':probe','1');localStorage.removeItem(key+':probe');available=true;const saved=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(saved))notes=saved.filter(validNote);const pending=JSON.parse(localStorage.getItem(key+':drafts')||'[]');if(Array.isArray(pending))drafts=new Map(pending.filter(validDraft).map(d=>[d.key,d]))}catch{available=false}
+    document.body.insertAdjacentHTML('beforeend',`<dialog class="dossier-dialog" id="evidence-dialog" aria-labelledby="source-title"><header><h2 id="source-title">Source</h2><button type="button" class="ui-button" data-close-dialog>Close reader ×</button></header><div class="dialog-content"><label for="source-select">Source document</label><select id="source-select">${Object.values(D.sources).map(s=>`<option value="${escape(s.id)}">${escape(s.path)}</option>`).join('')}</select><p class="source-meta" id="source-meta"></p><pre class="source-text" id="source-text"></pre></div></dialog><dialog class="dossier-dialog" id="annotation-dialog" aria-labelledby="note-heading"><header><h2 id="note-heading">Add annotation</h2><button type="button" class="ui-button" data-close-dialog>Close ×</button></header><form class="dialog-content" id="annotation-form"><p class="source-meta" id="note-target"></p><p class="dialog-help" id="note-context-status"></p><label for="note-type">Comment type</label><select id="note-type">${types.map(t=>`<option>${t}</option>`).join('')}</select><label for="note-text">Your comment</label><textarea id="note-text" required placeholder="What should the researcher investigate, clarify, or change?"></textarea><p class="dialog-help">Your wording and original source context are preserved. Notes do not change the recorded research assessment.</p><p id="note-error" role="alert" hidden>Please enter a comment.</p><div class="dialog-actions"><button type="submit" class="ui-button">Save annotation</button><button type="button" class="ui-button" data-close-dialog>Cancel</button><span data-storage-status class="dialog-help"></span></div></form></dialog><dialog class="dossier-dialog" id="notes-dialog" aria-labelledby="notes-heading"><header><h2 id="notes-heading">Review notes <span data-note-count>0</span></h2><button type="button" class="ui-button" data-close-dialog>Close notes ×</button></header><div class="dialog-content"><p class="feedback-separation">Human feedback, separate from the scientific record. Export feedback for the agent; use a JSON backup to move notes between browsers or file locations.</p><div id="notes-list"></div><div id="draft-list"></div><div class="dialog-actions">${exportButton()}<button type="button" class="ui-button" data-export-backup>Back up notes</button><button type="button" class="ui-button" data-import-backup>Restore notes</button><input type="file" id="notes-import" accept="application/json,.json" hidden></div><p class="dialog-help" data-storage-status></p><p id="import-error" role="alert" hidden></p></div></dialog><div class="dossier-toast" id="dossier-toast" role="status" hidden></div>`);
+    document.addEventListener('click',event=>{
+      const el=event.target.closest('button,a');if(!el)return;
+      if(el.hasAttribute('data-evidence'))showEvidence(el.dataset.evidence);
+      else if(el.hasAttribute('data-annotate'))annotate(el.dataset.annotate);
+      else if(el.hasAttribute('data-show-notes'))showNotes();
+      else if(el.hasAttribute('data-export-feedback'))exportFeedback();
+      else if(el.hasAttribute('data-close-dialog'))el.closest('dialog').close();
+      else if(el.hasAttribute('data-edit-note')){const n=notes.find(n=>n.id===el.dataset.editNote);if(n)annotate(n.target,n.id)}
+      else if(el.hasAttribute('data-delete-note')){const id=el.dataset.deleteNote;notes=notes.filter(n=>n.id!==id);drafts.delete('edit:'+id);persist();renderNotes()}
+      else if(el.hasAttribute('data-resume-draft')){const d=drafts.get(el.dataset.resumeDraft);if(d)annotate(d.target,d.editingId,d.key)}
+      else if(el.hasAttribute('data-delete-draft')){drafts.delete(el.dataset.deleteDraft);persist();renderNotes()}
+      else if(el.hasAttribute('data-export-backup'))exportBackup();
+      else if(el.hasAttribute('data-import-backup'))document.getElementById('notes-import').click();
+      if(el.hasAttribute('data-issue'))window.dispatchEvent(new CustomEvent('dossier:issue',{detail:{id:el.dataset.issue}}));
+    });
+    document.getElementById('source-select').addEventListener('change',e=>showEvidence(e.target.value));
+    document.getElementById('note-text').addEventListener('input',saveDraft);document.getElementById('note-type').addEventListener('change',saveDraft);
+    document.getElementById('annotation-form').addEventListener('submit',event=>{event.preventDefault();const value=document.getElementById('note-text').value;if(!value.trim()){document.getElementById('note-error').hidden=false;return}const prior=notes.find(n=>n.id===active.editingId),now=new Date().toISOString(),n={id:prior?.id||newId(),target:active.target,type:document.getElementById('note-type').value,text:value,context:active.context,createdAt:prior?.createdAt||now,updatedAt:now};notes=prior?notes.map(x=>x.id===prior.id?n:x):[...notes,n];drafts.delete(active.key);persist();document.getElementById('annotation-dialog').close();toast(available?'Annotation saved in this browser.':'Annotation saved for this session. Export to keep it.')});
+    document.getElementById('notes-import').addEventListener('change',async event=>{const file=event.target.files[0],error=document.getElementById('import-error');if(!file)return;try{restore(JSON.parse(await file.text()));error.hidden=true}catch(e){error.textContent=e.message;error.hidden=false}finally{event.target.value=''}});
+    status();setTimeout(status,0);
+  }
+  return {escape,sourceButton,noteButton,notesButton,exportButton,mount,showEvidence,annotate,showNotes,markdown,exportFeedback,exportBackup,backup,restore,status};
+})();
+</script>
+<script>UI.mount();
+(() => {
+  const e = UI.escape, app = document.getElementById('github-app'), p = D.project;
+  const paths = {overview:'Overview', reviews:'Idea & review', plan:'Final plan', issues:'Issues', sources:'Sources'};
+  const modes = {independent:'Independent model-agent review', external_review:'External review', single_agent:'Structured self-review', unselected:'Review mode not selected'};
+  const convergence = {converged:'Converged', not_converged:'Not converged', not_assessed:'Convergence not assessed'};
+  const plan = D.plan, snapshots = D.rounds;
+  const closed = i => ['Resolved','Rejected with justification'].includes(i.status);
+  const bucket = i => closed(i) ? 'resolved' : 'open';
+  const counts = {open:D.issues.filter(i => !closed(i)).length, resolved:D.issues.filter(closed).length, all:D.issues.length};
+  const rounds = [...new Set([...snapshots.map(r => r.round), ...D.issues.map(i => i.round), ...D.issues.flatMap(i => i.discussion.map(d => d.round)), ...D.reviewers.map(r => r.round), ...D.timeline.map(t => t.round)].filter(n => n > 0))].sort((a,b) => a-b);
+  let state = 'open', severity = 'all', query = '', round = 'all';
+  const filterKey = 'idea-shaokao:review:filters:' + p.workspaceId;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(filterKey) || 'null');
+    if (saved) {
+      if (['open','resolved','all'].includes(saved.state)) state = saved.state;
+      if (['all','Critical','Major','Moderate','Minor'].includes(saved.severity)) severity = saved.severity;
+      if (typeof saved.query === 'string') query = saved.query;
+      if (saved.round === 'all' || rounds.includes(Number(saved.round))) round = saved.round;
+    }
+  } catch {}
+  const saveFilters = () => {try {sessionStorage.setItem(filterKey, JSON.stringify({state,severity,query,round}))} catch {}};
+  const sourceLink = (id, label) => `<button type="button" class="link-button" data-evidence="${e(id)}">${e(label || D.sources[id].path)}</button>`;
+  const refs = ids => `<div class="record-links">${ids.map(id => sourceLink(id, D.sources[id].title)).join('<span aria-hidden="true">·</span>')}</div>`;
+  const feedback = (id, label='Add feedback') => UI.noteButton(id, label);
+  const storage = () => '<p class="storage-message" data-storage-status></p>';
+  const badge = i => `<span class="severity-label severity-${i.severity.toLowerCase()}">${e(i.severity)}</span>`;
+  const roundLabel = n => n ? 'Round ' + String(n).padStart(2,'0') : 'Before review';
+  const missing = text => `<p class="missing">${e(text)}</p>`;
+  const statusLabel = p.recommendation === 'Undetermined' ? 'No recommendation recorded' : (p.assessor === 'Unassigned' ? 'Assessment' : p.assessor) + ' recommends ' + p.recommendation;
+  const decision = () => `<section class="decision-strip" aria-label="Current assessment"><div><span class="badge recommendation-${p.recommendation.toLowerCase()}">${e(statusLabel)}</span><span class="quiet">${e(p.stage)} stage</span></div><p>${e(p.rationale)}</p>${sourceLink(p.sources[0], 'Assessment source ↗')}</section>`;
+  const heading = (title, description, action='') => `<div class="page-heading"><div><h1>${e(title)}</h1><p class="page-description">${e(description)}</p></div>${action}</div>`;
+  const titleRow = (title, extra='') => `<div class="section-heading"><h2>${e(title)}</h2>${extra}</div>`;
+  const score = value => value ? sourceLink(value.source, value.score) : '<span class="missing-inline">Not recorded</span>';
+  const roundSnapshot = n => snapshots.find(r => r.round === n);
+  const roundIssues = n => D.issues.filter(i => i.round === n || i.discussion.some(d => d.round === n));
+  const block = (record, empty) => record ? `<p class="record-text">${e(record.text)}</p>${refs(record.sources)}` : missing(empty);
+  const targetFeedback = n => D.targets['round:'+n] ? feedback('round:'+n,'Annotate round') : feedback('section:reviews','Review feedback');
+
+  document.getElementById('project-slug').textContent = p.slug;
+  document.getElementById('header-tools').innerHTML = UI.notesButton() + UI.exportButton();
+  document.getElementById('project-context').innerHTML = `<div class="project-label">Research workspace${p.testCase ? '<span class="badge">Test case</span>' : ''}</div><div class="project-meta"><span>${e(p.stage)} stage</span><span class="mono">${e(p.version)}</span><span>Round ${p.round} / ${p.maxRounds}</span><span>${e(convergence[p.convergence] || p.convergence)}</span></div>`;
+  document.getElementById('section-nav').innerHTML = Object.entries(paths).map(([id,label]) => `<a class="section-link ${id === 'issues' ? 'secondary-start' : ''}" href="#${id}" data-section="${id}">${label}${id === 'issues' ? `<span class="count">${counts.open}</span>` : ''}</a>`).join('');
+
+  function roundSummary(n) {
+    const r = roundSnapshot(n), reviewers = D.reviewers.filter(x => x.round === n);
+    const outcome = r?.outcome?.text || D.timeline.filter(t => t.round === n).at(-1)?.summary || 'No outcome summary recorded.';
+    return `<a class="round-summary" href="#reviews/${n}"><span class="round-number">${String(n).padStart(2,'0')}</span><div><div class="round-summary-heading"><strong>${roundLabel(n)}</strong><span class="mono quiet">${e(r?.version || 'Version not recorded')}</span></div><p>${e(r?.idea?.text || 'Idea snapshot not recorded for this round.')}</p><div class="round-outcome">${e(outcome)}</div></div><span class="round-summary-end">${reviewers.length ? reviewers.map(x => `${e(x.id)} ${e(x.final?.score || x.initial?.score || '—')}`).join('<br>') : 'Open round'}<span aria-hidden="true">→</span></span></a>`;
+  }
+
+  function overview() {
+    const method = plan.idea.find(x => ['method','mechanism','insight'].includes(x.id));
+    app.innerHTML = `${heading(p.title, 'The current idea, the review that shaped it, and the plan to carry it forward.', feedback('section:overview'))}${decision()}<div class="overview-layout"><div class="overview-main"><section class="overview-section">${titleRow('Current idea', '<a class="text-link" href="#plan/idea">View method design →</a>')}<p class="idea-summary">${e(p.description)}</p>${method ? `<div class="method-summary"><h3>${e(method.title)}</h3><p>${e(method.text)}</p>${refs(method.sources)}</div>` : ''}${D.claims.length ? `<div class="claim-list">${D.claims.map(c => `<div class="claim-row"><span class="record-id">${e(c.id)}</span><div><h3>${e(c.title)}</h3><p>${e(c.text)}</p><div class="claim-meta"><span class="evidence-state">${e(c.status)}</span>${refs(c.sources)}${feedback('claim:'+c.id,'Annotate')}</div></div></div>`).join('')}</div>` : missing('No claim index recorded. The original report retains the stated scope.')}</section><section class="overview-section">${titleRow('Idea & review progression', '<a class="text-link" href="#reviews">Read full process →</a>')}${rounds.length ? `<div class="round-summary-list">${rounds.map(roundSummary).join('')}</div>` : missing('No review rounds recorded yet.')}<p class="section-caption">Each round keeps its own idea, author response, review record, and outcome.</p></section></div><aside class="overview-aside"><section class="next-action"><h2>Next action</h2><p>${e(p.nextAction)}</p><a class="btn btn-primary" href="#plan">Open final plan <span aria-hidden="true">→</span></a></section><section class="record-context"><h2>Research record</h2><dl><dt>Review stage</dt><dd>${e(p.stage)}</dd><dt>Proposal</dt><dd class="mono">${e(p.version)}</dd><dt>Review mode</dt><dd>${e(modes[p.mode] || p.mode)}</dd><dt>Progress</dt><dd>${p.lastCompletedRound != null ? p.lastCompletedRound+' completed · ' : ''}${p.round} / ${p.maxRounds} rounds</dd><dt>Convergence</dt><dd>${e(convergence[p.convergence] || p.convergence)}</dd><dt>Run status</dt><dd>${e(p.status.replaceAll('_',' '))}</dd></dl>${sourceLink('report','Read full final report ↗')}</section><section class="record-context"><h2>Final plan</h2><a href="#plan/idea">01 <span>Idea & method</span></a><a href="#plan/experiments">02 <span>Experiment design</span></a><a href="#plan/story">03 <span>Research story</span></a><a href="#plan/paper">04 <span>Paper outline</span></a><a href="#plan/roadmap">05 <span>Implementation roadmap</span></a></section></aside></div>${storage()}`;
+  }
+
+  function reviewTable(items) {
+    if (!items.length) return missing('No independent reviewer score records supplied for this round.');
+    const rubrics = new Map();
+    items.forEach(r => {const key=JSON.stringify([r.stage,r.rubric]);if(!rubrics.has(key))rubrics.set(key,{stage:r.stage,rubric:r.rubric,reviewers:[]});rubrics.get(key).reviewers.push(r.id)});
+    return `<div class="table-scroll"><table class="simple-table review-table"><thead><tr><th>Reviewer / focus</th><th>Initial</th><th>After rebuttal</th><th>Confidence</th></tr></thead><tbody>${items.map(r => `<tr><td><strong>${e(r.id)}</strong><span class="table-detail">${e(r.focus)}</span></td><td class="score-cell">${score(r.initial)}</td><td class="score-cell">${score(r.final)}</td><td class="confidence-cell">${e(r.confidence)}</td></tr>`).join('')}</tbody></table></div><details class="rubric-details"><summary>Stage & scoring rubric</summary>${[...rubrics.values()].map(r=>`<p><strong>${e(r.reviewers.join(', '))}</strong><span>${e(r.stage)} · ${e(r.rubric)}</span></p>`).join('')}</details>`;
+  }
+
+  function reviews(selected) {
+    const n = rounds.includes(Number(selected)) ? Number(selected) : rounds.at(-1);
+    if (!n) {
+      app.innerHTML = `${heading('Idea & review', modes[p.mode] || p.mode, feedback('section:reviews'))}<div class="empty-panel"><h2>No review rounds recorded</h2><p>The research overview and final plan contain the work available so far.</p><a class="btn" href="#overview">Read overview</a></div>${D.timeline.length ? phaseTimeline(D.timeline) : ''}${storage()}`;
+      return;
+    }
+    const r = roundSnapshot(n), reviewers = D.reviewers.filter(x => x.round === n), entries = D.timeline.filter(t => t.round === n), concerns = roundIssues(n);
+    const position = rounds.indexOf(n);
+    app.innerHTML = `${heading('Idea & review', 'Follow each idea through review, discussion, author response, and revision.', feedback('section:reviews'))}<div class="reading-layout"><aside class="reading-nav" aria-label="Review rounds"><div class="nav-caption">Review rounds</div>${rounds.map(num => {const snap=roundSnapshot(num);return `<a class="round-link" href="#reviews/${num}" ${num===n?'aria-current="page"':''}><span>${roundLabel(num)}</span><small>${e(snap?.version || 'Version not recorded')}</small></a>`}).join('')}<p class="nav-help">${e(modes[p.mode] || p.mode)}<br>${e(convergence[p.convergence] || p.convergence)}</p></aside><article class="reading-content"><header class="round-heading"><div><h2>${roundLabel(n)}</h2><div class="inline-meta"><span class="mono">${e(r?.version || 'Version not recorded')}</span><span>${e(r?.status || 'Status not recorded')}</span></div></div>${targetFeedback(n)}</header><div class="round-snapshot"><section><h3>Idea entering this round</h3>${block(r?.idea, 'No idea snapshot indexed for this round. Open the submitted sources in the review process below.')}</section><section><h3>What changed</h3>${block(r?.changes, 'No change record indexed for this round. A new review round alone does not imply a revised idea.')}</section></div><section class="reading-section">${titleRow('Reviewer assessments')}${reviewTable(reviewers)}<p class="section-caption">Scores keep their original scale and rubric. Missing assessments remain visible.</p></section><section class="reading-section">${titleRow('Review process')}${entries.length ? phaseTimeline(entries) : missing('No timeline entries indexed for this round. Read the original reviews above.')}</section><section class="reading-section">${titleRow('Concerns & responses', `<span class="quiet">${concerns.length} records</span>`)}${concerns.length ? `<div class="concern-list">${concerns.map(i => {const entries=i.discussion.filter(d => d.round===n);return `<div class="concern-item"><div><button class="issue-title" type="button" data-issue="${e(i.id)}">${e(i.title)}</button>${badge(i)}</div><p class="issue-subline">${e(i.id)} · Current disposition: ${e(i.status)}</p>${entries.length ? `<p>${e(entries.at(-1).text)}</p>` : missing('No discussion entry recorded in this round.')}<button class="link-button" type="button" data-issue="${e(i.id)}">Read full discussion →</button></div>`}).join('')}</div>` : missing('No concerns indexed for this round. This is not evidence of validity.')}</section><section class="round-conclusion"><h3>Round outcome</h3>${block(r?.outcome, 'No round outcome summary recorded. Inspect the chair or author assessment in the original sources.')}</section><nav class="reading-pagination" aria-label="Adjacent rounds">${position>0?`<a href="#reviews/${rounds[position-1]}">← ${roundLabel(rounds[position-1])}</a>`:'<span></span>'}${position<rounds.length-1?`<a href="#reviews/${rounds[position+1]}">${roundLabel(rounds[position+1])} →</a>`:'<a href="#plan">Continue to final plan →</a>'}</nav>${storage()}</article></div>`;
+  }
+
+  function phaseTimeline(entries) {
+    return `<ol class="phase-timeline">${entries.map((t,index) => `<li><span class="phase-number" aria-hidden="true">${String(index+1).padStart(2,'0')}</span><div class="phase-content"><div class="phase-heading"><h3>${e(t.label)}</h3><span class="quiet">${e(t.role)}</span></div><p>${e(t.summary)}</p>${sourceLink(t.source,'Read original record ↗')}</div></li>`).join('')}</ol>`;
+  }
+
+  const planSections = {idea:'Idea & method', experiments:'Experiment design', story:'Research story', paper:'Paper outline', roadmap:'Implementation roadmap'};
+  function planBlocks(collection) {
+    return plan[collection].map(x => `<section class="plan-block"><div class="block-heading"><h3>${e(x.title)}</h3>${feedback('plan:'+collection+':'+x.id,'Annotate')}</div><p class="record-text">${e(x.text)}</p>${refs(x.sources)}</section>`).join('');
+  }
+  function experiments() {
+    const fields = {hypothesis:'Hypothesis', setup:'Setup & configuration', data:'Data / workloads', baselines:'Baselines', metrics:'Metrics', controls:'Controls & ablations', success:'Success criterion', failure:'Failure / stop criterion', resources:'Resources & execution', result:'Observed evidence'};
+    return D.experiments.length ? D.experiments.map(x => `<article class="experiment-block" id="experiment-${e(x.id)}"><header><div class="experiment-id mono">${e(x.id)}</div><div><h3>${e(x.title)}</h3><p>${e(x.kind)}</p></div><span class="badge">${e(x.status)}</span></header><p class="experiment-summary">${e(x.summary)}</p><dl class="experiment-fields">${Object.entries(fields).map(([key,label]) => `<div><dt>${label}</dt><dd ${x[key] ? '' : 'class="missing-inline"'}>${e(x[key] || 'Not recorded')}</dd></div>`).join('')}</dl><div class="block-footer">${refs(x.sources)}${feedback('experiment:'+x.id,'Annotate experiment')}</div></article>`).join('') : missing('No experiment entries supplied. No execution or result is implied.');
+  }
+  function paper() {
+    return plan.paper.length ? `<div class="paper-outline">${plan.paper.map((x,index) => `<section class="paper-section"><div class="paper-section-number mono">${String(index+1).padStart(2,'0')}</div><div><div class="block-heading"><h3>${e(x.title)}</h3>${feedback('plan:paper:'+x.id,'Annotate')}</div><dl class="paper-fields"><dt>Purpose</dt><dd>${e(x.goal)}</dd><dt>Section design</dt><dd>${e(x.design)}</dd><dt>Evidence / figures</dt><dd>${e(x.evidence)}</dd></dl>${x.experiments.length ? `<div class="experiment-references">${x.experiments.map(id => `<a class="badge" href="#plan/experiments/${e(id)}">${e(id)} ↗</a>`).join('')}</div>` : ''}${refs(x.sources)}</div></section>`).join('')}</div>` : missing('A section-by-section paper design has not been recorded for this study. The original final report remains available.');
+  }
+  function roadmap() {
+    return plan.roadmap.length ? `<div class="roadmap-list">${plan.roadmap.map((x,index) => `<section class="roadmap-step"><span class="mono quiet">${String(index+1).padStart(2,'0')}</span><div><div class="block-heading"><h3>${e(x.title)}</h3>${feedback('plan:roadmap:'+x.id,'Annotate')}</div><p>${e(x.task)}</p><dl class="roadmap-fields"><dt>Dependencies</dt><dd>${e(x.dependencies)}</dd><dt>Deliverable</dt><dd>${e(x.artifact)}</dd><dt>Effort / resources</dt><dd>${e(x.estimate)}</dd></dl>${refs(x.sources)}</div></section>`).join('')}</div>` : missing('No implementation roadmap indexed. The next action below is taken from the research checkpoint.');
+  }
+  function renderPlan(part, experimentId) {
+    app.innerHTML = `${heading('Final research plan', 'The selected idea, experiment specifications, research narrative, and paper design.', feedback('section:plan'))}<div class="plan-context"><span class="mono">${e(p.version)}</span><span>${e(p.stage)} stage</span><span class="badge recommendation-${p.recommendation.toLowerCase()}">${e(p.recommendation)}</span>${sourceLink('report','Full final report ↗')}</div><div class="reading-layout"><aside class="reading-nav" aria-label="Plan contents"><div class="nav-caption">On this page</div>${Object.entries(planSections).map(([id,label],index) => `<a class="plan-link" href="#plan/${id}" data-plan-link="${id}"><span class="mono">0${index+1}</span>${label}</a>`).join('')}<p class="nav-help">${e(p.version)} · ${e(p.stage)}<br>Sources accompany each design decision.</p></aside><article class="reading-content plan-document"><section class="plan-section" id="plan-idea">${titleRow('Idea & method', '<span class="section-index">01</span>')}${plan.idea.length ? planBlocks('idea') : `<p>${e(p.description)}</p>${missing('Detailed method design has not been indexed. Read the original final report.')}`}${D.claims.length ? `<div class="plan-claims"><h3>Claims & evidence status</h3>${D.claims.map(c => `<div><code>${e(c.id)}</code><p><strong>${e(c.title)}</strong> — ${e(c.text)}<span class="table-detail">${e(c.status)}</span></p>${feedback('claim:'+c.id,'Annotate')}</div>`).join('')}</div>` : ''}</section><section class="plan-section" id="plan-experiments">${titleRow('Experiment design', '<span class="section-index">02</span>')}<p class="section-intro">Setups, comparisons, and decision criteria. Each record distinguishes planned work from observed evidence.</p>${experiments()}</section><section class="plan-section" id="plan-story">${titleRow('Research story', '<span class="section-index">03</span>')}${plan.story.length ? planBlocks('story') : missing('The research narrative has not been indexed: problem, gap, insight, evidence chain, and limitations need a sourced account.')}</section><section class="plan-section" id="plan-paper">${titleRow('Paper outline', '<span class="section-index">04</span>')}<p class="section-intro">What each section should establish, how to develop it, and which evidence it needs.</p>${paper()}</section><section class="plan-section" id="plan-roadmap">${titleRow('Implementation roadmap', '<span class="section-index">05</span>')}${roadmap()}<div class="next-step"><h3>Exact next action</h3><p>${e(p.nextAction)}</p></div></section><div class="document-end">${UI.sourceButton('report','Read original final report')}${feedback('section:plan')}</div>${storage()}</article></div>`;
+    const active = Object.hasOwn(planSections,part) ? part : 'idea';
+    updatePlanNav(active);
+    if (Object.hasOwn(planSections,part)) {
+      const target = experimentId ? document.getElementById('experiment-'+experimentId) : null;
+      const section = target || document.getElementById('plan-'+part);
+      requestAnimationFrame(() => {
+        window.scrollTo({top:Math.max(0,section.getBoundingClientRect().top+window.scrollY-24),behavior:'instant'});
+        if (target) {target.classList.add('target-highlight');target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      planObserver = new IntersectionObserver(entries => {
+        const first = entries.filter(x => x.isIntersecting).sort((a,b) => a.boundingClientRect.top-b.boundingClientRect.top)[0];
+        if (first) updatePlanNav(first.target.id.slice(5));
+      }, {rootMargin:'-5% 0px -65% 0px'});
+      document.querySelectorAll('.plan-section').forEach(section => planObserver.observe(section));
+    }
+  }
+  function updatePlanNav(id) {document.querySelectorAll('[data-plan-link]').forEach(a => a.setAttribute('aria-current',a.dataset.planLink===id?'location':'false'))}
+  let planObserver;
+
+  function roundSelect() {
+    return rounds.length > 1 ? `<select class="severity-select" id="round-filter" aria-label="Filter by round"><option value="all">All rounds</option>${rounds.map(n => `<option value="${n}" ${round===String(n)?'selected':''}>${roundLabel(n)}</option>`).join('')}</select>` : '';
+  }
+  function renderList() {
+    app.innerHTML = `${heading('Research issues', 'Inspect specific concerns and their complete discussion threads.', feedback('section:decision'))}${decision()}<form class="search-form" id="issue-search"><label class="sr-only" for="issue-query">Search issues</label><input type="search" class="search-input" id="issue-query" placeholder="Search concerns, original IDs, or responses…" value="${e(query)}"><button class="btn" type="submit">Search</button></form><div class="list-box"><div class="list-toolbar"><div class="state-filters" aria-label="Issue state">${['open','resolved','all'].map(s => `<button type="button" class="state-filter" data-state="${s}" aria-pressed="${state===s}">${s==='open'?'Open':s==='resolved'?'Resolved':'All'} <span class="count">${counts[s]}</span></button>`).join('')}</div><div class="filter-controls">${roundSelect()}<select class="severity-select" id="severity-filter" aria-label="Filter by severity">${['all','Critical','Major','Moderate','Minor'].map(s => `<option value="${s}" ${severity===s?'selected':''}>${s==='all'?'All severities':s}</option>`).join('')}</select></div></div><div id="issue-rows" aria-live="polite"></div></div><p class="section-caption" id="list-summary"></p>${storage()}`;
+    renderRows();
+  }
+  function renderRows() {
+    saveFilters();
+    const needle = query.toLowerCase().trim();
+    const items = D.issues.filter(i => (state==='all'||bucket(i)===state) && (severity==='all'||i.severity===severity) && (round==='all'||i.round===Number(round)||i.discussion.some(d=>d.round===Number(round))) && (!needle||[i.title,i.id,...i.aliases,...i.discussion.map(d=>d.text),i.severity,i.status].join(' ').toLowerCase().includes(needle)));
+    document.getElementById('issue-rows').innerHTML = items.length ? items.map(i => `<article class="issue-row"><span class="issue-status ${bucket(i)}" aria-hidden="true">${closed(i)?'✓':'○'}</span><div><div class="issue-row-title"><button type="button" class="issue-title" data-issue="${e(i.id)}">${e(i.title)}</button>${badge(i)}</div><div class="issue-subline">${e(i.id)} · ${roundLabel(i.round)} · ${e(i.status)}</div></div><span class="row-chevron" aria-hidden="true">→</span></article>`).join('') : `<div class="empty-panel"><h2>${D.issues.length?'No matching issues':'No concerns recorded'}</h2><p>${D.issues.length?'Try another search or clear the filters.':'This report has no indexed issues. This alone does not establish validity or readiness.'}</p>${D.issues.length?'<button type="button" class="btn" data-clear-filters>Clear filters</button>':'<a class="btn" href="#overview">Read research overview</a>'}</div>`;
+    document.getElementById('list-summary').textContent = `${items.length} of ${D.issues.length} issue records shown. Original IDs and sources are retained.`;
+  }
+  function renderIssue(id) {
+    const i = D.issues.find(i => i.id === id);
+    if (!i) {location.hash='issues';return}
+    app.innerHTML = `<a class="back-link" href="#issues">← All issues</a><div class="detail-heading"><h1>${e(i.title)}</h1><div class="inline-meta"><span class="badge">${e(i.status)}</span>${badge(i)}<span class="mono">${e(i.id)}</span><span>${roundLabel(i.round)}</span></div></div><div class="detail-layout"><div class="thread">${i.discussion.length ? i.discussion.map(d => `<section class="comment"><header class="comment-header"><span><strong>${e(d.author)}</strong><span> · ${e(d.phase)} · ${roundLabel(d.round)}</span></span>${sourceLink(d.source,'View source ↗')}</header><div class="comment-body"><p>${e(d.text)}</p></div></section>`).join('') : missing('No discussion has been recorded for this concern.')}<div class="thread-action">${feedback('issue:'+i.id)}<span class="quiet">Human feedback is separate from the research record.</span></div>${storage()}</div><aside class="detail-sidebar"><section><h2>Original issue IDs</h2>${i.aliases.map(id=>`<code>${e(id)}</code>`).join('')}</section><section><h2>Closure criterion</h2><p>${e(i.criterion)}</p></section><section><h2>Evidence</h2><div class="source-links">${i.sources.map(id=>sourceLink(id)).join('')}</div></section><section><a href="#reviews/${i.round}">Open ${roundLabel(i.round)} →</a></section></aside></div>`;
+  }
+  function sources() {
+    const values = Object.values(D.sources);
+    app.innerHTML = `${heading('Original sources', `${values.length} bundled documents. Exact source text and SHA-256 hashes remain available offline.`)}<div class="source-list">${values.map(s=>`<div class="source-row"><div>${sourceLink(s.id,s.path)}<p>${e(s.id)}</p></div><span class="mono source-hash">${e(s.sha256.slice(0,12))}</span></div>`).join('')}</div>${storage()}`;
+  }
+
+  function route() {
+    planObserver?.disconnect();
+    const parts = location.hash.slice(1).split('/'), raw = parts[0] || 'overview';
+    const section = raw === 'issue' ? 'issues' : Object.hasOwn(paths,raw) ? raw : 'overview';
+    document.querySelectorAll('[data-section]').forEach(a=>a.setAttribute('aria-current',a.dataset.section===section?'page':'false'));
+    window.scrollTo(0,0);
+    if (raw === 'issue') {let id;try{id=decodeURIComponent(parts.slice(1).join('/'))}catch{id=''}renderIssue(id)}
+    else if (section==='overview') overview();
+    else if (section==='reviews') reviews(parts[1]);
+    else if (section==='plan') renderPlan(parts[1],parts[2]);
+    else if (section==='sources') sources();
+    else renderList();
+    UI.status();
+    document.title = `${raw==='issue'?'Issue':paths[section]} · ${p.title} · idea-shaokao`;
+    app.dataset.route = parts.join('/') || 'overview';
+  }
+  app.addEventListener('submit',event=>{if(event.target.id==='issue-search'){event.preventDefault();query=document.getElementById('issue-query').value;renderRows()}});
+  app.addEventListener('input',event=>{if(event.target.id==='issue-query'){query=event.target.value;renderRows()}});
+  app.addEventListener('change',event=>{if(event.target.id==='severity-filter'){severity=event.target.value;renderRows()}if(event.target.id==='round-filter'){round=event.target.value;renderRows()}});
+  app.addEventListener('click',event=>{const btn=event.target.closest('button');if(!btn)return;if(btn.hasAttribute('data-state')){state=btn.dataset.state;renderList();UI.status()}if(btn.hasAttribute('data-clear-filters')){state='all';severity='all';round='all';query='';renderList();UI.status()}});
+  document.querySelector('.skip-link').addEventListener('click',event=>{event.preventDefault();document.getElementById('main-content').focus();document.getElementById('main-content').scrollIntoView()});
+  window.addEventListener('dossier:issue',event=>{location.hash='issue/'+encodeURIComponent(event.detail.id)});
+  window.addEventListener('hashchange',route);
+  route();
+})();
+</script>
+</body>
+</html>

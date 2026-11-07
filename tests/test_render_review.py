@@ -10,7 +10,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import render_review as renderer
-from review_fixture import make_workspace, write_index
+from review_fixture import make_workspace, write_index, add_research_design
 
 
 def payload(root):
@@ -70,6 +70,61 @@ class RenderReviewTests(unittest.TestCase):
         before = self.snapshot()
         self.assertTrue(renderer.render(self.root, check=True)['checked_only'])
         self.assertEqual(self.snapshot(), before)
+
+    def test_round_snapshots_and_full_plan_keep_sourced_settings_and_targets(self):
+        add_research_design(self.root, self.index)
+        renderer.render(self.root)
+        data = payload(self.root)
+        self.assertEqual([r['round'] for r in data['rounds']], [1, 2])
+        self.assertEqual([r['version'] for r in data['rounds']], ['v01', 'v01'])
+        self.assertIn('64 MiB', data['experiments'][0]['setup'])
+        self.assertIn('Not run', data['experiments'][0]['result'])
+        self.assertEqual(next(x for x in data['plan']['paper'] if x['id'] == 'experiments')['experiments'], ['E-early'])
+        for target in ('round:2', 'experiment:E-early', 'plan:idea:method',
+                       'plan:story:evidence', 'plan:paper:experiments', 'plan:roadmap:gate', 'section:plan'):
+            self.assertTrue(data['targets'][target]['sources'])
+        self.assertEqual(data['targets']['experiment:E-early']['sources'], ['plan'])
+        self.assertEqual(data['targets']['round:1']['round'], 1)
+        self.assertEqual(data['targets']['round:1']['stage'], 'proposal')
+
+    def test_old_indices_leave_snapshots_and_manuscript_design_explicitly_missing(self):
+        renderer.render(self.root)
+        data = payload(self.root)
+        self.assertEqual(data['rounds'], [])
+        self.assertEqual(data['plan'], dict(idea=[], story=[], paper=[], roadmap=[]))
+        self.assertIsNone(data['experiments'][0]['setup'])
+        self.assertIsNone(data['experiments'][0]['result'])
+
+    def test_invalid_plan_and_historical_references_fail_without_replacing_report(self):
+        add_research_design(self.root, self.index)
+        renderer.render(self.root)
+        original = json.loads(json.dumps(self.index))
+        def future_round(index): index['rounds'][0]['round'] = 3
+        def duplicate_round(index): index['rounds'].append(index['rounds'][0])
+        def missing_source(index): index['rounds'][0]['idea']['sources'] = ['missing']
+        def duplicate_section(index): index['plan']['paper'].append(index['plan']['paper'][0])
+        def missing_experiment(index): index['plan']['paper'][0]['experiments'] = ['E-missing']
+        def missing_evidence(index): del index['plan']['paper'][0]['evidence']
+        def invalid_experiment_source(index): index['experiments'][0]['sources'] = ['missing']
+        for mutation in (future_round, duplicate_round, missing_source, duplicate_section,
+                         missing_experiment, missing_evidence, invalid_experiment_source):
+            with self.subTest(mutation=mutation.__name__):
+                invalid = json.loads(json.dumps(original))
+                mutation(invalid)
+                write_index(self.root, invalid)
+                before = self.snapshot()
+                with self.assertRaises(renderer.ReviewError):
+                    renderer.render(self.root)
+                self.assertEqual(self.snapshot(), before)
+
+    def test_experiment_annotation_tracks_settings_and_result_sources(self):
+        self.index['experiments'][0]['sources'] = ['plan', 'final']
+        write_index(self.root, self.index)
+        renderer.render(self.root)
+        data = payload(self.root)
+        self.assertEqual(data['experiments'][0]['sources'], ['plan', 'final'])
+        self.assertEqual(data['targets']['experiment:E-early']['sources'], ['plan', 'final'])
+        self.assertIn('final', data['targets']['section:plan']['sources'])
 
     def test_invalid_input_keeps_previous_report_and_identity_unchanged(self):
         renderer.render(self.root)

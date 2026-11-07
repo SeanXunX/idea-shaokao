@@ -45,7 +45,7 @@ research/<slug>/
     candidate_ideas.md
     idea_selection.md
   proposal/
-    v01/                          proposal.md, experiments.md, evidence.md
+    v01/                          proposal.md, experiments.md, evidence.md, paper_plan.md
     v02/                          Next submission, including changes.md
     final/                        Selected version and its provenance
   reviews/

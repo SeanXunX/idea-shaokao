@@ -76,6 +76,28 @@ directory. If actual code exists, identify its revision and the tests inspected.
 Freeze these files when reviewed; write changes into the next version, not over
 the submitted record. Use `changes.md` to connect edits to issue IDs and evidence.
 
+## Research story and paper design
+
+For a developed proposal, save `proposal/vNN/paper_plan.md` alongside the method
+and experiment plan. Explain the complete narrative: problem, gap in the closest
+work, core insight, mechanism, evidence chain, intended contribution, and limits.
+Make clear which links are hypotheses and which have evidence.
+
+Design the manuscript section by section rather than listing generic headings:
+
+| Section | Purpose | Concrete design | Evidence / figures | Linked hypotheses / experiments |
+| --- | --- | --- | --- | --- |
+
+Specify the argument, method details, analysis, comparisons, tables, and figures
+each section needs. Link stable experiment IDs to the claims they would test.
+Keep planned figures and expected observations distinct from completed results.
+Cover the abstract, introduction, related work, formulation/method, experimental
+design/results, analysis, limitations, and conclusion as appropriate to the work.
+Record unfinished literature, unperformed experiments, and missing decisions.
+Freeze the writing plan with the submitted version and retain its provenance in
+`proposal/final/`. For a killed or narrowly scoped review, preserve the actual
+story and explain why a manuscript design was not produced; do not invent one.
+
 ## Experiment design and execution
 
 Give hypotheses and experiments stable identifiers (`H01`, `E01`). For each planned

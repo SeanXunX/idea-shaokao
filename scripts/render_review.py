@@ -165,6 +165,7 @@ def load_workspace(root):
         'section:overview': {'title': 'Research overview', 'sources': summary_sources},
         'section:reviews': {'title': 'Review history', 'sources': ['report']},
         'section:experiments': {'title': 'Experiment plan and evidence', 'sources': ['report']},
+        'section:plan': {'title': 'Final research plan', 'sources': ['report']},
     }
     issues, aliases_seen = [], set()
     seen = set()
@@ -259,12 +260,72 @@ def load_workspace(root):
         seen.add(key)
         row = {field: text(item.get(field), 'experiment.' + field) for field in ('title', 'kind', 'status', 'summary')}
         row.update(id=key, source=source_refs([item.get('source')], sources, 'experiment.source')[0])
+        row['sources'] = source_refs([row['source']] + array(item.get('sources', []), 'experiment.sources'), sources, 'experiment.sources')
+        for field in ('hypothesis', 'setup', 'data', 'baselines', 'metrics', 'controls',
+                      'success', 'failure', 'resources', 'result'):
+            row[field] = text(item[field], 'experiment.' + field) if field in item else None
         experiments.append(row)
+        targets['experiment:' + key] = {'title': row['title'], 'sources': row['sources']}
+    rounds, seen = [], set()
+    for item in array(index.get('rounds', []), 'rounds'):
+        mapping(item, 'round snapshot')
+        n = number(item.get('round'), 'rounds.round', 1, current)
+        if n in seen:
+            fail(f'Duplicate round snapshot: {n}')
+        seen.add(n)
+        row = {'round': n, 'version': text(item.get('version'), 'rounds.version', 'Not recorded'),
+               'status': text(item.get('status'), 'rounds.status', 'Not recorded'),
+               'stage': text(item.get('stage'), 'rounds.stage', 'Not recorded')}
+        if row['stage'] not in ('proposal', 'implementation', 'paper', 'Not recorded'):
+            fail('rounds.stage must be proposal, implementation, or paper when recorded')
+        refs = []
+        for field in ('idea', 'changes', 'outcome'):
+            value = item.get(field)
+            row[field] = None
+            if value is not None:
+                mapping(value, 'rounds.' + field)
+                row[field] = {'text': text(value.get('text'), 'rounds.' + field + '.text'),
+                              'sources': source_refs(value.get('sources'), sources, 'rounds.' + field + '.sources')}
+                refs.extend(row[field]['sources'])
+        if not refs:
+            fail(f'Round {n} needs at least one sourced idea, change, or outcome')
+        targets['round:' + str(n)] = {'title': f'Round {n} idea and review',
+                                     'sources': list(dict.fromkeys(refs)),
+                                     'round': n, 'version': row['version'], 'stage': row['stage']}
+        rounds.append(row)
+    rounds.sort(key=lambda row: row['round'])
+    plan_input = mapping(index.get('plan', {}), 'plan')
+    plan = {}
+    experiment_ids = {row['id'] for row in experiments}
+    for collection, fields in {'idea': ('text',), 'story': ('text',),
+                               'paper': ('goal', 'design', 'evidence'),
+                               'roadmap': ('task', 'dependencies', 'artifact', 'estimate')}.items():
+        plan[collection], seen = [], set()
+        for item in array(plan_input.get(collection, []), 'plan.' + collection):
+            mapping(item, 'plan.' + collection + ' entry')
+            key = identifier(item.get('id'), 'plan.' + collection + '.id')
+            if key in seen:
+                fail(f'Duplicate plan.{collection} ID: {key}')
+            seen.add(key)
+            row = {'id': key, 'title': text(item.get('title'), 'plan.' + collection + '.title'),
+                   'sources': source_refs(item.get('sources'), sources, 'plan.' + collection + '.sources')}
+            for field in fields:
+                row[field] = text(item.get(field), 'plan.' + collection + '.' + field)
+            if collection == 'paper':
+                refs = array(item.get('experiments', []), 'plan.paper.experiments')
+                if any(not isinstance(ref, str) or ref not in experiment_ids for ref in refs):
+                    fail('plan.paper.experiments references an unknown experiment ID')
+                row['experiments'] = list(dict.fromkeys(refs))
+            plan[collection].append(row)
+            targets['plan:' + collection + ':' + key] = {'title': row['title'], 'sources': row['sources']}
     targets['section:reviews']['sources'] = list(dict.fromkeys([x['source'] for x in timeline] + ['report']))
-    targets['section:experiments']['sources'] = list(dict.fromkeys([x['source'] for x in experiments] + ['report']))
+    targets['section:experiments']['sources'] = list(dict.fromkeys([ref for x in experiments for ref in x['sources']] + ['report']))
+    targets['section:plan']['sources'] = list(dict.fromkeys(
+        [ref for rows in plan.values() for row in rows for ref in row['sources']]
+        + [ref for x in experiments for ref in x['sources']] + ['report']))
     return {'schema_version': 1, 'project': project, 'issues': issues, 'claims': claims,
             'reviewers': reviewers, 'timeline': timeline, 'experiments': experiments,
-            'sources': sources, 'targets': targets}, hashlib.sha256(index_path.read_bytes()).hexdigest()
+            'rounds': rounds, 'plan': plan, 'sources': sources, 'targets': targets}, hashlib.sha256(index_path.read_bytes()).hexdigest()
 
 
 def identity(root, slug):
