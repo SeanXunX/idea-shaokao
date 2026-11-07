@@ -148,3 +148,13 @@ experiments, the first implementation step, biggest rejection risk, remaining
 uncertainty, evidence stage, execution mode, and links to saved artifacts. For a
 narrow or interrupted run, deliver completed work and the exact continuation step;
 do not imply omitted phases happened.
+
+For every persisted run, finish with the approved review interface using
+[review-report.md](references/review-report.md). Write the sourced
+`final/review-data.json` index from this run's actual artifacts, then run
+`python3 <skill-dir>/scripts/render_review.py <research-workspace>` to generate
+`final/review.html`. Do this for completed, killed, budget-stopped, and scoped
+incomplete runs; never substitute demo content or invent missing phases. Keep
+`final/review-manifest.json` across regeneration to retain annotation identity.
+Link the HTML and Markdown reports in the handoff. If host capabilities prevent
+HTML generation, record the pending delivery and exact continuation step.

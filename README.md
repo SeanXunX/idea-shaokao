@@ -94,7 +94,8 @@ need the full process.
 5. **Decision and revision:** the AC synthesizes the record; a separate SAC audits
    its quality and issues a recommendation. Revise within a bounded round budget.
 6. **Delivery:** a final report, versioned proposal, experiment plan, full review
-   history, issue resolutions, and a first-week implementation roadmap.
+   history, issue resolutions, a first-week implementation roadmap, and an
+   offline interactive `final/review.html` with sourced issues and feedback export.
 
 The default limit is four rounds. Convergence requires two consecutive complete
 independent rounds with no new critical issues and no unresolved critical blocker.
@@ -139,27 +140,64 @@ and directories for research artifacts. Resume validates and prints the checkpoi
 without changing files; it does not run the research workflow. The helper refuses
 collisions and unsafe identifiers. See [the workspace contract](references/workspace.md).
 
+## Interactive review report
+
+Every persisted research run ends with the approved GitHub Issues-style
+`final/review.html`, alongside `final/final_report.md`. The agent writes a sourced
+`final/review-data.json` index and automatically invokes the bundled renderer:
+
+```bash
+python3 <skill-dir>/scripts/render_review.py <research-workspace>
+```
+
+The renderer uses Python 3.10+ and the standard library. It reads this run's actual
+artifacts, embeds their original text and hashes, and supports multiple review
+rounds, arbitrary recorded score scales, and explicit missing-data states. It
+contains no demo research claims or verdicts. Source errors stop rendering while
+keeping the previous report intact.
+
+Use the issue list and discussion threads to inspect concerns, rebuttals,
+reassessments, and evidence. Annotations and unfinished drafts survive regeneration
+through a persistent workspace identity. Changed sources or removed targets retain
+old comments with their original context. Export `review_feedback.md` for the
+agent; back up/restore `review_notes.json` when moving browsers or file locations.
+Notes remain separate from scientific issue dispositions and chair judgments.
+
+The finalization instructions apply to completed, killed, budget-stopped, and
+incomplete scoped runs. See [the index and report contract](references/review-report.md).
+Browser tools are optional for generation; no server, frontend build, provider
+API, network call, or third-party runtime package is required.
+
 ## Repository map and validation
 
-The current [review-interface prototype](design-demos/github-review.html) uses a
-compact GitHub Issues layout: searchable concerns, state/severity filters, and
-threaded reviewer, author, and reassessment records. It supports local annotations
-and Markdown feedback export. See the [design notes](design-demos/README.md) for
-screenshots, verification, and earlier explorations. Automatic report generation
-is a subsequent integration step.
+The approved [design prototype](design-demos/github-review.html) and its
+[design notes](design-demos/README.md) preserve the visual reference and earlier
+explorations. Production reports use [the bundled assets](assets/review/template.html)
+and the [renderer](scripts/render_review.py) with each run’s own sources.
 
 - [SKILL.md](SKILL.md): discovery metadata, workflow, capability fallbacks, and decision gates.
 - [Research contracts](references/research.md): sources, candidates, design, experiments.
 - [Agent roles](references/roles.md) and [review protocol](references/review-protocol.md): dispatch, independence, discussion, scoring, closure.
 - [Deliverables](references/deliverables.md): final report and implementation roadmap.
 - [Workspace helper](scripts/init_research.py): optional standard-library-only initialization.
+- [Report contract](references/review-report.md): sourced display index, finalization, and annotation continuity.
 - [Behavioral evaluation scenarios](tests/evals.md): realistic skill execution checks.
 
-Run the helper's automated tests:
+Run the workspace and renderer tests:
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
+
+Development browser checks additionally use Playwright:
+
+```bash
+node tests/verify_review_browser.cjs
+```
+
+Set `PLAYWRIGHT_MODULE` to an external Playwright module path and
+`CHROMIUM_EXECUTABLE` to an existing Chromium binary when needed. The generated
+HTML itself needs neither Node nor Playwright.
 
 Check local package discovery without installing:
 

@@ -74,3 +74,28 @@ Compare activation for “Develop three testable research ideas and run conferen
 review,” “Resume this idea-shaokao workspace,” “Suggest a catchy project name,” and
 “Review this small code diff.” The first two fit; the last two should not trigger a
 full research laboratory workflow unless the user explicitly requests it.
+
+## Report-finalization integration — 2026-11-07
+
+The approved GitHub Issues-style report is integrated as a finalization step.
+Validation for this change included:
+
+- All 22 Python workspace/renderer tests passed, covering actual file ingestion,
+  multiple rounds and missing scores, partial self-review, stable report identity,
+  source fidelity, script-safe JSON, invalid references, and failure preservation.
+- `verify_review_browser.cjs` passed with networking disabled at 1440×900 and
+  1024×768, using generated reports from independent synthetic test workspaces.
+  It checked filters, sources, annotations, multiple drafts, version regeneration,
+  changed/missing target context, Markdown export, fresh-browser JSON restore,
+  non-destructive conflicts (including associated edit drafts), and storage denial.
+- An independent agent finalized an isolated copy of the actual earlier projection
+  review using only the skill and its real artifacts. Its generated report retained
+  SAC Kill, proposal stage, original 1/10 scores, analytical falsification, canceled
+  empirical checks, and unknown novelty/runtime. All 38 bundled source hashes
+  matched the actual files; regeneration retained the workspace UUID.
+- Skills CLI 1.7.6 installed the updated package for Codex, Claude Code, OpenCode,
+  and Cursor in a temporary project. Both actual installed copies preserved every
+  report asset and successfully ran the installed renderer's check mode.
+
+These checks establish package and report behavior, not scientific validity of
+arbitrary future research or identical browser storage behavior across all hosts.

@@ -57,6 +57,9 @@ research/<slug>/
     <run-id>/                     Configuration, commands, raw logs, measurements
   final/
     final_report.md
+    review-data.json                Sourced display index for this research run
+    review-manifest.json            Persistent annotation identity and source hashes
+    review.html                     Standalone interactive review report
 ```
 
 Only the top-level directories, README, state, and empty issue tracker are created
@@ -115,3 +118,10 @@ On resume, reconcile state against actual artifacts and the latest manifest:
 If the helper rejects malformed state, inspect the file and actual artifacts.
 Back up the existing checkpoint before a deliberate repair, then validate it.
 Never reinitialize over an existing project to conceal missing history.
+
+At every run's final checkpoint, generate the HTML using
+[review-report.md](review-report.md). Preserve the display index and manifest on
+resume; refresh the index from actual revised artifacts and regenerate the HTML.
+Read exported `review_feedback.md` against its original version and source hashes
+before applying it. Browser-local notes are not stored in the research directory;
+use the report's JSON backup/restore controls when moving browsers or file URLs.

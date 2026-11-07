@@ -66,6 +66,16 @@ without rewriting an unfavorable assessment. Otherwise title this section
 8. **First implementation step:** What concrete task should begin next?
 9. **Final recommendation:** Proceed, Revise, Restart, or Kill, with rationale and confidence.
 
+## Interactive review report
+
+After saving the real research artifacts and checkpoint, follow
+[review-report.md](review-report.md) to write the sourced display index and run
+the bundled renderer. Every persisted run delivers `final/review.html` alongside
+this Markdown report, including negative and incomplete outcomes. Use the approved
+GitHub Issues-style assets, with actual issue discussions, all recorded rounds,
+source documents, and honest missing-data states. Preserve the report manifest
+for stable annotations and feedback export on later versions.
+
 ## Delivery check
 
 Before handing off, verify that important references resolve, factual claims have
@@ -73,4 +83,6 @@ support, expectations are not presented as measurements, scores have identifiabl
 authors, and unresolved critical issues remain visible. Check that the stated
 convergence follows the actual history and budget. Ensure the checkpoint matches
 the delivered artifacts and records the exact next action, even after Kill or a
-budget stop. Link the report and workspace in the final user-facing response.
+budget stop. Link `final/review.html`, this report, and the workspace in the
+final user-facing response. If HTML generation is unavailable, report it as pending
+rather than declaring the full delivery complete.

@@ -71,5 +71,7 @@ The earlier prototypes are retained for comparison and history:
 and verification records are unchanged. The build helper regenerates all four
 prototypes; `verify_demos.cjs` checks the earlier three.
 
-The current delivery is the revised review interface. Generating it automatically
-as `final/review.html` remains a subsequent skill integration task.
+This direction is now integrated into the skill. Every persisted research run
+produces `final/review.html` through the [production renderer](../scripts/render_review.py)
+and [report contract](../references/review-report.md). The production assets use
+the current run’s own sources, not the fixed dataset in these design explorations.
